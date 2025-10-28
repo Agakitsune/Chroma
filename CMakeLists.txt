@@ -37,6 +37,18 @@ FetchContent_Declare(
     GIT_BRANCH master
 )
 
+find_package(Freetype QUIET)
+if(NOT Freetype_FOUND)
+    message(STATUS "Fetching FreeType from source...")
+    include(FetchContent)
+    FetchContent_Declare(
+        freetype
+        GIT_REPOSITORY https://github.com/freetype/freetype.git
+        GIT_TAG VER-2-14-1
+    )
+    FetchContent_MakeAvailable(freetype)
+endif()
+
 FetchContent_MakeAvailable(
     sdl3
     sdl_image
@@ -44,8 +56,6 @@ FetchContent_MakeAvailable(
     imgui
     lua
 )
-
-find_package(Vulkan REQUIRED)
 
 file(GLOB CPP_SOURCES
     src/*.cpp
@@ -62,6 +72,21 @@ list(APPEND IMGUI_SOURCES
 
 add_executable(${PROJECT_NAME} ${CPP_SOURCES} ${IMGUI_SOURCES})
 
+find_package(Vulkan QUIET)
+if(NOT Vulkan_FOUND)
+    message(STATUS "Fetching Vulkan headers...")
+    include(FetchContent)
+    FetchContent_Declare(
+        vulkan_headers
+        GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
+        GIT_BRANCH main
+    )
+    FetchContent_MakeAvailable(vulkan_headers)
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        ${vulkan_headers_SOURCE_DIR}/include
+    )
+endif()
+
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
@@ -71,6 +96,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Vulkan::Vulkan
-    SDL3
+    SDL3::SDL3
     lua::lib
 )
