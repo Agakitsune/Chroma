@@ -66,11 +66,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
     ${sdl3_SOURCE_DIR}/include
+    ${sdl_image_SOURCE_DIR}/include
     ./include
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Vulkan::Vulkan
-    SDL3
+    SDL3::SDL3
+    SDL3_image::SDL3_image
+    SDL3_ttf::SDL3_ttf
     lua::lib
 )
