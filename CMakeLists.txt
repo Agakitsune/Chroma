@@ -47,6 +47,9 @@ if(NOT Freetype_FOUND)
         GIT_TAG VER-2-14-1
     )
     FetchContent_MakeAvailable(freetype)
+    set(FREETYPE_INCLUDE_DIRS ${Freetype_INCLUDE_DIRS} CACHE PATH "")
+    set(FREETYPE_LIBRARY ${Freetype_LIBRARIES} CACHE FILEPATH "")
+    # set(SDLTTF_FREETYPE_VENDORED ON CACHE BOOL "")
 endif()
 
 FetchContent_MakeAvailable(
@@ -87,15 +90,27 @@ if(NOT Vulkan_FOUND)
     )
 endif()
 
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_options(${PROJECT_NAME} PRIVATE
+    $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /permissive->
+    -g
+)
+
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
     ${sdl3_SOURCE_DIR}/include
+    ${sdl_image_SOURCE_DIR}/include
+    ${sdl_ttf_SOURCE_DIR}/include
     ./include
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Vulkan::Vulkan
     SDL3::SDL3
+    SDL3_image::SDL3_image
+    SDL3_ttf::SDL3_ttf
     lua::lib
 )
