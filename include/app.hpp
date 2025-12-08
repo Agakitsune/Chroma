@@ -31,8 +31,8 @@ namespace chroma {
 
             int process_events();
 
-            // Color main_color;
-            // Color second_color;
+            Color main_color;
+            Color second_color;
 
             SDL_Window* window = nullptr;
             SDL_GPUDevice* device = nullptr;
