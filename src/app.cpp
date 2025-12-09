@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+
+
 namespace chroma {
     App::~App() {
         SDL_WaitForGPUIdle(device);
@@ -40,6 +42,38 @@ namespace chroma {
     int App::run() {
         uint64_t tick = 0;
         uint64_t delta = 0;
+
+        ImVec4 button_colors[] = {
+            {1.00f, 0.50f, 0.00f, 1.0f},   // Orange
+            {0.20f, 0.15f, 0.25f, 1.0f},   // Dark Purple
+            {0.90f, 0.75f, 0.55f, 1.0f},   // Beige
+            {0.95f, 0.95f, 0.20f, 1.0f},   // Yellow
+            {0.40f, 0.30f, 0.15f, 1.0f},   // Brown
+
+            {0.10f, 0.45f, 0.25f, 1.0f},   // Forest Green
+            {0.00f, 0.30f, 0.15f, 1.0f},   // Deep Green
+            {0.20f, 0.60f, 0.35f, 1.0f},   // Grass Green
+            {0.70f, 0.90f, 0.40f, 1.0f},   // Lime
+            {0.35f, 0.50f, 0.15f, 1.0f},   // Olive
+
+            {0.10f, 0.40f, 0.45f, 1.0f},   // Teal
+            {0.05f, 0.25f, 0.30f, 1.0f},   // Deep Teal
+            {0.40f, 0.75f, 1.00f, 1.0f},   // Light Blue
+            {0.20f, 0.50f, 0.90f, 1.0f},   // Sky Blue
+            {0.10f, 0.25f, 0.50f, 1.0f},   // Steel Blue
+
+            {0.90f, 0.90f, 1.00f, 1.0f},   // Off White
+            {1.00f, 1.00f, 1.00f, 1.0f},   // White
+            {0.50f, 0.30f, 0.30f, 1.0f},   // Brick
+            {0.65f, 0.20f, 0.20f, 1.0f},   // Red
+            {1.00f, 0.50f, 0.80f, 1.0f},   // Pink
+
+            {0.40f, 0.45f, 0.15f, 1.0f},   // Olive Green
+            {0.25f, 0.20f, 0.05f, 1.0f},   // Mud Brown
+            {0.30f, 0.20f, 0.30f, 1.0f},   // Dark Mauve
+            {0.55f, 0.40f, 0.50f, 1.0f},   // Purple Gray
+            {0.50f, 0.15f, 0.40f, 1.0f},   // Plum
+        };
 
         ImGuiIO& io = ImGui::GetIO();
 
@@ -80,14 +114,38 @@ namespace chroma {
 
             ImGui::Begin("Palette", nullptr, window_flags);
 
-            if (ImGui::ColorButton("#1", ImVec4(1, 0, 0, 1), ImGuiColorEditFlags_NoTooltip)) {
-                main_color.r = 1.0;
-                main_color.g = 0.0;
-                main_color.b = 0.0;
-                main_color.a = 1.0;
-            }
+            int color_perLine = 5;
+            int total_color_nb = sizeof(button_colors) / sizeof(button_colors[0]);
+            int rows = (total_color_nb + color_perLine - 1) / color_perLine;
 
+            if (ImGui::BeginTable("table1", color_perLine))
+            {
+                int color_nb = 0;
+
+                for (int row = 0; row < rows; row++)
+                {
+                    ImGui::TableNextRow();
+                    for (int column = 0; column < color_perLine; column++)
+                    {
+                        ImGui::TableSetColumnIndex(column);
+                        // Si on dépasse le nombre de couleurs → cellules vides
+                        if (color_nb >= total_color_nb)
+                            continue;
+                        std::string button_id = "ColorButton##" + std::to_string(color_nb);
+                        if (ImGui::ColorButton(button_id.c_str(), button_colors[color_nb], ImGuiColorEditFlags_NoTooltip))
+                        {
+                            main_color.r = button_colors[color_nb].x;
+                            main_color.g = button_colors[color_nb].y;
+                            main_color.b = button_colors[color_nb].z;
+                            main_color.a = button_colors[color_nb].w;
+                        }
+                        color_nb++;
+                    }
+                }
+                ImGui::EndTable();
+            }
             ImGui::End();
+
 
             ImGui::Begin("ColorPick", nullptr, window_flags);
 
@@ -434,7 +492,7 @@ namespace chroma {
         ImGuiID dock_layer;
 
         // Split right 20% (Inspector)
-        dock_palette = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.30f, nullptr, &dock_main);
+        dock_palette = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.10f, nullptr, &dock_main);
         dock_colorpick = ImGui::DockBuilderSplitNode(dock_palette, ImGuiDir_Down, 0.30f, nullptr, &dock_palette);
         dock_layer = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down, 0.20f, nullptr, &dock_main);
         // // Split bottom 25% (Console)
