@@ -9,6 +9,7 @@
 #include "backends/imgui_impl_sdlgpu3.h"
 
 #include <iostream>
+#include <vector>
 
 
 
@@ -43,7 +44,7 @@ namespace chroma {
         uint64_t tick = 0;
         uint64_t delta = 0;
 
-        ImVec4 button_colors[] = {
+        std::vector<ImVec4> button_colors = {
             {1.00f, 0.50f, 0.00f, 1.0f},   // Orange
             {0.20f, 0.15f, 0.25f, 1.0f},   // Dark Purple
             {0.90f, 0.75f, 0.55f, 1.0f},   // Beige
@@ -115,9 +116,10 @@ namespace chroma {
             ImGui::Begin("Palette", nullptr, window_flags);
 
             int color_perLine = 5;
-            int total_color_nb = sizeof(button_colors) / sizeof(button_colors[0]);
+            int total_color_nb = button_colors.size();
             int rows = (total_color_nb + color_perLine - 1) / color_perLine;
 
+            std::cout << "Total colors: " << total_color_nb << ", Rows: " << rows << std::endl;
             if (ImGui::BeginTable("table1", color_perLine))
             {
                 int color_nb = 0;
@@ -128,7 +130,6 @@ namespace chroma {
                     for (int column = 0; column < color_perLine; column++)
                     {
                         ImGui::TableSetColumnIndex(column);
-                        // Si on dépasse le nombre de couleurs → cellules vides
                         if (color_nb >= total_color_nb)
                             continue;
                         std::string button_id = "ColorButton##" + std::to_string(color_nb);
@@ -138,6 +139,11 @@ namespace chroma {
                             main_color.g = button_colors[color_nb].y;
                             main_color.b = button_colors[color_nb].z;
                             main_color.a = button_colors[color_nb].w;
+                        }
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+                        {
+                            std::cout << "Right clicked on color button " << color_nb << std::endl;
+                            button_colors.erase(button_colors.begin() + color_nb);
                         }
                         color_nb++;
                     }
