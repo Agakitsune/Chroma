@@ -62,6 +62,8 @@ FetchContent_MakeAvailable(
 
 file(GLOB CPP_SOURCES
     src/*.cpp
+    src/window/*.cpp
+    src/lua/*.cpp
 )
 
 file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*cpp")
