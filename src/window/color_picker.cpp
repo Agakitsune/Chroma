@@ -8,18 +8,20 @@
 
 namespace chroma {
     
-    ColorPickerWindow::ColorPickerWindow()
+    ColorPickerWindow::ColorPickerWindow() noexcept
     : Window(
         "Color Pick",
         ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoScrollbar |
         ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoTitleBar
+        ImGuiWindowFlags_NoMove
     )
     {}
 
-    bool ColorPickerWindow::render()
+    void ColorPickerWindow::display()
     {
+        ImGui::Begin(label.c_str(), nullptr, flags);
+
         ImGuiContext& g = *GImGui;
         ImGuiWindow* w = ImGui::GetCurrentWindow();
         ImDrawList* draw_list = w->DrawList;
@@ -65,7 +67,7 @@ namespace chroma {
         ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
         // SV rectangle logic
         ImGui::InvisibleButton("sv", sv_picker_size);
-        if (ImGui::IsItemActive())
+        if (ImGui::IsItemActive() || ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
             S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
             V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
@@ -166,6 +168,7 @@ namespace chroma {
         if (set_current_color_edit_id)
             g.ColorEditCurrentID = 0;
         ImGui::PopID();
+
+        ImGui::End();
     }
 }
-
