@@ -8,6 +8,7 @@
 #include "window/window.hpp"
 #include "window/color_picker.hpp"
 #include "window/viewport.hpp"
+#include "window/palette.hpp"
 
 #include "lua.hpp"
 
@@ -69,6 +70,7 @@ namespace chroma {
 
             ViewportWindow viewport_window;
             ColorPickerWindow color_picker;
+            PaletteWindow palette_window;
 
             std::unordered_map<std::string, Window*> windows;
 

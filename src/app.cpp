@@ -138,45 +138,45 @@ namespace chroma {
             // ImGuiWindow* w = ImGui::GetCurrentWindow();
             // ImDrawList* draw_list = w->DrawList;
 
-            int color_perLine = 5;
-            int total_color_nb = button_colors.size();
-            int rows = (total_color_nb + color_perLine - 1) / color_perLine;
+            // int color_perLine = 5;
+            // int total_color_nb = button_colors.size();
+            // int rows = (total_color_nb + color_perLine - 1) / color_perLine;
 
-            std::cout << "Total colors: " << total_color_nb << ", Rows: " << rows << std::endl;
-            if (ImGui::BeginTable("table1", color_perLine))
-            {
-                int color_nb = 0;
+            // std::cout << "Total colors: " << total_color_nb << ", Rows: " << rows << std::endl;
+            // if (ImGui::BeginTable("table1", color_perLine))
+            // {
+            //     int color_nb = 0;
 
-                for (int row = 0; row < rows; row++)
-                {
-                    ImGui::TableNextRow();
-                    for (int column = 0; column < color_perLine; column++)
-                    {
-                        ImGui::TableSetColumnIndex(column);
-                        if (color_nb >= total_color_nb)
-                            continue;
-                        std::string button_id = "ColorButton##" + std::to_string(color_nb);
-                        if (ImGui::ColorButton(button_id.c_str(), button_colors[color_nb], ImGuiColorEditFlags_NoTooltip))
-                        {
-                            main_color.r = button_colors[color_nb].x;
-                            main_color.g = button_colors[color_nb].y;
-                            main_color.b = button_colors[color_nb].z;
-                            main_color.a = button_colors[color_nb].w;
-                        }
-                        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-                        {
-                            std::cout << "Right clicked on color button " << color_nb << std::endl;
-                            button_colors.erase(button_colors.begin() + color_nb);
-                        }
-                        color_nb++;
-                    }
-                }
-                ImGui::EndTable();
-            }
-            ImGui::End();
+            //     for (int row = 0; row < rows; row++)
+            //     {
+            //         ImGui::TableNextRow();
+            //         for (int column = 0; column < color_perLine; column++)
+            //         {
+            //             ImGui::TableSetColumnIndex(column);
+            //             if (color_nb >= total_color_nb)
+            //                 continue;
+            //             std::string button_id = "ColorButton##" + std::to_string(color_nb);
+            //             if (ImGui::ColorButton(button_id.c_str(), button_colors[color_nb], ImGuiColorEditFlags_NoTooltip))
+            //             {
+            //                 main_color.r = button_colors[color_nb].x;
+            //                 main_color.g = button_colors[color_nb].y;
+            //                 main_color.b = button_colors[color_nb].z;
+            //                 main_color.a = button_colors[color_nb].w;
+            //             }
+            //             if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+            //             {
+            //                 std::cout << "Right clicked on color button " << color_nb << std::endl;
+            //                 button_colors.erase(button_colors.begin() + color_nb);
+            //             }
+            //             color_nb++;
+            //         }
+            //     }
+            //     ImGui::EndTable();
+            // }
+            // ImGui::End();
 
 
-            ImGui::Begin("ColorPick", nullptr, window_flags);
+            // ImGui::Begin("ColorPick", nullptr, window_flags);
 
             // // SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
             // // SDL_Texture *target = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, (int)window_size.x, (int)window_size.y);
@@ -213,57 +213,59 @@ namespace chroma {
             //     canvas_offset + canvas_size
             // );
 
-            ImVec2 avail = ImGui::GetContentRegionAvail();
+            // ImVec2 avail = ImGui::GetContentRegionAvail();
 
-            ImVec2 sv_picker_size(avail.x, 150.0f);
+            // ImVec2 sv_picker_size(avail.x, 150.0f);
 
-            // float sv_picker_size = 250.0f;
-            bool value_changed_sv = false;
-            bool value_changed_h = false;
-            bool value_changed = false;
+            // // float sv_picker_size = 250.0f;
+            // bool value_changed_sv = false;
+            // bool value_changed_h = false;
+            // bool value_changed = false;
 
-            ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
-            // SV rectangle logic
-            ImGui::InvisibleButton("sv", sv_picker_size);
-            bool right_clicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
+            // ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
+            // // SV rectangle logic
+            // ImGui::InvisibleButton("sv", sv_picker_size);
+            // bool right_clicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
 
-            if (ImGui::IsItemActive()) // click on colorpicker with left mouse button
-            {
-                S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
-                V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
-                IM_ASSERT(g.ColorEditCurrentID != 0);
-                if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
-                    // return;
-                    H = g.ColorEditSavedHue;
-                }
-                // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
-                value_changed_sv = true;
-            }
-            if (right_clicked) { // click on colorpicker with right mouse button
-                S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
-                V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
-                IM_ASSERT(g.ColorEditCurrentID != 0);
-                if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
-                    // return;
-                    H = g.ColorEditSavedHue;
-                }
-                // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
-                value_changed_sv = true;
-                button_colors.push_back(ImVec4(main_color[0], main_color[1], main_color[2], 1.0f));
-            }
+            // if (ImGui::IsItemActive()) // click on colorpicker with left mouse button
+            // {
+            //     S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
+            //     V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
+            //     IM_ASSERT(g.ColorEditCurrentID != 0);
+            //     if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
+            //         // return;
+            //         H = g.ColorEditSavedHue;
+            //     }
+            //     // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
+            //     value_changed_sv = true;
+            // }
+            // if (right_clicked) { // click on colorpicker with right mouse button
+            //     S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
+            //     V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
+            //     IM_ASSERT(g.ColorEditCurrentID != 0);
+            //     if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
+            //         // return;
+            //         H = g.ColorEditSavedHue;
+            //     }
+            //     // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
+            //     value_changed_sv = true;
+            //     button_colors.push_back(ImVec4(main_color[0], main_color[1], main_color[2], 1.0f));
+            // }
 
             // ImGui::End();
 
-            ImGui::Begin("Palette", nullptr, window_flags);
+            palette_window.display();
 
-            if (ImGui::ColorButton("#1", color_picker.main_color, ImGuiColorEditFlags_NoTooltip)) {
-                // main_color.r = 1.0;
-                // main_color.g = 0.0;
-                // main_color.b = 0.0;
-                // main_color.a = 1.0;
-            }
+            // ImGui::Begin("Palette", nullptr, window_flags);
 
-            ImGui::End();
+            // if (ImGui::ColorButton("#1", color_picker.main_color, ImGuiColorEditFlags_NoTooltip)) {
+            //     // main_color.r = 1.0;
+            //     // main_color.g = 0.0;
+            //     // main_color.b = 0.0;
+            //     // main_color.a = 1.0;
+            // }
+
+            // ImGui::End();
 
             // for ((label, window))
 
