@@ -295,6 +295,11 @@ namespace chroma {
         return 0;
     }
 
+    App* App::get_instance() noexcept
+    {
+        return instance;
+    }
+
     SDL_Renderer *App::get_renderer() noexcept
     {
         if (!instance) return nullptr;

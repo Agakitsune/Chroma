@@ -37,7 +37,12 @@ namespace chroma {
             //     return (T*)windows[label].get();
             // }
 
-            static SDL_Renderer *get_renderer() noexcept;
+            static App* get_instance() noexcept;
+            static SDL_Renderer* get_renderer() noexcept;
+
+            ViewportWindow viewport_window;
+            ColorPickerWindow color_picker;
+            PaletteWindow palette_window;
         
         private:
             int create_window() noexcept;
@@ -67,10 +72,6 @@ namespace chroma {
             bool idle = false;
 
             lua_State *state;
-
-            ViewportWindow viewport_window;
-            ColorPickerWindow color_picker;
-            PaletteWindow palette_window;
 
             std::unordered_map<std::string, Window*> windows;
 

@@ -14,6 +14,8 @@ namespace chroma {
         Arrow = Default,
         Cross,
         Grab,
+        Picker,
+        Point,
 
         Count
     };

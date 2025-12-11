@@ -141,7 +141,9 @@ namespace chroma {
             SDL_SetRenderDrawColorFloat(renderer, 0.0f, 0.0f, 0.0f, 0.0f);
             SDL_RenderClear(renderer);
 
-            SDL_SetRenderDrawColorFloat(renderer, 0.0f, 0.0f, 0.0f, 1.0f);
+            Color main = App::get_instance()->color_picker.main_color;
+
+            SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
 
             const ImVec2 canvas_size = ImVec2(canvas.preview->w, canvas.preview->h) * canvas.zoom;
 

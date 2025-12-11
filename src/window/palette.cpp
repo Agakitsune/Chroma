@@ -7,6 +7,7 @@
 #include "imgui_internal.h"
 
 #include "app.hpp"
+#include "cursor.hpp"
 
 namespace chroma {
 
@@ -84,13 +85,15 @@ namespace chroma {
                 const uint64_t index = y * palette_width + x;
                 Color color = palette[index];
 
-                // const uint32_t 
-
                 ImGui::SetCursorScreenPos(pos);
 
                 ImGui::PushID(x);
-                if (ImGui::InvisibleButton("##color", button_size)) {
-                    // set shit here
+                if (ImGui::InvisibleButton("##color", back_size)) {
+                    App::get_instance()->color_picker.main_color = color;
+                    selected = index;
+                }
+                if (ImGui::IsItemHovered()) {
+                    CursorManager::set_cursor(Cursor::Point);
                 }
                 ImGui::PopID();
 
