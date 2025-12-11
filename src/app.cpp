@@ -12,6 +12,9 @@
 #include "cursor.hpp"
 
 #include <iostream>
+#include <vector>
+
+
 
 namespace chroma {
     App* App::instance = nullptr;
@@ -56,6 +59,38 @@ namespace chroma {
     int App::run() noexcept {
         uint64_t tick = 0;
         uint64_t delta = 0;
+
+        std::vector<ImVec4> button_colors = {
+            {1.00f, 0.50f, 0.00f, 1.0f},   // Orange
+            {0.20f, 0.15f, 0.25f, 1.0f},   // Dark Purple
+            {0.90f, 0.75f, 0.55f, 1.0f},   // Beige
+            {0.95f, 0.95f, 0.20f, 1.0f},   // Yellow
+            {0.40f, 0.30f, 0.15f, 1.0f},   // Brown
+
+            {0.10f, 0.45f, 0.25f, 1.0f},   // Forest Green
+            {0.00f, 0.30f, 0.15f, 1.0f},   // Deep Green
+            {0.20f, 0.60f, 0.35f, 1.0f},   // Grass Green
+            {0.70f, 0.90f, 0.40f, 1.0f},   // Lime
+            {0.35f, 0.50f, 0.15f, 1.0f},   // Olive
+
+            {0.10f, 0.40f, 0.45f, 1.0f},   // Teal
+            {0.05f, 0.25f, 0.30f, 1.0f},   // Deep Teal
+            {0.40f, 0.75f, 1.00f, 1.0f},   // Light Blue
+            {0.20f, 0.50f, 0.90f, 1.0f},   // Sky Blue
+            {0.10f, 0.25f, 0.50f, 1.0f},   // Steel Blue
+
+            {0.90f, 0.90f, 1.00f, 1.0f},   // Off White
+            {1.00f, 1.00f, 1.00f, 1.0f},   // White
+            {0.50f, 0.30f, 0.30f, 1.0f},   // Brick
+            {0.65f, 0.20f, 0.20f, 1.0f},   // Red
+            {1.00f, 0.50f, 0.80f, 1.0f},   // Pink
+
+            {0.40f, 0.45f, 0.15f, 1.0f},   // Olive Green
+            {0.25f, 0.20f, 0.05f, 1.0f},   // Mud Brown
+            {0.30f, 0.20f, 0.30f, 1.0f},   // Dark Mauve
+            {0.55f, 0.40f, 0.50f, 1.0f},   // Purple Gray
+            {0.50f, 0.15f, 0.40f, 1.0f},   // Plum
+        };
 
         ImGuiIO& io = ImGui::GetIO();
 
@@ -103,13 +138,45 @@ namespace chroma {
             // ImGuiWindow* w = ImGui::GetCurrentWindow();
             // ImDrawList* draw_list = w->DrawList;
 
-            // ImVec2 pad = ImGui::GetStyle().WindowPadding;
+            int color_perLine = 5;
+            int total_color_nb = button_colors.size();
+            int rows = (total_color_nb + color_perLine - 1) / color_perLine;
 
-            // ImVec2 window_size = ImGui::GetContentRegionAvail() + pad * 2.0f;
-            // ImVec2 canvas_size = ImVec2(64, 64);
+            std::cout << "Total colors: " << total_color_nb << ", Rows: " << rows << std::endl;
+            if (ImGui::BeginTable("table1", color_perLine))
+            {
+                int color_nb = 0;
 
-            // ImVec2 origin = w->DC.CursorPos - pad;
-            // ImVec2 canvas_offset = origin + (window_size - canvas_size) * 0.5f;
+                for (int row = 0; row < rows; row++)
+                {
+                    ImGui::TableNextRow();
+                    for (int column = 0; column < color_perLine; column++)
+                    {
+                        ImGui::TableSetColumnIndex(column);
+                        if (color_nb >= total_color_nb)
+                            continue;
+                        std::string button_id = "ColorButton##" + std::to_string(color_nb);
+                        if (ImGui::ColorButton(button_id.c_str(), button_colors[color_nb], ImGuiColorEditFlags_NoTooltip))
+                        {
+                            main_color.r = button_colors[color_nb].x;
+                            main_color.g = button_colors[color_nb].y;
+                            main_color.b = button_colors[color_nb].z;
+                            main_color.a = button_colors[color_nb].w;
+                        }
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+                        {
+                            std::cout << "Right clicked on color button " << color_nb << std::endl;
+                            button_colors.erase(button_colors.begin() + color_nb);
+                        }
+                        color_nb++;
+                    }
+                }
+                ImGui::EndTable();
+            }
+            ImGui::End();
+
+
+            ImGui::Begin("ColorPick", nullptr, window_flags);
 
             // // SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
             // // SDL_Texture *target = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, (int)window_size.x, (int)window_size.y);
@@ -146,11 +213,44 @@ namespace chroma {
             //     canvas_offset + canvas_size
             // );
 
-            // // draw_list->AddImage(
-            // //     (ImTextureRef)(uintptr_t)canvas,
-            // //     w->DC.CursorPos,
-            // //     w->DC.CursorPos + window_size
-            // // );
+            ImVec2 avail = ImGui::GetContentRegionAvail();
+
+            ImVec2 sv_picker_size(avail.x, 150.0f);
+
+            // float sv_picker_size = 250.0f;
+            bool value_changed_sv = false;
+            bool value_changed_h = false;
+            bool value_changed = false;
+
+            ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
+            // SV rectangle logic
+            ImGui::InvisibleButton("sv", sv_picker_size);
+            bool right_clicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
+
+            if (ImGui::IsItemActive()) // click on colorpicker with left mouse button
+            {
+                S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
+                V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
+                IM_ASSERT(g.ColorEditCurrentID != 0);
+                if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
+                    // return;
+                    H = g.ColorEditSavedHue;
+                }
+                // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
+                value_changed_sv = true;
+            }
+            if (right_clicked) { // click on colorpicker with right mouse button
+                S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
+                V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
+                IM_ASSERT(g.ColorEditCurrentID != 0);
+                if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
+                    // return;
+                    H = g.ColorEditSavedHue;
+                }
+                // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
+                value_changed_sv = true;
+                button_colors.push_back(ImVec4(main_color[0], main_color[1], main_color[2], 1.0f));
+            }
 
             // ImGui::End();
 
@@ -346,7 +446,7 @@ namespace chroma {
         ImGuiID dock_layer;
 
         // Split right 20% (Inspector)
-        dock_palette = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.30f, nullptr, &dock_main);
+        dock_palette = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.10f, nullptr, &dock_main);
         dock_colorpick = ImGui::DockBuilderSplitNode(dock_palette, ImGuiDir_Down, 0.30f, nullptr, &dock_palette);
         dock_layer = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down, 0.20f, nullptr, &dock_main);
         // // Split bottom 25% (Console)
