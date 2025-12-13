@@ -169,30 +169,27 @@ namespace chroma {
 
                 old = canvas.get_color(x, y);
 
-                // printf("Mouse at (%f, %f) -> Local (%f, %f) -> Snapped (%f, %f) -> Pos (%u, %u)\n",
-                //     mouse.x, mouse.y,
-                //     local.x, local.y,
-                //     snapped.x, snapped.y,
-                //     x, y
-                // );
+                printf("Mouse at (%f, %f) -> Local (%f, %f) -> Snapped (%f, %f) -> Pos (%u, %u)\n",
+                    mouse.x, mouse.y,
+                    local.x, local.y,
+                    snapped.x, snapped.y,
+                    x, y
+                );
                 
                 if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-                    printf("Brushing at (%u, %u)\n", x, y);
                     if (!brushing) {
-                        printf("Starting brush command %p\n", cmd.get());
                         cmd->start(x, y, old);
+                        canvas.set_color(x, y, color_pick->main_color);
                     } else {
-                        printf("Updating brush command %p\n", cmd.get());
                         cmd->update(x, y, old);
+                        canvas.set_color(x, y, color_pick->main_color);
                     }
                     brushing = true;
                     canvas.dirty = true;
                 } else if (brushing) {
-                    printf("Brushing at (%u, %u)\n", x, y);
-                    printf("Ending brush command %p\n", cmd.get());
                     cmd->end(x, y, old);
+                    canvas.set_color(x, y, color_pick->main_color);
                     canvas.add_command(std::move(cmd));
-                    // canvas.execute_command(std::move(cmd));
                     brushing = false;
 
                     // Prepare new command

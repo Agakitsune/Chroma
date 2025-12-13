@@ -151,12 +151,14 @@ namespace chroma {
         } else {
             index = (div_width << 6) + (div_height << 6); // Skip all full tiles
 
-            if (div_x == div_width) {
+            if (div_y == div_height) {
                 // Skip last partial row
-                index += div_width * (mod_height << 6);
-            }
+                index += div_height * (mod_width << 6);
 
-            index += div_y * (mod_width << 6);
+                index += div_x * (mod_height << 6);
+            } else {
+                index += div_y * (mod_height << 6);
+            }
 
             base = layer.data + (index << 2);
 
@@ -213,10 +215,10 @@ namespace chroma {
 
             base = layer.data + (index << 2);
 
-            if (div_y == div_height) {
-                color.upload(base + (((mod_y << 6) + mod_x) << 2));
-            } else {
+            if (div_x == div_width) {
                 color.upload(base + (((mod_y * mod_width) + mod_x) << 2));
+            } else {
+                color.upload(base + (((mod_y << 6) + mod_x) << 2));
             }
         }
 
