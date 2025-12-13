@@ -161,7 +161,7 @@ namespace chroma {
             16,
             16,
             0,
-            16
+            15
         );
 
         cursors[(size_t)Cursor::Point] = SDL_CreateCursor(

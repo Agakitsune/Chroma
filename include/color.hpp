@@ -35,6 +35,20 @@ namespace chroma {
                 ((uint32_t)(g * 255.0f) << 8)  |
                 ((uint32_t)(r * 255.0f) << 0);
         }
+
+        void upload(uint8_t *dst) const noexcept {
+            dst[0] = (uint8_t)(r * 255.0f);
+            dst[1] = (uint8_t)(g * 255.0f);
+            dst[2] = (uint8_t)(b * 255.0f);
+            dst[3] = (uint8_t)(a * 255.0f);
+        }
+
+        void download(const uint8_t *src) noexcept {
+            r = src[0] / 255.0f;
+            g = src[1] / 255.0f;
+            b = src[2] / 255.0f;
+            a = src[3] / 255.0f;
+        }
     };
 
     constexpr Color WHITE(1.0f, 1.0f, 1.0f);

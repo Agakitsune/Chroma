@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(chroma VERSION 0.1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
@@ -64,6 +64,9 @@ file(GLOB CPP_SOURCES
     src/*.cpp
     src/window/*.cpp
     src/lua/*.cpp
+    src/lua/imgui/*.cpp
+    src/canvas/*.cpp
+    src/canvas/command/*.cpp
 )
 
 file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*cpp")

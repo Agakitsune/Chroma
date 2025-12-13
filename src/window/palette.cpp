@@ -71,7 +71,13 @@ namespace chroma {
 
         uint64_t palette_size = palette.size();
         const uint64_t palette_width = (uint64_t)(avail.x / back_size.x);
-        const uint64_t palette_height = palette_size / palette_width;
+
+        if (palette_width == 0) {
+            ImGui::End();
+            return;
+        }
+
+        const uint64_t palette_height = palette_size / palette_width + (palette_size % palette_width ? 1 : 0);
 
         for (uint64_t y = 0; y < palette_height; y++) {
             const uint64_t row = palette_size > palette_width ? palette_width : palette_size;
@@ -89,7 +95,7 @@ namespace chroma {
 
                 ImGui::PushID(x);
                 if (ImGui::InvisibleButton("##color", back_size)) {
-                    App::get_instance()->color_picker.main_color = color;
+                    App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->main_color = color;
                     selected = index;
                 }
                 if (ImGui::IsItemHovered()) {

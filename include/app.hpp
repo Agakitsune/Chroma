@@ -2,7 +2,7 @@
 #pragma once
 
 #include "SDL3/SDL.h"
-#include "SDL3/SDL_render.h"
+#include "SDL3/SDL_gpu.h"
 #include "color.hpp"
 
 #include "window/window.hpp"
@@ -31,18 +31,18 @@ namespace chroma {
             int init() noexcept;
             int run() noexcept;
 
-            // template <typename T>
-            // T *get_window(const std::string &label) const noexcept {
-            //     if (!windows.contains(label)) return nullptr;
-            //     return (T*)windows[label].get();
-            // }
+            template <typename T>
+            T *get_window(const std::string &label) const noexcept {
+                if (!windows.contains(label)) return nullptr;
+                return (T*)windows.at(label).get();
+            }
 
             static App* get_instance() noexcept;
-            static SDL_Renderer* get_renderer() noexcept;
+            static SDL_GPUDevice* get_device() noexcept;
 
-            ViewportWindow viewport_window;
-            ColorPickerWindow color_picker;
-            PaletteWindow palette_window;
+            // ViewportWindow viewport_window;
+            // ColorPickerWindow color_picker;
+            // PaletteWindow palette_window;
         
         private:
             int create_window() noexcept;
@@ -63,9 +63,7 @@ namespace chroma {
             // Color second_color;
 
             SDL_Window* window = nullptr;
-            SDL_Renderer *renderer = nullptr;
-            SDL_Texture *canvas = nullptr;
-            // SDL_GPUDevice* device = nullptr;
+            SDL_GPUDevice* device = nullptr;
 
             bool dockspace_initialized = false;
             bool done = false;
@@ -73,7 +71,7 @@ namespace chroma {
 
             lua_State *state;
 
-            std::unordered_map<std::string, Window*> windows;
+            std::unordered_map<std::string, std::unique_ptr<Window>> windows;
 
             static App* instance;
     };

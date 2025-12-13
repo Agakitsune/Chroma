@@ -6,7 +6,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "backends/imgui_impl_sdl3.h"
-#include "backends/imgui_impl_sdlrenderer3.h"
+#include "backends/imgui_impl_sdlgpu3.h"
 #include "lua/api.hpp"
 
 #include "cursor.hpp"
@@ -22,11 +22,14 @@ namespace chroma {
     App::~App() noexcept {
         lua_close(state);
 
-        ImGui_ImplSDLRenderer3_Shutdown();
+        SDL_WaitForGPUIdle(device);
+
         ImGui_ImplSDL3_Shutdown();
+        ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        SDL_DestroyRenderer(renderer);
+        SDL_ReleaseWindowFromGPUDevice(device, window);
+        SDL_DestroyGPUDevice(device);
         SDL_DestroyWindow(window);
         SDL_Quit();
     }
@@ -49,9 +52,13 @@ namespace chroma {
             return -1;
         }
 
-        register_lua(state);
+        luaL_openlibs(state);
 
-        SDL_SetRenderTarget(renderer, nullptr);
+        lua::register_chroma_api(state);
+
+        windows["Viewport"] = std::make_unique<ViewportWindow>();
+        windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
+        windows["Palette"] = std::make_unique<PaletteWindow>();
 
         return 0;
     }
@@ -60,41 +67,55 @@ namespace chroma {
         uint64_t tick = 0;
         uint64_t delta = 0;
 
-        std::vector<ImVec4> button_colors = {
-            {1.00f, 0.50f, 0.00f, 1.0f},   // Orange
-            {0.20f, 0.15f, 0.25f, 1.0f},   // Dark Purple
-            {0.90f, 0.75f, 0.55f, 1.0f},   // Beige
-            {0.95f, 0.95f, 0.20f, 1.0f},   // Yellow
-            {0.40f, 0.30f, 0.15f, 1.0f},   // Brown
+        // std::vector<ImVec4> button_colors = {
+        //     {1.00f, 0.50f, 0.00f, 1.0f},   // Orange
+        //     {0.20f, 0.15f, 0.25f, 1.0f},   // Dark Purple
+        //     {0.90f, 0.75f, 0.55f, 1.0f},   // Beige
+        //     {0.95f, 0.95f, 0.20f, 1.0f},   // Yellow
+        //     {0.40f, 0.30f, 0.15f, 1.0f},   // Brown
 
-            {0.10f, 0.45f, 0.25f, 1.0f},   // Forest Green
-            {0.00f, 0.30f, 0.15f, 1.0f},   // Deep Green
-            {0.20f, 0.60f, 0.35f, 1.0f},   // Grass Green
-            {0.70f, 0.90f, 0.40f, 1.0f},   // Lime
-            {0.35f, 0.50f, 0.15f, 1.0f},   // Olive
+        //     {0.10f, 0.45f, 0.25f, 1.0f},   // Forest Green
+        //     {0.00f, 0.30f, 0.15f, 1.0f},   // Deep Green
+        //     {0.20f, 0.60f, 0.35f, 1.0f},   // Grass Green
+        //     {0.70f, 0.90f, 0.40f, 1.0f},   // Lime
+        //     {0.35f, 0.50f, 0.15f, 1.0f},   // Olive
 
-            {0.10f, 0.40f, 0.45f, 1.0f},   // Teal
-            {0.05f, 0.25f, 0.30f, 1.0f},   // Deep Teal
-            {0.40f, 0.75f, 1.00f, 1.0f},   // Light Blue
-            {0.20f, 0.50f, 0.90f, 1.0f},   // Sky Blue
-            {0.10f, 0.25f, 0.50f, 1.0f},   // Steel Blue
+        //     {0.10f, 0.40f, 0.45f, 1.0f},   // Teal
+        //     {0.05f, 0.25f, 0.30f, 1.0f},   // Deep Teal
+        //     {0.40f, 0.75f, 1.00f, 1.0f},   // Light Blue
+        //     {0.20f, 0.50f, 0.90f, 1.0f},   // Sky Blue
+        //     {0.10f, 0.25f, 0.50f, 1.0f},   // Steel Blue
 
-            {0.90f, 0.90f, 1.00f, 1.0f},   // Off White
-            {1.00f, 1.00f, 1.00f, 1.0f},   // White
-            {0.50f, 0.30f, 0.30f, 1.0f},   // Brick
-            {0.65f, 0.20f, 0.20f, 1.0f},   // Red
-            {1.00f, 0.50f, 0.80f, 1.0f},   // Pink
+        //     {0.90f, 0.90f, 1.00f, 1.0f},   // Off White
+        //     {1.00f, 1.00f, 1.00f, 1.0f},   // White
+        //     {0.50f, 0.30f, 0.30f, 1.0f},   // Brick
+        //     {0.65f, 0.20f, 0.20f, 1.0f},   // Red
+        //     {1.00f, 0.50f, 0.80f, 1.0f},   // Pink
 
-            {0.40f, 0.45f, 0.15f, 1.0f},   // Olive Green
-            {0.25f, 0.20f, 0.05f, 1.0f},   // Mud Brown
-            {0.30f, 0.20f, 0.30f, 1.0f},   // Dark Mauve
-            {0.55f, 0.40f, 0.50f, 1.0f},   // Purple Gray
-            {0.50f, 0.15f, 0.40f, 1.0f},   // Plum
-        };
+        //     {0.40f, 0.45f, 0.15f, 1.0f},   // Olive Green
+        //     {0.25f, 0.20f, 0.05f, 1.0f},   // Mud Brown
+        //     {0.30f, 0.20f, 0.30f, 1.0f},   // Dark Mauve
+        //     {0.55f, 0.40f, 0.50f, 1.0f},   // Purple Gray
+        //     {0.50f, 0.15f, 0.40f, 1.0f},   // Plum
+        // };
 
         ImGuiIO& io = ImGui::GetIO();
 
-        luaL_dofile(state, "../test.lua");
+        // bool a = luaL_dofile(state, "../test.lua");
+        // if (a != LUA_OK) {
+        //     const char *msg = lua_tostring(state, -1);
+        //     std::cerr << "Lua Error: " << msg << std::endl;
+        //     lua_pop(state, 1);
+        // }
+
+        // lua_getglobal(state, "update");
+        // if (!lua_isfunction(state, -1)) {
+        //     std::cerr << "Lua Error: 'update' is not a function" << std::endl;
+        //     lua_pop(state, 1);
+        //     return -1;
+        // }
+
+        // int update_ref = luaL_ref(state, LUA_REGISTRYINDEX);
 
         while (!done) {
             process_events(delta);
@@ -111,13 +132,20 @@ namespace chroma {
             }
 
             // Start the Dear ImGui frame
-            ImGui_ImplSDLRenderer3_NewFrame();
+            ImGui_ImplSDLGPU3_NewFrame();
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
             CursorManager::update();
 
             CursorManager::set_cursor(Cursor::Default);
+
+            // lua_rawgeti(state, LUA_REGISTRYINDEX, update_ref);
+            // if (lua_pcall(state, 0, 0, 0) != LUA_OK) {
+            //     const char *msg = lua_tostring(state, -1);
+            //     std::cerr << "Lua Error: " << msg << std::endl;
+            //     lua_pop(state, 1);
+            // }
 
             // ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 
@@ -129,7 +157,7 @@ namespace chroma {
             }
             // imgui_dockspace();
 
-            viewport_window.display();
+            // viewport_window.display();
 
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
 
@@ -254,7 +282,7 @@ namespace chroma {
 
             // ImGui::End();
 
-            palette_window.display();
+            // palette_window.display();
 
             // ImGui::Begin("Palette", nullptr, window_flags);
 
@@ -269,7 +297,11 @@ namespace chroma {
 
             // for ((label, window))
 
-            color_picker.display();
+            // color_picker.display();
+
+            for (const auto& [label, window] : windows) {
+                window->display();
+            }
 
             ImGui::Begin("Layer", nullptr, window_flags);
             ImGui::Text("Layer and shit");
@@ -280,14 +312,49 @@ namespace chroma {
             ImDrawData* draw_data = ImGui::GetDrawData();
             const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
 
-            SDL_SetRenderTarget(renderer, nullptr);
+            SDL_GPUCommandBuffer *cmd_buffer = SDL_AcquireGPUCommandBuffer(device);
 
-            SDL_SetRenderScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-            SDL_SetRenderDrawColorFloat(renderer, 0.07f, 0.07f, 0.07f, 1.0f);
-            SDL_RenderClear(renderer);
+            SDL_GPUTexture *swapchain_texture;
+            SDL_WaitAndAcquireGPUSwapchainTexture(cmd_buffer, window, &swapchain_texture, nullptr, nullptr);
 
-            ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
-            SDL_RenderPresent(renderer);
+            if (swapchain_texture != nullptr && !is_minimized)
+            {
+                // This is mandatory: call ImGui_ImplSDLGPU3_PrepareDrawData() to upload the vertex/index buffer!
+                ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, cmd_buffer);
+
+                ViewportWindow *viewport = get_window<ViewportWindow>("Viewport");
+                if (!viewport->is_empty()) {
+                    Canvas &canvas = viewport->get_canvas();
+
+                    if (!canvas.pending.empty()) {
+                        canvas.execute_pending();
+                    }
+
+                    SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
+
+                    canvas.upload(copy_pass);
+
+                    SDL_EndGPUCopyPass(copy_pass);
+                }
+    
+                // Setup and start a render pass
+                SDL_GPUColorTargetInfo target_info = {};
+                target_info.texture = swapchain_texture;
+                target_info.clear_color = SDL_FColor { 0.07f, 0.07f, 0.07f, 1.0f };
+                target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+                target_info.store_op = SDL_GPU_STOREOP_STORE;
+                target_info.mip_level = 0;
+                target_info.layer_or_depth_plane = 0;
+                target_info.cycle = false;
+                SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(cmd_buffer, &target_info, 1, nullptr);
+    
+                // Render ImGui
+                ImGui_ImplSDLGPU3_RenderDrawData(draw_data, cmd_buffer, render_pass);
+    
+                SDL_EndGPURenderPass(render_pass);
+            }
+    
+            SDL_SubmitGPUCommandBuffer(cmd_buffer);
 
             const uint64_t end_tick = SDL_GetTicks();
             delta = end_tick - tick;
@@ -300,10 +367,10 @@ namespace chroma {
         return instance;
     }
 
-    SDL_Renderer *App::get_renderer() noexcept
+    SDL_GPUDevice *App::get_device() noexcept
     {
         if (!instance) return nullptr;
-        return instance->renderer;
+        return instance->device;
     }
 
     int App::create_window() noexcept
@@ -338,26 +405,18 @@ namespace chroma {
 
     int App::create_device() noexcept {
         // Create GPU Device
-        this->renderer = SDL_CreateRenderer(window, "vulkan");
-        if (renderer == nullptr)
-        {
-            SDL_Log("Error: SDL_CreateRenderer(): %s\n", SDL_GetError());
+
+        this->device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, nullptr);
+        if (device == nullptr) {
+            SDL_Log("Error: SDL_CreateGPUDevice(): %s\n", SDL_GetError());
             return 1;
         }
 
-        // SDL_SetRenderVSync(renderer, 1);
-        SDL_SetRenderDrawColorFloat(renderer, 0.07f, 0.07f, 0.07f, 1.0f);
-
-        // this->canvas = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 64, 64);
-
-        // if (canvas == nullptr) {
-        //     SDL_Log("Error: SDL_CreateTexture(): %s\n", SDL_GetError());
-        //     return 1;
-        // }
-
-        // SDL_SetRenderTarget(renderer, canvas);
-        // SDL_SetRenderDrawColorFloat(renderer, 1.0f, 1.0f, 1.0f, 0.0f);
-        // SDL_RenderClear(renderer);
+        if (!SDL_ClaimWindowForGPUDevice(device, window)) {
+            SDL_Log("Error: SDL_ClaimWindowForGPUDevice(): %s\n", SDL_GetError());
+            return 1;
+        }
+        SDL_SetGPUSwapchainParameters(device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_IMMEDIATE);
 
         return 0;
     }
@@ -381,7 +440,7 @@ namespace chroma {
 
         ctx->DebugLogFlags |=
         // ImGuiDebugLogFlags_EventDocking |
-        ImGuiDebugLogFlags_EventPopup |
+        // ImGuiDebugLogFlags_EventPopup |
         0;
 
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -399,24 +458,25 @@ namespace chroma {
         style.FontScaleDpi = main_scale;        // Set initial font scale. (using io.ConfigDpiScaleFonts=true makes this unnecessary. We leave both here for documentation purpose)
 
         // Setup Platform/Renderer backends
-        if (!ImGui_ImplSDL3_InitForSDLRenderer(window, renderer)) {
-            SDL_Log("Error: ImGui_ImplSDL3_InitForSDLRenderer(): %s\n", SDL_GetError());
+        if (!ImGui_ImplSDL3_InitForSDLGPU(window)) {
+            SDL_Log("Error: ImGui_ImplSDL3_InitForSDLGPU(): %s\n", SDL_GetError());
             return 1;
         }
 
-        if (!ImGui_ImplSDLRenderer3_Init(renderer)) {
-            SDL_Log("Error: ImGui_ImplSDLRenderer3_Init(): %s\n", SDL_GetError());
+        ImGui_ImplSDLGPU3_InitInfo init_info = {};
+        init_info.Device = device;
+        init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(device, window);
+        init_info.MSAASamples = SDL_GPU_SAMPLECOUNT_1;                      // Only used in multi-viewports mode.
+        init_info.SwapchainComposition = SDL_GPU_SWAPCHAINCOMPOSITION_SDR;  // Only used in multi-viewports mode.
+        init_info.PresentMode = SDL_GPU_PRESENTMODE_IMMEDIATE;
+
+        if (!ImGui_ImplSDLGPU3_Init(&init_info)) {
+            SDL_Log("Error: ImGui_ImplSDLGPU3_Init(): %s\n", SDL_GetError());
             return 1;
         }
 
         return 0;
     }
-
-    // int App::setup_windows() {
-    //     windows["color_picker"] = std::make_unique<ColorPickerWindow>();
-
-    //     return 0;
-    // }
 
     int App::setup_imgui_dockspace() noexcept {
         // static bool layout_initialized = false;
@@ -496,7 +556,6 @@ namespace chroma {
             // ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_N); // doesn't woerk, need to find another way
             if (ImGui::MenuItem("New", "Ctrl+N")) {
                 // New file action
-                // viewport_window.new_canvas(renderer, 64, 64);
                 ImGui::PushOverrideID(32);
                 ImGui::OpenPopup("New");
                 w = 16;
@@ -531,7 +590,7 @@ namespace chroma {
 
             if (ImGui::Button("OK", ImVec2(140, 0))) {
                 // Create new file with specified width and height
-                viewport_window.new_canvas(renderer, w, h);
+                get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();

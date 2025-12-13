@@ -10,7 +10,7 @@
 
 #include "app.hpp"
 
-#include "SDL3/SDL_render.h"
+#include "canvas/command/brush_command.hpp"
 
 namespace chroma {
 
@@ -41,7 +41,16 @@ namespace chroma {
 
         const ImVec2 mouse = io.MousePos;
 
-        SDL_Renderer *renderer = App::get_renderer();
+        SDL_GPUDevice *device = App::get_device();
+
+        if (cmd == nullptr) {
+            cmd = std::make_unique<BrushCommand>();
+        }
+
+        ColorPickerWindow *color_pick = App::get_instance()->get_window<ColorPickerWindow>("ColorPicker");
+
+        cmd->set_main_color(color_pick->main_color);
+        cmd->set_second_color(color_pick->second_color);
 
         uint64_t modal = 0;
         if (ImGui::BeginTabBar("##ViewportTabs",
@@ -55,7 +64,7 @@ namespace chroma {
             for (uint64_t i = 0; i < canvases.size(); ++i) {
                 const Canvas &canvas = canvases[i];
 
-                const ImVec2 canvas_size = ImVec2(canvas.preview->w, canvas.preview->h) * canvas.zoom;
+                const ImVec2 canvas_size = ImVec2(canvas.width, canvas.height) * canvas.zoom;
                 const ImVec2 canvas_offset = origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
                 ImGui::PushID(i);
@@ -68,6 +77,7 @@ namespace chroma {
 
                 bool open = true;
                 if (ImGui::BeginTabItem(canvas.name.c_str(), &open, flags)) {
+                    selected = i;
                     draw_list->PushClipRectFullScreen();
                     draw_list->AddRectFilled(origin, origin + window_size, IM_COL32(101, 85, 97, 255));
 
@@ -90,7 +100,7 @@ namespace chroma {
 
                     for (uint64_t i = 0; i < canvas.layers.size(); i++) {
                         draw_list->AddImage(
-                            (ImTextureRef)(uintptr_t)canvas.layers[i],
+                            (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
                             canvas_offset,
                             canvas_offset + canvas_size
                         );
@@ -117,11 +127,6 @@ namespace chroma {
                         ImGui::OpenPopup("Warning");
                         ImGui::PopID();
                     } else {
-                        SDL_DestroyTexture(canvases[modal].preview);
-
-                        for (SDL_Texture* layer : canvases[modal].layers) {
-                            SDL_DestroyTexture(layer);
-                        }
                         canvases.erase(canvases.begin() + i);
                         --i;
                     }
@@ -136,34 +141,55 @@ namespace chroma {
         if (canvases.size() > 0) {
             Canvas &canvas = canvases[modal];
 
-            SDL_SetRenderTarget(renderer, canvas.preview);
+            Color old;
+            // Color main = App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->main_color;
 
-            SDL_SetRenderDrawColorFloat(renderer, 0.0f, 0.0f, 0.0f, 0.0f);
-            SDL_RenderClear(renderer);
-
-            Color main = App::get_instance()->color_picker.main_color;
-
-            SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
-
-            const ImVec2 canvas_size = ImVec2(canvas.preview->w, canvas.preview->h) * canvas.zoom;
+            const ImVec2 canvas_size = ImVec2(canvas.width, canvas.height) * canvas.zoom;
 
             const ImVec2 canvas_offset = origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
             if (ImGui::IsMouseHoveringRect(canvas_offset, canvas_offset + canvas_size)) {
-                const ImVec2 local = mouse - canvas_offset;
+                const ImVec2 local = mouse - canvas_offset;\
+                const ImVec2 local_zoomed = local * (1.0f / canvas.zoom);
+                // const ImVec2 local = local_zoomed * (1.0f / canvas.zoom);
                 const ImVec2 snapped = ImVec2(
-                    floorf(local.x / canvas.preview->w),
-                    floorf(local.y / canvas.preview->h)
+                    floorf(local_zoomed.x),
+                    floorf(local_zoomed.y)
                 );
+
+                uint32_t x = static_cast<uint32_t>(snapped.x);
+                uint32_t y = static_cast<uint32_t>(snapped.y);
+
+                old = canvas.get_color(x, y);
+
+                // printf("Mouse at (%f, %f) -> Local (%f, %f) -> Snapped (%f, %f) -> Pos (%u, %u)\n",
+                //     mouse.x, mouse.y,
+                //     local.x, local.y,
+                //     snapped.x, snapped.y,
+                //     x, y
+                // );
                 
-                SDL_RenderPoint(renderer, snapped.x, snapped.y);
-
                 if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                    printf("Brushing at (%u, %u)\n", x, y);
+                    if (!brushing) {
+                        printf("Starting brush command %p\n", cmd.get());
+                        cmd->start(x, y, old);
+                    } else {
+                        printf("Updating brush command %p\n", cmd.get());
+                        cmd->update(x, y, old);
+                    }
+                    brushing = true;
                     canvas.dirty = true;
+                } else if (brushing) {
+                    printf("Brushing at (%u, %u)\n", x, y);
+                    printf("Ending brush command %p\n", cmd.get());
+                    cmd->end(x, y, old);
+                    canvas.add_command(std::move(cmd));
+                    // canvas.execute_command(std::move(cmd));
+                    brushing = false;
 
-                    SDL_SetRenderTarget(renderer, canvas.layers[canvas.layer]);
-
-                    SDL_RenderTexture(renderer, canvas.preview, nullptr, nullptr);
+                    // Prepare new command
+                    cmd = std::make_unique<BrushCommand>();
                 }
             }
 
@@ -217,14 +243,6 @@ namespace chroma {
 
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Discard", ImVec2(-FLT_MIN, 0))) {
-                    // Discard changes
-                    if (canvases[modal].preview) {
-                        SDL_DestroyTexture(canvases[modal].preview);
-
-                        for (SDL_Texture* layer : canvases[modal].layers) {
-                            SDL_DestroyTexture(layer);
-                        }
-                    }
                     canvases.erase(canvases.begin() + modal);
                     ImGui::CloseCurrentPopup();
                 }
@@ -245,28 +263,15 @@ namespace chroma {
         ImGui::End();
     }
 
-    bool ViewportWindow::new_canvas(SDL_Renderer *renderer, int width, int height, const std::string &name) noexcept
+    bool ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
-        Canvas &canvas = canvases.emplace_back();
+        Canvas &canvas = canvases.emplace_back(width, height);
 
-        canvas.layers.push_back(SDL_CreateTexture(
-            renderer,
-            SDL_PIXELFORMAT_RGBA8888,
-            SDL_TEXTUREACCESS_TARGET,
-            width,
-            height
-        ));
-        canvas.layer = 0;
+        if (!canvas.layers[0].texture) {
+            return false;
+        }
 
-        canvas.preview = SDL_CreateTexture(
-            renderer,
-            SDL_PIXELFORMAT_RGBA8888,
-            SDL_TEXTUREACCESS_TARGET,
-            width,
-            height
-        );
-
-        if (!canvas.layers[0]) {
+        if (!canvas.layers[0].buffer) {
             return false;
         }
 
@@ -274,13 +279,17 @@ namespace chroma {
             return false;
         }
 
-        SDL_SetTextureScaleMode(canvas.layers[0], SDL_ScaleMode::SDL_SCALEMODE_NEAREST);
-        SDL_SetTextureScaleMode(canvas.preview, SDL_ScaleMode::SDL_SCALEMODE_NEAREST);
-
-        canvas.name = name.empty() ? "Untitled" : name;
-        // canvas.dirty = true;
-
         return true;
     }
+
+    bool ViewportWindow::is_empty() const noexcept
+    {
+        return canvases.empty();
+    }
+
+    Canvas &ViewportWindow::get_canvas() noexcept
+    {
+        return canvases[selected];
+    } 
 
 }

@@ -2,6 +2,8 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 
 #include "window/color_picker.hpp"
+#include "app.hpp"
+#include "cursor.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -18,7 +20,7 @@ namespace chroma {
     )
     {}
 
-    void ColorPickerWindow::display()
+    void ColorPickerWindow::display() noexcept
     {
         ImGui::Begin(label.c_str(), nullptr, flags);
 
@@ -67,7 +69,10 @@ namespace chroma {
         ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
         // SV rectangle logic
         ImGui::InvisibleButton("sv", sv_picker_size);
-        if (ImGui::IsItemActive() || ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        bool right_clicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
+        if (ImGui::IsItemHovered())
+            CursorManager::set_cursor(Cursor::Picker);
+        if (ImGui::IsItemActive() || right_clicked)
         {
             S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
             V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
@@ -78,6 +83,11 @@ namespace chroma {
             }
             // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
             value_changed_sv = true;
+
+            if (right_clicked) {
+                ImGui::ColorConvertHSVtoRGB(H, S, V, main_color[0], main_color[1], main_color[2]);
+                App::get_instance()->get_window<PaletteWindow>("Palette")->add_color(Color{R, G, B, main_color[3]});
+            }
         }
 
         const float bar_height = 15.0;
@@ -85,6 +95,8 @@ namespace chroma {
         // Hue bar logic
         ImGui::SetCursorScreenPos(ImVec2(picker_pos.x, picker_pos.y + sv_picker_size.y));
         ImGui::InvisibleButton("hue", ImVec2(sv_picker_size.x, bar_height));
+        if (ImGui::IsItemHovered())
+            CursorManager::set_cursor(Cursor::Picker);
         if (ImGui::IsItemActive())
         {
             H = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
@@ -93,6 +105,8 @@ namespace chroma {
 
         ImGui::SetCursorScreenPos(ImVec2(picker_pos.x, picker_pos.y + sv_picker_size.y + bar_height));
         ImGui::InvisibleButton("alpha", ImVec2(sv_picker_size.x, bar_height));
+        if (ImGui::IsItemHovered())
+            CursorManager::set_cursor(Cursor::Picker);
         if (ImGui::IsItemActive())
         {
             main_color[3] = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
