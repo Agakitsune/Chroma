@@ -14,7 +14,18 @@
 #include <iostream>
 #include <vector>
 
+struct ImGui_ImplSDLGPU3_Data
+{
+    ImGui_ImplSDLGPU3_InitInfo   InitInfo;
 
+    // Graphics pipeline & shaders
+    SDL_GPUShader*               VertexShader           = nullptr;
+    SDL_GPUShader*               FragmentShader         = nullptr;
+    SDL_GPUGraphicsPipeline*     Pipeline               = nullptr;
+    SDL_GPUSampler*              TexSamplerLinear       = nullptr;
+    SDL_GPUTransferBuffer*       TexTransferBuffer      = nullptr;
+    uint32_t                     TexTransferBufferSize  = 0;
+};
 
 namespace chroma {
     App* App::instance = nullptr;
@@ -135,6 +146,16 @@ namespace chroma {
             ImGui_ImplSDLGPU3_NewFrame();
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
+
+            ImGui_ImplSDLGPU3_Data *bd = (ImGui_ImplSDLGPU3_Data*)io.BackendRendererUserData;
+
+            if (bd->TexSamplerLinear != sampler) {
+                if (bd->TexSamplerLinear) {
+                    SDL_ReleaseGPUSampler(device, bd->TexSamplerLinear);
+                }
+                bd->TexSamplerLinear = sampler;
+            }
+
 
             CursorManager::update();
 
@@ -472,6 +493,26 @@ namespace chroma {
 
         if (!ImGui_ImplSDLGPU3_Init(&init_info)) {
             SDL_Log("Error: ImGui_ImplSDLGPU3_Init(): %s\n", SDL_GetError());
+            return 1;
+        }
+
+        SDL_GPUSamplerCreateInfo sampler_info = {};
+        sampler_info.min_filter = SDL_GPU_FILTER_NEAREST;
+        sampler_info.mag_filter = SDL_GPU_FILTER_NEAREST;
+        sampler_info.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST;
+        sampler_info.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        sampler_info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        sampler_info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        sampler_info.mip_lod_bias = 0.0f;
+        sampler_info.min_lod = -1000.0f;
+        sampler_info.max_lod = 1000.0f;
+        sampler_info.enable_anisotropy = false;
+        sampler_info.max_anisotropy = 1.0f;
+        sampler_info.enable_compare = false;
+
+        this->sampler = SDL_CreateGPUSampler(device, &sampler_info);
+        if (sampler == nullptr) {
+            SDL_Log("Error: SDL_CreateGPUSampler(): %s\n", SDL_GetError());
             return 1;
         }
 

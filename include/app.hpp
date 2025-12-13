@@ -68,6 +68,7 @@ namespace chroma {
 
             SDL_Window* window = nullptr;
             SDL_GPUDevice* device = nullptr;
+            SDL_GPUSampler *sampler = nullptr;
 
             bool dockspace_initialized = false;
             bool done = false;
