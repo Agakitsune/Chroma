@@ -10,7 +10,11 @@
 #include "window/viewport.hpp"
 #include "window/palette.hpp"
 
-#include "lua.hpp"
+extern "C" {
+    #include "lua.h"
+    #include "lualib.h"
+    #include "lauxlib.h"
+}
 
 #include <unordered_map>
 #include <memory>

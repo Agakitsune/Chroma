@@ -1,7 +1,11 @@
 
 #pragma once
 
-#include "lua.hpp"
+extern "C" {
+    #include "lua.h"
+    #include "lualib.h"
+    #include "lauxlib.h"
+}
 
 namespace chroma {
     struct Color;

@@ -109,6 +109,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${sdl3_SOURCE_DIR}/include
     ${sdl_image_SOURCE_DIR}/include
     ${sdl_ttf_SOURCE_DIR}/include
+    ${lua_SOURCE_DIR}/src
     ./include
 )
 
