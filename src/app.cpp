@@ -78,38 +78,6 @@ namespace chroma {
         uint64_t tick = 0;
         uint64_t delta = 0;
 
-        // std::vector<ImVec4> button_colors = {
-        //     {1.00f, 0.50f, 0.00f, 1.0f},   // Orange
-        //     {0.20f, 0.15f, 0.25f, 1.0f},   // Dark Purple
-        //     {0.90f, 0.75f, 0.55f, 1.0f},   // Beige
-        //     {0.95f, 0.95f, 0.20f, 1.0f},   // Yellow
-        //     {0.40f, 0.30f, 0.15f, 1.0f},   // Brown
-
-        //     {0.10f, 0.45f, 0.25f, 1.0f},   // Forest Green
-        //     {0.00f, 0.30f, 0.15f, 1.0f},   // Deep Green
-        //     {0.20f, 0.60f, 0.35f, 1.0f},   // Grass Green
-        //     {0.70f, 0.90f, 0.40f, 1.0f},   // Lime
-        //     {0.35f, 0.50f, 0.15f, 1.0f},   // Olive
-
-        //     {0.10f, 0.40f, 0.45f, 1.0f},   // Teal
-        //     {0.05f, 0.25f, 0.30f, 1.0f},   // Deep Teal
-        //     {0.40f, 0.75f, 1.00f, 1.0f},   // Light Blue
-        //     {0.20f, 0.50f, 0.90f, 1.0f},   // Sky Blue
-        //     {0.10f, 0.25f, 0.50f, 1.0f},   // Steel Blue
-
-        //     {0.90f, 0.90f, 1.00f, 1.0f},   // Off White
-        //     {1.00f, 1.00f, 1.00f, 1.0f},   // White
-        //     {0.50f, 0.30f, 0.30f, 1.0f},   // Brick
-        //     {0.65f, 0.20f, 0.20f, 1.0f},   // Red
-        //     {1.00f, 0.50f, 0.80f, 1.0f},   // Pink
-
-        //     {0.40f, 0.45f, 0.15f, 1.0f},   // Olive Green
-        //     {0.25f, 0.20f, 0.05f, 1.0f},   // Mud Brown
-        //     {0.30f, 0.20f, 0.30f, 1.0f},   // Dark Mauve
-        //     {0.55f, 0.40f, 0.50f, 1.0f},   // Purple Gray
-        //     {0.50f, 0.15f, 0.40f, 1.0f},   // Plum
-        // };
-
         ImGuiIO& io = ImGui::GetIO();
 
         // bool a = luaL_dofile(state, "../test.lua");
@@ -155,7 +123,6 @@ namespace chroma {
                 }
                 bd->TexSamplerLinear = sampler;
             }
-
 
             CursorManager::update();
 
@@ -335,6 +302,32 @@ namespace chroma {
 
             SDL_GPUCommandBuffer *cmd_buffer = SDL_AcquireGPUCommandBuffer(device);
 
+            ViewportWindow *viewport = get_window<ViewportWindow>("Viewport");
+            if (!viewport->is_empty()) {
+                Canvas &canvas = viewport->get_canvas();
+
+                if (!canvas.pending.empty()) {
+                    canvas.execute_pending();
+                }
+
+                SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
+
+                canvas.upload(copy_pass);
+
+                SDL_EndGPUCopyPass(copy_pass);
+
+                SDL_GPUColorTargetInfo target_info = {};
+                target_info.texture = canvas.preview;
+                target_info.clear_color = SDL_FColor { 1.0f, 1.0f, 1.0f, 0.0f };
+                target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+                target_info.store_op = SDL_GPU_STOREOP_STORE;
+                target_info.mip_level = 0;
+                target_info.layer_or_depth_plane = 0;
+                target_info.cycle = false;
+                SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(cmd_buffer, &target_info, 1, nullptr);
+                SDL_EndGPURenderPass(render_pass);
+            }
+
             SDL_GPUTexture *swapchain_texture;
             SDL_WaitAndAcquireGPUSwapchainTexture(cmd_buffer, window, &swapchain_texture, nullptr, nullptr);
 
@@ -342,21 +335,6 @@ namespace chroma {
             {
                 // This is mandatory: call ImGui_ImplSDLGPU3_PrepareDrawData() to upload the vertex/index buffer!
                 ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, cmd_buffer);
-
-                ViewportWindow *viewport = get_window<ViewportWindow>("Viewport");
-                if (!viewport->is_empty()) {
-                    Canvas &canvas = viewport->get_canvas();
-
-                    if (!canvas.pending.empty()) {
-                        canvas.execute_pending();
-                    }
-
-                    SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
-
-                    canvas.upload(copy_pass);
-
-                    SDL_EndGPUCopyPass(copy_pass);
-                }
     
                 // Setup and start a render pass
                 SDL_GPUColorTargetInfo target_info = {};

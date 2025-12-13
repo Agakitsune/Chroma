@@ -83,6 +83,11 @@ namespace chroma {
 
                     draw_list->PopClipRect();
 
+                    draw_list->PushClipRect(
+                        origin,
+                        origin + window_size
+                    );
+
                     draw_list->AddRectFilled(
                         canvas_offset - ImVec2(2, 2),
                         canvas_offset + canvas_size + ImVec2(2, 2),
@@ -113,6 +118,8 @@ namespace chroma {
                             );
                         }
                     }
+
+                    draw_list->PopClipRect();
 
                     ImGui::EndTabItem();
                 }
