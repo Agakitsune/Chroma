@@ -20,7 +20,7 @@ namespace chroma {
 
         SDL_GPUTextureCreateInfo texture_info = {};
         texture_info.type = SDL_GPU_TEXTURETYPE_2D;
-        texture_info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM_SRGB;
+        texture_info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
         texture_info.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
         texture_info.width = width;
         texture_info.height = height;
