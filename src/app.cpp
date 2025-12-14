@@ -33,6 +33,8 @@ namespace chroma {
     App::~App() noexcept {
         lua_close(state);
 
+        windows.clear(); // Release all windows and their resources
+
         SDL_WaitForGPUIdle(device);
 
         ImGui_ImplSDL3_Shutdown();
@@ -128,6 +130,27 @@ namespace chroma {
 
             CursorManager::set_cursor(Cursor::Default);
 
+            this->cmd_buffer = SDL_AcquireGPUCommandBuffer(device);
+
+            // ViewportWindow *viewport = get_window<ViewportWindow>("Viewport");
+            // Canvas *canvas = nullptr;
+
+            // SDL_GPURenderPass* preview_pass = nullptr;
+
+            // if (!viewport->is_empty()) {
+            //     canvas = &viewport->get_canvas();
+
+            //     SDL_GPUColorTargetInfo target_info = {};
+            //     target_info.texture = canvas->preview;
+            //     target_info.clear_color = SDL_FColor { 1.0f, 1.0f, 1.0f, 0.0f };
+            //     target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+            //     target_info.store_op = SDL_GPU_STOREOP_STORE;
+            //     target_info.mip_level = 0;
+            //     target_info.layer_or_depth_plane = 0;
+            //     target_info.cycle = false;
+            //     preview_pass = SDL_BeginGPURenderPass(cmd_buffer, &target_info, 1, nullptr);
+            // }
+
             // lua_rawgeti(state, LUA_REGISTRYINDEX, update_ref);
             // if (lua_pcall(state, 0, 0, 0) != LUA_OK) {
             //     const char *msg = lua_tostring(state, -1);
@@ -143,153 +166,28 @@ namespace chroma {
             } else {
                 imgui_dockspace();
             }
-            // imgui_dockspace();
-
-            // viewport_window.display();
 
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
-
-            // ImGui::Begin("Viewport", nullptr, window_flags);
-
-            // ImGuiWindow* w = ImGui::GetCurrentWindow();
-            // ImDrawList* draw_list = w->DrawList;
-
-            // int color_perLine = 5;
-            // int total_color_nb = button_colors.size();
-            // int rows = (total_color_nb + color_perLine - 1) / color_perLine;
-
-            // std::cout << "Total colors: " << total_color_nb << ", Rows: " << rows << std::endl;
-            // if (ImGui::BeginTable("table1", color_perLine))
-            // {
-            //     int color_nb = 0;
-
-            //     for (int row = 0; row < rows; row++)
-            //     {
-            //         ImGui::TableNextRow();
-            //         for (int column = 0; column < color_perLine; column++)
-            //         {
-            //             ImGui::TableSetColumnIndex(column);
-            //             if (color_nb >= total_color_nb)
-            //                 continue;
-            //             std::string button_id = "ColorButton##" + std::to_string(color_nb);
-            //             if (ImGui::ColorButton(button_id.c_str(), button_colors[color_nb], ImGuiColorEditFlags_NoTooltip))
-            //             {
-            //                 main_color.r = button_colors[color_nb].x;
-            //                 main_color.g = button_colors[color_nb].y;
-            //                 main_color.b = button_colors[color_nb].z;
-            //                 main_color.a = button_colors[color_nb].w;
-            //             }
-            //             if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-            //             {
-            //                 std::cout << "Right clicked on color button " << color_nb << std::endl;
-            //                 button_colors.erase(button_colors.begin() + color_nb);
-            //             }
-            //             color_nb++;
-            //         }
-            //     }
-            //     ImGui::EndTable();
-            // }
-            // ImGui::End();
-
-
-            // ImGui::Begin("ColorPick", nullptr, window_flags);
-
-            // // SDL_Texture *old_target = SDL_GetRenderTarget(renderer);
-            // // SDL_Texture *target = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, (int)window_size.x, (int)window_size.y);
-
-            // // SDL_SetRenderTarget(renderer, target);
-
-            // // SDL_SetRenderDrawColorFloat(renderer, 1.0f, 0.1f, 0.1f, 1.0f);
-            // // SDL_RenderClear(renderer);
-
-            // // SDL_SetRenderTarget(renderer, old_target);
-
-            // draw_list->PushClipRectFullScreen();
-            // draw_list->AddRectFilled(origin, origin + window_size, IM_COL32(101, 85, 97, 255));
-            // draw_list->PopClipRect();
-
-            // draw_list->AddRectFilled(
-            //     canvas_offset - ImVec2(2, 2),
-            //     canvas_offset + canvas_size + ImVec2(2, 2),
-            //     IM_COL32(0, 0, 0, 255)
-            // );
-
-            // ImGui::RenderColorRectWithAlphaCheckerboard(
-            //     draw_list,
-            //     canvas_offset,
-            //     canvas_offset + canvas_size,
-            //     0,
-            //     16.0f,
-            //     ImVec2(0, 0)
-            // );
-
-            // draw_list->AddImage(
-            //     (ImTextureRef)(uintptr_t)canvas,
-            //     canvas_offset,
-            //     canvas_offset + canvas_size
-            // );
-
-            // ImVec2 avail = ImGui::GetContentRegionAvail();
-
-            // ImVec2 sv_picker_size(avail.x, 150.0f);
-
-            // // float sv_picker_size = 250.0f;
-            // bool value_changed_sv = false;
-            // bool value_changed_h = false;
-            // bool value_changed = false;
-
-            // ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
-            // // SV rectangle logic
-            // ImGui::InvisibleButton("sv", sv_picker_size);
-            // bool right_clicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
-
-            // if (ImGui::IsItemActive()) // click on colorpicker with left mouse button
-            // {
-            //     S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
-            //     V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
-            //     IM_ASSERT(g.ColorEditCurrentID != 0);
-            //     if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
-            //         // return;
-            //         H = g.ColorEditSavedHue;
-            //     }
-            //     // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
-            //     value_changed_sv = true;
-            // }
-            // if (right_clicked) { // click on colorpicker with right mouse button
-            //     S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size.x - 1));
-            //     V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size.y - 1));
-            //     IM_ASSERT(g.ColorEditCurrentID != 0);
-            //     if (!(g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != ImGui::ColorConvertFloat4ToU32(ImVec4(main_color[0], main_color[1], main_color[2], 0)))) {
-            //         // return;
-            //         H = g.ColorEditSavedHue;
-            //     }
-            //     // ImGui::ColorEditRestoreH(&main_color.r, &H); // Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
-            //     value_changed_sv = true;
-            //     button_colors.push_back(ImVec4(main_color[0], main_color[1], main_color[2], 1.0f));
-            // }
-
-            // ImGui::End();
-
-            // palette_window.display();
-
-            // ImGui::Begin("Palette", nullptr, window_flags);
-
-            // if (ImGui::ColorButton("#1", color_picker.main_color, ImGuiColorEditFlags_NoTooltip)) {
-            //     // main_color.r = 1.0;
-            //     // main_color.g = 0.0;
-            //     // main_color.b = 0.0;
-            //     // main_color.a = 1.0;
-            // }
-
-            // ImGui::End();
-
-            // for ((label, window))
-
-            // color_picker.display();
 
             for (const auto& [label, window] : windows) {
                 window->display();
             }
+
+            // if (preview_pass) {
+            //     SDL_EndGPURenderPass(preview_pass);
+            // }
+
+            // if (canvas) {
+            //     if (!canvas->pending.empty()) {
+            //         canvas->execute_pending();
+            //     }
+
+            //     SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
+
+            //     canvas->upload(copy_pass);
+
+            //     SDL_EndGPUCopyPass(copy_pass);
+            // }
 
             ImGui::Begin("Layer", nullptr, window_flags);
             ImGui::Text("Layer and shit");
@@ -299,34 +197,6 @@ namespace chroma {
             ImGui::Render();
             ImDrawData* draw_data = ImGui::GetDrawData();
             const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
-
-            SDL_GPUCommandBuffer *cmd_buffer = SDL_AcquireGPUCommandBuffer(device);
-
-            ViewportWindow *viewport = get_window<ViewportWindow>("Viewport");
-            if (!viewport->is_empty()) {
-                Canvas &canvas = viewport->get_canvas();
-
-                if (!canvas.pending.empty()) {
-                    canvas.execute_pending();
-                }
-
-                SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
-
-                canvas.upload(copy_pass);
-
-                SDL_EndGPUCopyPass(copy_pass);
-
-                SDL_GPUColorTargetInfo target_info = {};
-                target_info.texture = canvas.preview;
-                target_info.clear_color = SDL_FColor { 1.0f, 1.0f, 1.0f, 0.0f };
-                target_info.load_op = SDL_GPU_LOADOP_CLEAR;
-                target_info.store_op = SDL_GPU_STOREOP_STORE;
-                target_info.mip_level = 0;
-                target_info.layer_or_depth_plane = 0;
-                target_info.cycle = false;
-                SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(cmd_buffer, &target_info, 1, nullptr);
-                SDL_EndGPURenderPass(render_pass);
-            }
 
             SDL_GPUTexture *swapchain_texture;
             SDL_WaitAndAcquireGPUSwapchainTexture(cmd_buffer, window, &swapchain_texture, nullptr, nullptr);
@@ -370,6 +240,12 @@ namespace chroma {
     {
         if (!instance) return nullptr;
         return instance->device;
+    }
+
+    SDL_GPUCommandBuffer *App::get_command_buffer() noexcept
+    {
+        if (!instance) return nullptr;
+        return instance->cmd_buffer;
     }
 
     int App::create_window() noexcept

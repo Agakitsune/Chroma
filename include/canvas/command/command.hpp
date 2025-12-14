@@ -20,6 +20,8 @@ namespace chroma {
             virtual void start(uint32_t x, uint32_t y, const Color &color) noexcept = 0;
             virtual void update(uint32_t x, uint32_t y, const Color &color) noexcept = 0;
             virtual void end(uint32_t x, uint32_t y, const Color &color) noexcept = 0;
+
+            virtual void preview(SDL_GPURenderPass *render_pass) const noexcept = 0;
     };
 
 }

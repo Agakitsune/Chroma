@@ -23,6 +23,9 @@ namespace chroma {
 
         std::unique_ptr<ICommand> cmd;
 
+        SDL_GPUTransferBuffer *transfer_buffer = nullptr;
+        SDL_GPUBuffer *uniform_buffer = nullptr;
+
         public:
             ViewportWindow() noexcept;
 

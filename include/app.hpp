@@ -43,6 +43,7 @@ namespace chroma {
 
             static App* get_instance() noexcept;
             static SDL_GPUDevice* get_device() noexcept;
+            static SDL_GPUCommandBuffer *get_command_buffer() noexcept;
 
             // ViewportWindow viewport_window;
             // ColorPickerWindow color_picker;
@@ -67,7 +68,10 @@ namespace chroma {
             // Color second_color;
 
             SDL_Window* window = nullptr;
+            
             SDL_GPUDevice* device = nullptr;
+            SDL_GPUCommandBuffer *cmd_buffer = nullptr;
+            
             SDL_GPUSampler *sampler = nullptr;
 
             bool dockspace_initialized = false;

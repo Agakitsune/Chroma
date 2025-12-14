@@ -22,7 +22,19 @@ namespace chroma {
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoMove
     )
-    {}
+    {
+        // SDL_GPUDevice *device = App::get_device();
+
+        // SDL_GPUTransferBufferCreateInfo transfer_info = {};
+        // transfer_info.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+        // transfer_info.size = sizeof(float) * 24; // mat4 and 2 vec4
+
+        // transfer_buffer = SDL_CreateGPUTransferBuffer(device, &transfer_info);
+
+        // SDL_GPUBufferCreateInfo uniform_info = {};
+        // uniform_info.usage = SDL_GPU_BUFFERUSAGE_UNIFORM;
+        // uniform_info.size = sizeof(float) * 24; // mat4 and 2 vec
+    }
 
     void ViewportWindow::display() noexcept
     {
@@ -42,6 +54,7 @@ namespace chroma {
         const ImVec2 mouse = io.MousePos;
 
         SDL_GPUDevice *device = App::get_device();
+        SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
 
         if (cmd == nullptr) {
             cmd = std::make_unique<BrushCommand>();
@@ -145,91 +158,93 @@ namespace chroma {
 
         dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
 
-        if (canvases.size() > 0) {
-            Canvas &canvas = canvases[modal];
+        if (canvases.empty()) {
+            ImGui::End();
+            return;
+        }
 
-            Color old;
-            // Color main = App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->main_color;
+        Canvas &canvas = canvases[selected];
 
-            const ImVec2 canvas_size = ImVec2(canvas.width, canvas.height) * canvas.zoom;
+        Color old;
 
-            const ImVec2 canvas_offset = origin + (window_size - canvas_size) * 0.5f + canvas.offset;
+        const ImVec2 canvas_size = ImVec2(canvas.width, canvas.height) * canvas.zoom;
 
-            if (ImGui::IsMouseHoveringRect(canvas_offset, canvas_offset + canvas_size)) {
-                const ImVec2 local = mouse - canvas_offset;\
-                const ImVec2 local_zoomed = local * (1.0f / canvas.zoom);
-                // const ImVec2 local = local_zoomed * (1.0f / canvas.zoom);
-                const ImVec2 snapped = ImVec2(
-                    floorf(local_zoomed.x),
-                    floorf(local_zoomed.y)
-                );
+        const ImVec2 canvas_offset = origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
-                uint32_t x = static_cast<uint32_t>(snapped.x);
-                uint32_t y = static_cast<uint32_t>(snapped.y);
+        if (ImGui::IsMouseHoveringRect(canvas_offset, canvas_offset + canvas_size)) {
+            const ImVec2 local = mouse - canvas_offset;\
+            const ImVec2 local_zoomed = local * (1.0f / canvas.zoom);
+            // const ImVec2 local = local_zoomed * (1.0f / canvas.zoom);
+            const ImVec2 snapped = ImVec2(
+                floorf(local_zoomed.x),
+                floorf(local_zoomed.y)
+            );
 
-                old = canvas.get_color(x, y);
+            uint32_t x = static_cast<uint32_t>(snapped.x);
+            uint32_t y = static_cast<uint32_t>(snapped.y);
 
-                printf("Mouse at (%f, %f) -> Local (%f, %f) -> Snapped (%f, %f) -> Pos (%u, %u)\n",
-                    mouse.x, mouse.y,
-                    local.x, local.y,
-                    snapped.x, snapped.y,
-                    x, y
-                );
-                
-                if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-                    if (!brushing) {
-                        cmd->start(x, y, old);
-                        canvas.set_color(x, y, color_pick->main_color);
-                    } else {
-                        cmd->update(x, y, old);
-                        canvas.set_color(x, y, color_pick->main_color);
-                    }
-                    brushing = true;
-                    canvas.dirty = true;
-                } else if (brushing) {
-                    cmd->end(x, y, old);
-                    canvas.set_color(x, y, color_pick->main_color);
-                    canvas.add_command(std::move(cmd));
-                    brushing = false;
+            old = canvas.get_color(x, y);
 
-                    // Prepare new command
-                    cmd = std::make_unique<BrushCommand>();
+            // printf("Mouse at (%f, %f) -> Local (%f, %f) -> Snapped (%f, %f) -> Pos (%u, %u)\n",
+            //     mouse.x, mouse.y,
+            //     local.x, local.y,
+            //     snapped.x, snapped.y,
+            //     x, y
+            // );
+            
+            if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                if (!brushing) {
+                    cmd->start(x, y, old);
+                    // canvas.set_color(x, y, color_pick->main_color);
+                } else {
+                    cmd->update(x, y, old);
+                    // canvas.set_color(x, y, color_pick->main_color);
                 }
+                brushing = true;
+                canvas.dirty = true;
+            } else if (brushing) {
+                cmd->end(x, y, old);
+                // canvas.set_color(x, y, color_pick->main_color);
+                canvas.add_command(std::move(cmd));
+                brushing = false;
+
+                // Prepare new command
+                cmd = std::make_unique<BrushCommand>();
+            }
+        }
+
+        if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
+            CursorManager::set_cursor(Cursor::Cross);
+
+            dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
+            
+            if (io.MouseWheel > 0.0f) {
+                canvas.zoom = std::min(canvas.zoom * 1.5f, 16.0f);
+            } else if (io.MouseWheel < 0.0f) {
+                canvas.zoom = std::max(canvas.zoom * 0.75f, 0.1f);
+            }
+        }
+
+        if (dragging) {
+            CursorManager::set_cursor(Cursor::Grab);
+            ImVec2 mouse_delta = io.MouseDelta;
+            canvas.offset += mouse_delta;
+            
+            const ImVec2 canvas_end = canvas_offset + canvas_size;
+            const ImVec2 window_end = origin + window_size;
+
+            if (canvas_offset.x < origin.x) {
+                canvas.offset.x += (origin.x - canvas_offset.x);
+            }
+            if (canvas_offset.y < origin.y) {
+                canvas.offset.y += (origin.y - canvas_offset.y);
             }
 
-            if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
-                CursorManager::set_cursor(Cursor::Cross);
-
-                dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
-                
-                if (io.MouseWheel > 0.0f) {
-                    canvas.zoom = std::min(canvas.zoom * 1.5f, 16.0f);
-                } else if (io.MouseWheel < 0.0f) {
-                    canvas.zoom = std::max(canvas.zoom * 0.75f, 0.1f);
-                }
+            if (canvas_end.x > window_end.x) {
+                canvas.offset.x -= canvas_end.x - window_end.x;
             }
-
-            if (dragging) {
-                CursorManager::set_cursor(Cursor::Grab);
-                ImVec2 mouse_delta = io.MouseDelta;
-                canvas.offset += mouse_delta;
-                
-                const ImVec2 canvas_end = canvas_offset + canvas_size;
-                const ImVec2 window_end = origin + window_size;
-
-                if (canvas_offset.x < origin.x) {
-                    canvas.offset.x += (origin.x - canvas_offset.x);
-                }
-                if (canvas_offset.y < origin.y) {
-                    canvas.offset.y += (origin.y - canvas_offset.y);
-                }
-
-                if (canvas_end.x > window_end.x) {
-                    canvas.offset.x -= canvas_end.x - window_end.x;
-                }
-                if (canvas_end.y > window_end.y) {
-                    canvas.offset.y -= canvas_end.y - window_end.y;
-                }
+            if (canvas_end.y > window_end.y) {
+                canvas.offset.y -= canvas_end.y - window_end.y;
             }
         }
 
@@ -265,6 +280,59 @@ namespace chroma {
         ImGui::PopID();
 
         ImGui::End();
+
+        constexpr float near = 0.0f;
+        constexpr float far = 10.0f;
+
+        float data[24] = {0.0f};
+        // float ortho[4][4] = (float*)data;
+        data[0] = 2.0f / canvas.width;
+        data[5] = -2.0f / canvas.height;
+        data[10] = -2.0f / (far - near);
+        data[12] = -1.0f;
+        data[13] = 1.0f;
+        data[14] = -(far + near) / (far - near);
+        data[15] = 1.0f;
+
+        color_pick->main_color.upload(&data[16]);
+        color_pick->second_color.upload(&data[20]);
+
+        SDL_PushGPUVertexUniformData(
+            cmd_buffer,
+            0,
+            data,
+            sizeof(data)
+        );
+
+        SDL_GPUColorTargetInfo target_info = {};
+        target_info.texture = canvas.preview;
+        target_info.clear_color = SDL_FColor { 1.0f, 1.0f, 1.0f, 0.0f };
+        target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+        target_info.store_op = SDL_GPU_STOREOP_STORE;
+        target_info.mip_level = 0;
+        target_info.layer_or_depth_plane = 0;
+        target_info.cycle = false;
+
+        SDL_GPURenderPass *render_pass = SDL_BeginGPURenderPass(
+            cmd_buffer,
+            &target_info,
+            1,
+            nullptr
+        );
+
+        cmd->preview(render_pass);
+
+        SDL_EndGPURenderPass(render_pass);
+
+        if (!canvas.pending.empty()) {
+            canvas.execute_pending();
+        }
+
+        SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
+
+        canvas.upload(copy_pass);
+
+        SDL_EndGPUCopyPass(copy_pass);
     }
 
     bool ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept

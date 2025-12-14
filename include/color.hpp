@@ -36,6 +36,20 @@ namespace chroma {
                 ((uint32_t)(r * 255.0f) << 0);
         }
 
+        void upload(float *dst) const noexcept {
+            dst[0] = r;
+            dst[1] = g;
+            dst[2] = b;
+            dst[3] = a;
+        }
+
+        void download(const float *src) noexcept {
+            r = src[0];
+            g = src[1];
+            b = src[2];
+            a = src[3];
+        }
+
         void upload(uint8_t *dst) const noexcept {
             dst[0] = (uint8_t)(r * 255.0f);
             dst[1] = (uint8_t)(g * 255.0f);
