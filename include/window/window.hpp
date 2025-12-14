@@ -14,6 +14,8 @@ namespace chroma {
                 ImGuiWindowFlags flags
             ) noexcept;
 
+            virtual ~Window() noexcept = default;
+
             virtual void display() noexcept = 0;
 
             // bool begin();

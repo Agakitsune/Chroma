@@ -29,6 +29,7 @@ namespace chroma {
 
         public:
             ViewportWindow() noexcept;
+            virtual ~ViewportWindow() noexcept = default;
 
             virtual void display() noexcept override final;
 

@@ -10,6 +10,7 @@ namespace chroma {
     class ColorPickerWindow : public Window {
         public:
             ColorPickerWindow() noexcept;
+            virtual ~ColorPickerWindow() noexcept = default; 
 
             virtual void display() noexcept override final;
         

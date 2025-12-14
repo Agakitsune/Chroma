@@ -27,7 +27,7 @@ namespace chroma {
 
         public:
             BrushCommand() noexcept;
-            ~BrushCommand() noexcept;
+            virtual ~BrushCommand() noexcept override;
 
             void add(uint32_t x, uint32_t y, const Color &old) noexcept;
             bool contains(uint32_t x, uint32_t y) const noexcept;

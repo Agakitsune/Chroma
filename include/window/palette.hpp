@@ -18,6 +18,7 @@ namespace chroma {
 
         public:
             PaletteWindow() noexcept;
+            virtual ~PaletteWindow() noexcept = default; 
 
             virtual void display() noexcept override final;
 

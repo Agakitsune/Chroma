@@ -11,6 +11,8 @@ namespace chroma {
 
     class ICommand {
         public:
+            virtual ~ICommand() noexcept = default;
+
             virtual void redo(Canvas &canvas) noexcept = 0;
             virtual void undo(Canvas &canvas) noexcept = 0;
 
