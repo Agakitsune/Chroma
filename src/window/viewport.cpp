@@ -161,7 +161,7 @@ namespace chroma {
         ImGui::PushOverrideID(64);
 
         if (ImGui::BeginPopupModal("Warning", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text("Save changes to '%s' before closing?\n\n", canvases[modal].name.c_str());
+            ImGui::Text("Save changes to '%s' before closing?\n\n", canvases[selected].name.c_str());
 
             if (ImGui::BeginTable("##ModalButtons", 3, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_NoBordersInBody)) {
                 ImGui::TableNextColumn();
@@ -172,7 +172,10 @@ namespace chroma {
 
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Discard", ImVec2(-FLT_MIN, 0))) {
-                    canvases.erase(canvases.begin() + modal);
+                    canvases.erase(canvases.begin() + selected);
+                    if (selected == canvases.size() && selected > 0) {
+                        selected--;
+                    }
                     ImGui::CloseCurrentPopup();
                 }
 
