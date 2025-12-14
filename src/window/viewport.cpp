@@ -164,11 +164,9 @@ namespace chroma {
         }
 
         Canvas &canvas = canvases[selected];
-
         Color old;
 
         const ImVec2 canvas_size = ImVec2(canvas.width, canvas.height) * canvas.zoom;
-
         const ImVec2 canvas_offset = origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
         if (ImGui::IsMouseHoveringRect(canvas_offset, canvas_offset + canvas_size)) {
@@ -191,25 +189,30 @@ namespace chroma {
             //     snapped.x, snapped.y,
             //     x, y
             // );
-            
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+
+            if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && !discarded) {
                 if (!brushing) {
                     cmd->start(x, y, old);
-                    // canvas.set_color(x, y, color_pick->main_color);
+                    brushing = true;
                 } else {
                     cmd->update(x, y, old);
-                    // canvas.set_color(x, y, color_pick->main_color);
+                    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+                        discarded = true;
+                        cmd->discard();
+                        brushing = false;
+                    }
                 }
-                brushing = true;
-                canvas.dirty = true;
             } else if (brushing) {
                 cmd->end(x, y, old);
-                // canvas.set_color(x, y, color_pick->main_color);
                 canvas.add_command(std::move(cmd));
                 brushing = false;
 
+                canvas.dirty = true;
+
                 // Prepare new command
                 cmd = std::make_unique<BrushCommand>();
+            } else {
+                discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) || ImGui::IsMouseDown(ImGuiMouseButton_Right);
             }
         }
 

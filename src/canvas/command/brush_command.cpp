@@ -308,6 +308,16 @@ namespace chroma {
         update(x, y, color);
     }
 
+    void BrushCommand::discard() noexcept {
+        positions.clear();
+        // SDL_GPUDevice *device = App::get_device();
+
+        // if (instance_buffer) {
+        //     SDL_ReleaseGPUBuffer(device, instance_buffer);
+        //     instance_buffer = nullptr;
+        // }
+    }
+
     void BrushCommand::preview(SDL_GPURenderPass *render_pass) const noexcept {
         if (positions.empty()) return;
 

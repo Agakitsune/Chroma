@@ -20,6 +20,7 @@ namespace chroma {
 
         bool dragging = false;
         bool brushing = false;
+        bool discarded = false;
 
         std::unique_ptr<ICommand> cmd;
 
