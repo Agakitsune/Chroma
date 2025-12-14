@@ -21,6 +21,15 @@ namespace chroma {
 
         SDL_GPUTransferBuffer *buffer = nullptr;
         SDL_GPUTexture *texture = nullptr;
+
+        Layer() noexcept = default;
+        ~Layer() noexcept;
+
+        Layer(const Layer&) = delete;
+        Layer& operator=(const Layer&) = delete;
+
+        Layer(Layer&&) noexcept;
+        Layer& operator=(Layer&&) noexcept;
     };
 
     struct Canvas {

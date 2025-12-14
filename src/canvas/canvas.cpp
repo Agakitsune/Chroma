@@ -8,6 +8,52 @@
 
 namespace chroma {
 
+    Layer::~Layer() noexcept
+    {
+        SDL_GPUDevice *device = App::get_device();
+
+        if (buffer) {
+            SDL_ReleaseGPUTransferBuffer(device, buffer);
+        }
+        if (texture) {
+            SDL_ReleaseGPUTexture(device, texture);
+        }
+        if (data) {
+            delete[] data;
+        }
+        if (dirty_flags) {
+            delete[] dirty_flags;
+        }
+    }
+
+    Layer::Layer(Layer&&other) noexcept
+    : data(other.data),
+    dirty_flags(other.dirty_flags),
+    buffer(other.buffer),
+    texture(other.texture)
+    {
+        other.data = nullptr;
+        other.dirty_flags = nullptr;
+        other.buffer = nullptr;
+        other.texture = nullptr;
+    }
+
+    Layer& Layer::operator=(Layer&&other) noexcept
+    {
+        if (this != &other) {
+            data = other.data;
+            dirty_flags = other.dirty_flags;
+            buffer = other.buffer;
+            texture = other.texture;
+
+            other.data = nullptr;
+            other.dirty_flags = nullptr;
+            other.buffer = nullptr;
+            other.texture = nullptr;
+        }
+        return *this;
+    }
+
     Canvas::Canvas(uint32_t width, uint32_t height) noexcept
     : width(width), height(height)
     {
@@ -69,21 +115,6 @@ namespace chroma {
     {
         SDL_GPUDevice *device = App::get_device();
 
-        for (Layer &layer : layers) {
-            if (layer.buffer) {
-                SDL_ReleaseGPUTransferBuffer(device, layer.buffer);
-            }
-            if (layer.texture) {
-                SDL_ReleaseGPUTexture(device, layer.texture);
-            }
-            if (layer.data) {
-                delete[] layer.data;
-            }
-            if (layer.dirty_flags) {
-                delete[] layer.dirty_flags;
-            }
-        }
-
         if (preview) {
             SDL_ReleaseGPUTexture(device, preview);
         }
@@ -102,7 +133,9 @@ namespace chroma {
     offset(other.offset),
     zoom(other.zoom),
     dirty(other.dirty)
-    {}
+    {
+        other.preview = nullptr;
+    }
 
     Canvas& Canvas::operator=(Canvas&&other) noexcept
     {
@@ -119,6 +152,8 @@ namespace chroma {
             offset = other.offset;
             zoom = other.zoom;
             dirty = other.dirty;
+
+            other.preview = nullptr;
         }
         return *this;
     }
