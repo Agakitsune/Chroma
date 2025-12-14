@@ -158,6 +158,37 @@ namespace chroma {
 
         dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
 
+        ImGui::PushOverrideID(64);
+
+        if (ImGui::BeginPopupModal("Warning", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::Text("Save changes to '%s' before closing?\n\n", canvases[modal].name.c_str());
+
+            if (ImGui::BeginTable("##ModalButtons", 3, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_NoBordersInBody)) {
+                ImGui::TableNextColumn();
+                if (ImGui::Button("Save", ImVec2(-FLT_MIN, 0))) {
+                    // Save file
+                }
+                ImGui::SetItemDefaultFocus();
+
+                ImGui::TableNextColumn();
+                if (ImGui::Button("Discard", ImVec2(-FLT_MIN, 0))) {
+                    canvases.erase(canvases.begin() + modal);
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::TableNextColumn();
+                if (ImGui::Button("Cancel", ImVec2(-FLT_MIN, 0))) {
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::EndTable();
+            }
+
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
+
         if (canvases.empty()) {
             ImGui::End();
             return;
@@ -250,37 +281,6 @@ namespace chroma {
                 canvas.offset.y -= canvas_end.y - window_end.y;
             }
         }
-
-        ImGui::PushOverrideID(64);
-
-        if (ImGui::BeginPopupModal("Warning", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text("Save changes to '%s' before closing?\n\n", canvases[modal].name.c_str());
-
-            if (ImGui::BeginTable("##ModalButtons", 3, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_NoBordersInBody)) {
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Save", ImVec2(-FLT_MIN, 0))) {
-                    // Save file
-                }
-                ImGui::SetItemDefaultFocus();
-
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Discard", ImVec2(-FLT_MIN, 0))) {
-                    canvases.erase(canvases.begin() + modal);
-                    ImGui::CloseCurrentPopup();
-                }
-
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Cancel", ImVec2(-FLT_MIN, 0))) {
-                    ImGui::CloseCurrentPopup();
-                }
-
-                ImGui::EndTable();
-            }
-
-            ImGui::EndPopup();
-        }
-
-        ImGui::PopID();
 
         ImGui::End();
 
