@@ -213,6 +213,11 @@ namespace chroma {
             SDL_ReleaseGPUShader(device, fragment_shader);
             fragment_shader = nullptr;
         }
+
+        if (instance_buffer) {
+            SDL_ReleaseGPUBuffer(device, instance_buffer);
+            instance_buffer = nullptr;
+        }
     }
 
     void BrushCommand::add(uint32_t x, uint32_t y, const Color &color) noexcept {
