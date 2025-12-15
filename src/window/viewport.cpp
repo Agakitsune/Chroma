@@ -267,22 +267,22 @@ namespace chroma {
             ImVec2 mouse_delta = io.MouseDelta;
             canvas.offset += mouse_delta;
             
-            const ImVec2 canvas_end = canvas_offset + canvas_size;
-            const ImVec2 window_end = origin + window_size;
+            // const ImVec2 canvas_end = canvas_offset + canvas_size;
+            // const ImVec2 window_end = origin + window_size;
 
-            if (canvas_offset.x < origin.x) {
-                canvas.offset.x += (origin.x - canvas_offset.x);
-            }
-            if (canvas_offset.y < origin.y) {
-                canvas.offset.y += (origin.y - canvas_offset.y);
-            }
+            // if (canvas_offset.x < origin.x) {
+            //     canvas.offset.x += (origin.x - canvas_offset.x);
+            // }
+            // if (canvas_offset.y < origin.y) {
+            //     canvas.offset.y += (origin.y - canvas_offset.y);
+            // }
 
-            if (canvas_end.x > window_end.x) {
-                canvas.offset.x -= canvas_end.x - window_end.x;
-            }
-            if (canvas_end.y > window_end.y) {
-                canvas.offset.y -= canvas_end.y - window_end.y;
-            }
+            // if (canvas_end.x > window_end.x) {
+            //     canvas.offset.x -= canvas_end.x - window_end.x;
+            // }
+            // if (canvas_end.y > window_end.y) {
+            //     canvas.offset.y -= canvas_end.y - window_end.y;
+            // }
         }
 
         ImGui::End();
