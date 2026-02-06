@@ -8,6 +8,8 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include <functional>
+
 namespace chroma {
     
     ColorPickerWindow::ColorPickerWindow() noexcept
@@ -19,6 +21,11 @@ namespace chroma {
         ImGuiWindowFlags_NoMove
     )
     {}
+
+    void ColorPickerWindow::ready() noexcept {
+        std::function<void(const Color &)> a = std::bind(&ColorPickerWindow::_on_main_color_selected, this, std::placeholders::_1);
+        App::get_instance()->connect_signal<const Color &>("color_selected", a);
+    }
 
     void ColorPickerWindow::display() noexcept
     {
@@ -184,5 +191,9 @@ namespace chroma {
         ImGui::PopID();
 
         ImGui::End();
+    }
+
+    void ColorPickerWindow::_on_main_color_selected(const Color &clr) {
+        main_color = clr;
     }
 }

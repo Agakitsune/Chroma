@@ -10,6 +10,8 @@
 #include "window/viewport.hpp"
 #include "window/palette.hpp"
 
+#include "system/signal.hpp"
+
 extern "C" {
     #include "lua.h"
     #include "lualib.h"
@@ -39,6 +41,44 @@ namespace chroma {
             T *get_window(const std::string &label) const noexcept {
                 if (!windows.contains(label)) return nullptr;
                 return (T*)windows.at(label).get();
+            }
+
+            template<typename... A>
+            void add_signal(const std::string &name) {
+                std::size_t hash = typeid(void(*)(A...)).hash_code();
+                signals.insert_or_assign(name, Signal());
+                signal_hash.insert_or_assign(name, hash);
+            }
+
+            template<typename... A>
+            void connect_signal(const std::string &name, const std::function<void(A...)> &func) {
+                std::size_t hash = typeid(void(*)(A...)).hash_code();
+                if (!signals.contains(name)) {
+                    return;
+                }
+                if (signal_hash[name] != hash) {
+                    return;
+                }
+                signals[name].connect((void(*)())func.template target<void(A...)>());
+            }
+
+            void disconnect_signal(const std::string &name, void(*func)()) {
+                if (!signals.contains(name)) {
+                    return;
+                }
+                signals[name].disconnect((void(*)())func);
+            }
+
+            template<typename... A>
+            void emit_signal(const std::string &name, A&&... args) {
+                std::size_t hash = typeid(void(*)(A...)).hash_code();
+                if (!signals.contains(name)) {
+                    return;
+                }
+                if (signal_hash[name] != hash) {
+                    return;
+                }
+                signals[name].emit(std::forward<A>(args)...);
             }
 
             static App* get_instance() noexcept;
@@ -81,6 +121,8 @@ namespace chroma {
             lua_State *state;
 
             std::unordered_map<std::string, std::unique_ptr<Window>> windows;
+            std::unordered_map<std::string, Signal> signals;
+            std::unordered_map<std::string, std::size_t> signal_hash;
 
             static App* instance;
     };

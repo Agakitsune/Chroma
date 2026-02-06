@@ -73,6 +73,10 @@ namespace chroma {
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
         windows["Palette"] = std::make_unique<PaletteWindow>();
 
+        for (const auto &[_n, win] : windows) {
+            win->ready();
+        }
+
         return 0;
     }
 
@@ -280,6 +284,8 @@ namespace chroma {
 
     int App::create_device() noexcept {
         // Create GPU Device
+
+        SDL_Log("Creating the GPU Device\n");
 
         this->device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, nullptr);
         if (device == nullptr) {
