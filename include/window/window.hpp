@@ -12,13 +12,18 @@ namespace chroma {
             Window(
                 const std::string &label,
                 ImGuiWindowFlags flags
-            );
+            ) noexcept;
 
-            bool begin();
-            bool render();
-            void end();
+            virtual ~Window() noexcept = default;
+
+            virtual void ready() noexcept {};
+            virtual void display() noexcept = 0;
+
+            // bool begin();
+            // bool render();
+            // void end();
         
-        private:
+        protected:
             std::string label;
             ImGuiWindowFlags flags;
     };

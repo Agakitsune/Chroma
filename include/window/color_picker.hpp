@@ -9,11 +9,16 @@ namespace chroma {
 
     class ColorPickerWindow : public Window {
         public:
-            ColorPickerWindow();
+            ColorPickerWindow() noexcept;
+            virtual ~ColorPickerWindow() noexcept = default; 
 
-            bool render();
+            virtual void ready() noexcept override final;
+            virtual void display() noexcept override final;
         
             Color main_color;
             Color second_color;
+        
+            private:
+                void _on_main_color_selected(const Color &clr);
     };
 }
