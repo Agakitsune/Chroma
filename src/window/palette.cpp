@@ -97,8 +97,8 @@ namespace chroma {
 
                 ImGui::PushID(x);
                 if (ImGui::InvisibleButton("##color", back_size)) {
-                    App::get_instance()->emit_signal<const Color &>("color_selected", color);
-                    // App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->main_color = color;
+                    // App::get_instance()->emit_signal<const Color &>("color_selected", color);
+                    App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->main_color = color;
                     selected = index;
                 }
                 if (ImGui::IsItemHovered()) {
