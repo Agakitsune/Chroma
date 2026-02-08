@@ -54,7 +54,7 @@ namespace chroma {
     void PaletteWindow::ready() noexcept
     {
         std::function<void(const Color &)> a = std::bind(&PaletteWindow::add_color, this, std::placeholders::_1);
-        App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->color_picked.connect(a);
+        App::get_instance()->color_picker.color_picked.connect(a);
     }
 
     void PaletteWindow::display() noexcept

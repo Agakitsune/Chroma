@@ -37,11 +37,11 @@ namespace chroma {
             int init() noexcept;
             int run() noexcept;
 
-            template <typename T>
-            T *get_window(const std::string &label) const noexcept {
-                if (!windows.contains(label)) return nullptr;
-                return (T*)windows.at(label).get();
-            }
+            // template <typename T>
+            // T *get_window(const std::string &label) const noexcept {
+            //     if (!windows.contains(label)) return nullptr;
+            //     return (T*)windows.at(label).get();
+            // }
 
             // template<typename... A>
             // void add_signal(const std::string &name) {
@@ -119,8 +119,15 @@ namespace chroma {
             bool idle = false;
 
             lua_State *state;
+        
+        public:
+            ColorPickerWindow color_picker;
+            PaletteWindow palette;
+            ViewportWindow viewport;
 
-            std::unordered_map<std::string, std::unique_ptr<Window>> windows;
+            Signal<int, int> canvas_created;
+
+            // std::unordered_map<std::string, std::unique_ptr<Window>> windows;
             // std::unordered_map<std::string, Signal> signals;
             // std::unordered_map<std::string, std::size_t> signal_hash;
 

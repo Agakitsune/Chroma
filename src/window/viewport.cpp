@@ -60,10 +60,10 @@ namespace chroma {
             cmd = std::make_unique<BrushCommand>();
         }
 
-        ColorPickerWindow *color_pick = App::get_instance()->get_window<ColorPickerWindow>("ColorPicker");
+        const ColorPickerWindow &color_pick = App::get_instance()->color_picker;
 
-        cmd->set_main_color(color_pick->main_color);
-        cmd->set_second_color(color_pick->second_color);
+        cmd->set_main_color(color_pick.main_color);
+        cmd->set_second_color(color_pick.second_color);
 
         uint64_t modal = 0;
         if (ImGui::BeginTabBar("##ViewportTabs",
@@ -300,8 +300,8 @@ namespace chroma {
         data[14] = -(far + near) / (far - near);
         data[15] = 1.0f;
 
-        color_pick->main_color.upload(&data[16]);
-        color_pick->second_color.upload(&data[20]);
+        color_pick.main_color.upload(&data[16]);
+        color_pick.second_color.upload(&data[20]);
 
         SDL_PushGPUVertexUniformData(
             cmd_buffer,
