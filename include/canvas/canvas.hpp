@@ -46,8 +46,8 @@ namespace chroma {
 
         uint32_t layer = 0;
 
-        uint32_t width;
-        uint32_t height;
+        uint32_t width = 0;
+        uint32_t height = 0;
 
         // -- ImGui related --
 
@@ -75,6 +75,19 @@ namespace chroma {
         void redo() noexcept;
 
         void upload(SDL_GPUCopyPass *pass) noexcept;
+
+        private:
+            struct TileTransfer {
+                uint32_t index;
+
+                uint32_t w;
+                uint32_t h;
+                
+                uint32_t x;
+                uint32_t y;
+            };
+
+            std::vector<TileTransfer> pending_uploads;
     };
 
 }
