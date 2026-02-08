@@ -395,7 +395,7 @@ namespace chroma {
                 pass,
                 &source,
                 &destination,
-                true
+                false
             );
         }
 
