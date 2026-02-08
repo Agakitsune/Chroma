@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-#define TILE_SIZE 64
+#define TILE_SIZE 32
 
 namespace chroma {
 
@@ -62,8 +62,8 @@ namespace chroma {
         SDL_GPUDevice *device = App::get_device();
 
         const uint64_t buffer_size = (width * height) * 4; // RGBA8
-        const uint64_t tile_x = (width >> 6) + ((width & 63) ? 1 : 0);
-        const uint64_t tile_y = (height >> 6) + ((height & 63) ? 1 : 0);
+        const uint64_t tile_x = (width / TILE_SIZE) + ((width & (TILE_SIZE - 1)) ? 1 : 0);
+        const uint64_t tile_y = (height / TILE_SIZE) + ((height & (TILE_SIZE - 1)) ? 1 : 0);
         const uint64_t dirty_flags_size = tile_x * tile_y;
 
         SDL_GPUTextureCreateInfo texture_info = {};
@@ -89,7 +89,7 @@ namespace chroma {
         layer.dirty_flags = new bool[dirty_flags_size];
 
         for (uint64_t i = 0; i < buffer_size; ++i) {
-            layer.data[i] = 255;
+            layer.data[i] = 0;
         }
 
         transfer.index = 0;
@@ -173,15 +173,15 @@ namespace chroma {
     {
         const Layer &layer = layers[this->layer];
 
-        const uint64_t div_x = x >> 6;
-        const uint64_t div_y = y >> 6;
-        const uint64_t mod_x = x & 63;
-        const uint64_t mod_y = y & 63;
+        const uint64_t div_x = x / TILE_SIZE;
+        const uint64_t div_y = y / TILE_SIZE;
+        const uint64_t mod_x = x & (TILE_SIZE - 1);
+        const uint64_t mod_y = y & (TILE_SIZE - 1);
 
-        const uint64_t div_width = width >> 6;
-        const uint64_t div_height = height >> 6;
-        const uint64_t mod_width = width & 63;
-        const uint64_t mod_height = height & 63;
+        const uint64_t div_width = width / TILE_SIZE;
+        const uint64_t div_height = height / TILE_SIZE;
+        const uint64_t mod_width = width & (TILE_SIZE - 1);
+        const uint64_t mod_height = height & (TILE_SIZE - 1);
 
         uint64_t index = 0;
         const uint8_t *base = nullptr;
@@ -222,15 +222,15 @@ namespace chroma {
     {
         const Layer &layer = layers[this->layer];
 
-        const uint64_t div_x = x >> 6;
-        const uint64_t div_y = y >> 6;
-        const uint64_t mod_x = x & 63;
-        const uint64_t mod_y = y & 63;
+        const uint64_t div_x = x / TILE_SIZE;
+        const uint64_t div_y = y / TILE_SIZE;
+        const uint64_t mod_x = x & (TILE_SIZE - 1);
+        const uint64_t mod_y = y & (TILE_SIZE - 1);
 
-        const uint64_t div_width = width >> 6;
-        const uint64_t div_height = height >> 6;
-        const uint64_t mod_width = width & 63;
-        const uint64_t mod_height = height & 63;
+        const uint64_t div_width = width / TILE_SIZE;
+        const uint64_t div_height = height / TILE_SIZE;
+        const uint64_t mod_width = width & (TILE_SIZE - 1);
+        const uint64_t mod_height = height & (TILE_SIZE - 1);
 
         // uint64_t index = 0;
         uint8_t *base = nullptr;
@@ -246,7 +246,7 @@ namespace chroma {
 
         if (div_x < div_width && div_y < div_height) {
             // Full 64x64 tile
-            transfer.index = (div_x * TILE_SIZE) + (div_y * (div_width * TILE_SIZE));
+            transfer.index = (div_x * TILE_SIZE * TILE_SIZE) + (div_y * (div_width * TILE_SIZE * TILE_SIZE));
 
             transfer.w = TILE_SIZE;
             transfer.h = TILE_SIZE;
@@ -345,10 +345,10 @@ namespace chroma {
     {
         SDL_GPUDevice *device = App::get_device();
 
-        const uint64_t div_width = width >> 6;
-        const uint64_t div_height = height >> 6;
-        const uint64_t mod_width = width & 63;
-        const uint64_t mod_height = height & 63;
+        const uint64_t div_width = width / TILE_SIZE;
+        const uint64_t div_height = height / TILE_SIZE;
+        const uint64_t mod_width = width & (TILE_SIZE - 1);
+        const uint64_t mod_height = height & (TILE_SIZE - 1);
 
         uint64_t index = 0;
 
