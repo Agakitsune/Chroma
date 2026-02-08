@@ -48,7 +48,13 @@ namespace chroma {
         palette[23] = Color(0.55f, 0.40f, 0.50f);   // Purple Gray
         palette[24] = Color(0.50f, 0.15f, 0.40f);   // Plum
 
-        App::get_instance()->add_signal<const Color &>("color_selected");
+        // App::get_instance()->add_signal<const Color &>("color_selected");
+    }
+
+    void PaletteWindow::ready() noexcept
+    {
+        std::function<void(const Color &)> a = std::bind(&PaletteWindow::add_color, this, std::placeholders::_1);
+        App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->color_picked.connect(a);
     }
 
     void PaletteWindow::display() noexcept
@@ -97,8 +103,9 @@ namespace chroma {
 
                 ImGui::PushID(x);
                 if (ImGui::InvisibleButton("##color", back_size)) {
+                    color_selected.emit(color);
                     // App::get_instance()->emit_signal<const Color &>("color_selected", color);
-                    App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->main_color = color;
+                    // App::get_instance()->get_window<ColorPickerWindow>("ColorPicker")->main_color = color;
                     selected = index;
                 }
                 if (ImGui::IsItemHovered()) {

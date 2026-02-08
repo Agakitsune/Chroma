@@ -2,8 +2,8 @@
 #pragma once
 
 #include "window.hpp"
-
 #include "color.hpp"
+#include "system/signal.hpp"
 
 namespace chroma {
 
@@ -17,8 +17,10 @@ namespace chroma {
         
             Color main_color;
             Color second_color;
+
+            Signal<Color> color_picked;
         
-            private:
-                void _on_main_color_selected(const Color &clr);
+        private:
+            void _on_main_color_selected(const Color &clr);
     };
 }
