@@ -12,6 +12,9 @@
 
 #include "canvas/command/brush_command.hpp"
 
+#include <SDL3/SDL_surface.h>
+// #include <SDL3/SDL.h>
+
 namespace chroma {
 
     ViewportWindow::ViewportWindow() noexcept
@@ -249,8 +252,28 @@ namespace chroma {
                 discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) || ImGui::IsMouseDown(ImGuiMouseButton_Right);
             }
         }
+        
+        
 
         if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
+
+            if (io.KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_S, false))
+                ImGui::OpenPopup("MyPopup");
+            if (ImGui::BeginPopup("MyPopup"))
+            {
+                ImGui::Text("Hello popup !");
+                void* pixels = SDL_MapGPUTransferBuffer(device, canvas.layers[0].buffer, false);
+                SDL_Surface* surface = SDL_CreateSurfaceFrom(16, 16, SDL_PIXELFORMAT_RGBA32, pixels, 16 * 4);
+                if (SDL_FlipSurface(surface, SDL_FLIP_VERTICAL) == true);
+                    ImGui::Text("FLIPED SURFACE");
+                if (SDL_SaveBMP(surface, "C:\\Users\\lucas\\Desktop\\EPITECH\\Chroma\\Chroma.bmp") == true)
+                    ImGui::Text("BMP SAVED");
+                SDL_DestroySurface(surface);
+                SDL_UnmapGPUTransferBuffer(device, transfer_buffer);
+
+                ImGui::EndPopup();
+            }
+
             CursorManager::set_cursor(Cursor::Cross);
 
             dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
@@ -368,6 +391,12 @@ namespace chroma {
     Canvas &ViewportWindow::get_canvas() noexcept
     {
         return canvases[selected];
-    } 
+    }
+
+    // void buffer_to_png()
+    // {
+        
+    //     return
+    // }
 
 }

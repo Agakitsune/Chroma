@@ -7,7 +7,7 @@
 #include "imgui_internal.h"
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_sdlgpu3.h"
-#include "lua/api.hpp"
+//#include "lua/api.hpp"
 
 #include "cursor.hpp"
 
@@ -31,7 +31,7 @@ namespace chroma {
     App* App::instance = nullptr;
 
     App::~App() noexcept {
-        lua_close(state);
+        //lua_close(state);
 
         windows.clear(); // Release all windows and their resources
 
@@ -60,14 +60,14 @@ namespace chroma {
             return err;
         }
 
-        state = luaL_newstate();
-        if (!state) {
-            return -1;
-        }
+        //state = luaL_newstate();
+        //if (!state) {
+        //    return -1;
+        //}
 
-        luaL_openlibs(state);
+        //luaL_openlibs(state);
 
-        lua::register_chroma_api(state);
+        //lua::register_chroma_api(state);
 
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
