@@ -395,20 +395,31 @@ namespace chroma {
         full_name += extension;
         Canvas &canvas = canvases[selected];
 
-        std::filesystem::path path = "./" + full_name;
+
 
         canvas.name = full_name;
         canvas.dirty = false;
 
+        std::string file_path = SDL_GetBasePath() + full_name;
+        const char *path = file_path.c_str();
+
         std::cout << full_name << std::endl;
-        std::cout << path << std::endl;
+        std::cout << "PATH: \"" << path << "\"" << std::endl;
 
         void *pixels = canvas.layers[0].data;
         SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
         
-        if (SDL_SaveBMP(surface, path.c_str())) {
-            SDL_DestroySurface(surface);
-            return false;
+        if (strcmp(extension, ".bmp") == 0) {
+            if (SDL_SaveBMP(surface, path)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
+        }
+        if (strcmp(extension, ".png") == 0) {
+            if (SDL_SavePNG(surface, path)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
         }
 
         SDL_DestroySurface(surface);
