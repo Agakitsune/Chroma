@@ -101,8 +101,6 @@ namespace chroma {
         separator("File");
         add_menu<ExitMenuItem>("File");
 
-        // add_signal<const std::string &>("save_canvas_requested");
-
         emit_signal("main_color_selected", WHITE);
         emit_signal("second_color_selected", BLACK);
 
