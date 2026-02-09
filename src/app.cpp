@@ -569,13 +569,14 @@ namespace chroma {
             if (ImGui::BeginCombo("File type", save_format)) {
                 // ImGui::Selectable(".bmp");
                 // ImGui::Selectable(".png");
-                if (ImGui::Selectable(".bmp", strcmp(save_format, ".bmp") == 0)) {
+                if (ImGui::Selectable(".bmp", strcmp(save_format, ".bmp") == 0))
                     save_format = ".bmp"; // Update the state
-                }
-                
-                if (ImGui::Selectable(".png", strcmp(save_format, ".png") == 0)) {
+                if (ImGui::Selectable(".png", strcmp(save_format, ".png") == 0))
                     save_format = ".png"; // Update the state
-                }
+                if (ImGui::Selectable(".jpg", strcmp(save_format, ".jpg") == 0))
+                    save_format = ".jpg"; // Update the state
+                if (ImGui::Selectable(".tga", strcmp(save_format, ".tga") == 0))
+                    save_format = ".tga"; // Update the state
                 ImGui::EndCombo();
             }
 

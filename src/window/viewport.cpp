@@ -15,6 +15,7 @@
 #include <filesystem>
 
 #include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
 // #include <SDL3/SDL.h>
 
 namespace chroma {
@@ -421,6 +422,18 @@ namespace chroma {
                 return false;
             }
         }
+        if (strcmp(extension, ".jpg") == 0) {
+            if (IMG_SaveJPG(surface, path, 100)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
+        }
+        if (strcmp(extension, ".tga") == 0) {
+            if (IMG_SaveTGA(surface, path)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
+        }
 
         SDL_DestroySurface(surface);
 
@@ -436,11 +449,5 @@ namespace chroma {
     {
         return canvases[selected];
     }
-
-    // void buffer_to_png()
-    // {
-        
-    //     return
-    // }
 
 }
