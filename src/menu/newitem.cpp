@@ -39,7 +39,7 @@ namespace chroma {
 
             if (ImGui::Button("OK", ImVec2(140, 0))) {
                 // Create new file with specified width and height
-                App::get_instance()->emit_signal("create_canvas_requested", w, h);
+                App::get_instance()->emit_signal<uint32_t, uint32_t>("create_canvas_requested", w, h);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
