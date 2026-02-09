@@ -401,7 +401,10 @@ namespace chroma {
         // return true;
     }
 
-    void ViewportWindow::save_canvas(const std::string &label, const std::string &extension) noexcept
+    void ViewportWindow::save_canvas(
+        const std::string &label,
+        const std::string &extension
+    ) noexcept
     {
         std::string full_name = label + extension;
         Canvas &canvas = canvases[selected];

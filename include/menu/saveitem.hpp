@@ -3,18 +3,20 @@
 
 #include "menu/menuitem.hpp"
 
-#include <cstdint>
+#include <filesystem>
 
 namespace chroma {
 
     class SaveMenuItem : public MenuItem {
-        char name[1024];
-        // uint32_t w;
-        // uint32_t h;
+        char *name;
+        char *directory;
+
+        std::filesystem::path home;
+        std::filesystem::path current;
 
         public:
-            SaveMenuItem() noexcept = default;
-            ~SaveMenuItem() noexcept = default;
+            SaveMenuItem() noexcept;
+            ~SaveMenuItem() noexcept;
 
             virtual void menubar() noexcept override final;
             virtual void display() noexcept override final;
