@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "system/signal.hpp"
+
 namespace chroma {
 
     class PaletteWindow : public Window {
@@ -20,6 +22,7 @@ namespace chroma {
             PaletteWindow() noexcept;
             virtual ~PaletteWindow() noexcept = default; 
 
+            virtual void ready() noexcept override final;
             virtual void display() noexcept override final;
 
             void add_color(const Color &color) noexcept;

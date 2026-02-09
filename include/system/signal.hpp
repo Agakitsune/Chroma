@@ -10,6 +10,7 @@ namespace chroma {
 
     class Signal {
         std::vector<void(*)()> connected;
+        std::vector<void*> objects;
 
         public:
             Signal() noexcept = default;
@@ -21,28 +22,33 @@ namespace chroma {
             Signal &operator=(const Signal &other) noexcept = default;
             Signal &operator=(Signal &&other) noexcept = default;
 
-            void connect(void (*func)()) noexcept {
-                connected.emplace_back(std::move(func));
+            template<typename O, typename... Args>
+            void connect(O *object, void (O::*func)(Args...)) noexcept
+            {
+                connected.push_back((void(*)())func);
+                objects.push_back(object);
             }
 
-            void disconnect(void (*func)()) noexcept {
-                auto it = connected.begin();
-                for (; it != connected.end(); it++) {
-                    if (*it == func) {
+            void disconnect(void *object) noexcept
+            {
+                auto it = objects.begin();
+                for (; it != objects.end(); it++) {
+                    if (*it == object) {
                         break;
                     }
                 }
                 
-                connected.erase(it);
+                size_t diff = it - objects.begin();
+                objects.erase(it);
+                connected.erase(connected.begin() + diff);
             }
 
-            template <typename... A>
-            void emit(A&&... args) const noexcept {
-                std::cout << "emit" << std::endl;
-                for (const auto &con : connected) {
-                    void(*ptr)(A...) = (void(*)(A...))con;
-                    std::cout << ptr << std::endl;
-                    ptr(std::forward<A>(args)...);
+            template<typename... Args>
+            void emit(Args&&... args) const noexcept
+            {
+                for (size_t i = 0; i < connected.size(); i++) {
+                    void(*fn)(void*, Args...) = (void(*)(void*, Args...))connected[i];
+                    fn(objects[i], std::forward<Args>(args)...);
                 }
             }
     };

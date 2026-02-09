@@ -34,41 +34,41 @@ namespace chroma {
             int init() noexcept;
             int run() noexcept;
 
-            template <typename T>
-            T *get_window(const std::string &label) const noexcept {
-                if (!windows.contains(label)) return nullptr;
-                return (T*)windows.at(label).get();
-            }
+            // template <typename T>
+            // T *get_window(const std::string &label) const noexcept {
+            //     if (!windows.contains(label)) return nullptr;
+            //     return (T*)windows.at(label).get();
+            // }
 
             template<typename... A>
             void add_signal(const std::string &name) {
-                std::size_t hash = typeid(void(*)(A...)).hash_code();
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 signals.insert_or_assign(name, Signal());
                 signal_hash.insert_or_assign(name, hash);
             }
 
-            template<typename... A>
-            void connect_signal(const std::string &name, const std::function<void(A...)> &func) {
-                std::size_t hash = typeid(void(*)(A...)).hash_code();
+            template<typename O, typename... A>
+            void connect_signal(const std::string &name, O *object, void (O::*func)(A...)) {
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 if (!signals.contains(name)) {
                     return;
                 }
                 if (signal_hash[name] != hash) {
                     return;
                 }
-                signals[name].connect((void(*)())func.template target<void(A...)>());
+                signals[name].connect(object, func);
             }
 
-            void disconnect_signal(const std::string &name, void(*func)()) {
+            void disconnect_signal(const std::string &name, void *object) {
                 if (!signals.contains(name)) {
                     return;
                 }
-                signals[name].disconnect((void(*)())func);
+                signals[name].disconnect(object);
             }
 
             template<typename... A>
             void emit_signal(const std::string &name, A&&... args) {
-                std::size_t hash = typeid(void(*)(A...)).hash_code();
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 if (!signals.contains(name)) {
                     return;
                 }

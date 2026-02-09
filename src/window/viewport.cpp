@@ -28,6 +28,7 @@ namespace chroma {
         ImGuiWindowFlags_NoMove
     )
     {
+        cmd = std::make_unique<BrushCommand>(); // default command
         // SDL_GPUDevice *device = App::get_device();
 
         // SDL_GPUTransferBufferCreateInfo transfer_info = {};
@@ -39,6 +40,14 @@ namespace chroma {
         // SDL_GPUBufferCreateInfo uniform_info = {};
         // uniform_info.usage = SDL_GPU_BUFFERUSAGE_UNIFORM;
         // uniform_info.size = sizeof(float) * 24; // mat4 and 2 vec
+    }
+
+    void ViewportWindow::ready() noexcept
+    {
+        App::get_instance()->connect_signal("create_canvas_requested", this, &ViewportWindow::new_canvas);
+
+        App::get_instance()->connect_signal("main_color_changed", this, &ViewportWindow::_on_main_color_changed);
+        App::get_instance()->connect_signal("second_color_changed", this, &ViewportWindow::_on_second_color_changed);
     }
 
     void ViewportWindow::display() noexcept
@@ -61,14 +70,14 @@ namespace chroma {
         SDL_GPUDevice *device = App::get_device();
         SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
 
-        if (cmd == nullptr) {
-            cmd = std::make_unique<BrushCommand>();
-        }
+        // if (cmd == nullptr) {
+        //     cmd = std::make_unique<BrushCommand>();
+        // }
 
-        ColorPickerWindow *color_pick = App::get_instance()->get_window<ColorPickerWindow>("ColorPicker");
+        // const ColorPickerWindow &color_pick = App::get_instance()->color_picker;
 
-        cmd->set_main_color(color_pick->main_color);
-        cmd->set_second_color(color_pick->second_color);
+        // cmd->set_main_color(color_pick.main_color);
+        // cmd->set_second_color(color_pick.second_color);
 
         uint64_t modal = 0;
         if (ImGui::BeginTabBar("##ViewportTabs",
@@ -329,8 +338,8 @@ namespace chroma {
         data[14] = -(far + near) / (far - near);
         data[15] = 1.0f;
 
-        color_pick->main_color.upload(&data[16]);
-        color_pick->second_color.upload(&data[20]);
+        cmd->get_main_color().upload(&data[16]);
+        cmd->get_second_color().upload(&data[20]);
 
         SDL_PushGPUVertexUniformData(
             cmd_buffer,
@@ -370,23 +379,24 @@ namespace chroma {
         SDL_EndGPUCopyPass(copy_pass);
     }
 
-    bool ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
+    void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
-        Canvas &canvas = canvases.emplace_back(width, height);
+        std::cout << "canne a pehce" << std::endl;
+        canvases.emplace_back(width, height);
 
-        if (!canvas.layers[0].texture) {
-            return false;
-        }
+        // if (!canvas.layers[0].texture) {
+        //     return false;
+        // }
 
-        if (!canvas.layers[0].buffer) {
-            return false;
-        }
+        // if (!canvas.layers[0].buffer) {
+        //     return false;
+        // }
 
-        if (!canvas.preview) {
-            return false;
-        }
+        // if (!canvas.preview) {
+        //     return false;
+        // }
 
-        return true;
+        // return true;
     }
 
     bool ViewportWindow::save_canvas(const char *label, const char *extension) noexcept
@@ -426,10 +436,14 @@ namespace chroma {
         return canvases[selected];
     }
 
-    // void buffer_to_png()
-    // {
-        
-    //     return
-    // }
+    void ViewportWindow::_on_main_color_changed(const Color &clr) noexcept
+    {
+        cmd->set_main_color(clr);
+    }
 
+    void ViewportWindow::_on_second_color_changed(const Color &clr) noexcept
+    {
+        cmd->set_second_color(clr);
+    }
+    
 }
