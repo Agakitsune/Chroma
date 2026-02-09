@@ -440,6 +440,34 @@ namespace chroma {
         return true;
     }
 
+    bool ViewportWindow::FlipLayerBuffer(SDL_GPUDevice* device, int width, int height) {
+
+        Canvas &canvas = canvases[selected];
+        // 1. Map the buffer to get a pointer to the raw pixel data
+        // Use cycle = false because we are modifying the existing data
+        void* mapPtr = canvas.layers[0].data;
+        
+        if (mapPtr) {
+            uint32_t* pixels = static_cast<uint32_t*>(mapPtr);
+            size_t rowSize = width * sizeof(uint32_t);
+        
+            // 2. Allocate a temporary row buffer for the swap
+            std::vector<uint8_t> tempRow(rowSize);
+
+            for (int y = 0; y < height / 2; ++y) {
+                uint8_t* rowTop = reinterpret_cast<uint8_t*>(&pixels[y * width]);
+                uint8_t* rowBottom = reinterpret_cast<uint8_t*>(&pixels[(height - 1 - y) * width]);
+
+                // 3. Perform the swap
+                memcpy(tempRow.data(), rowTop, rowSize);
+                memcpy(rowTop, rowBottom, rowSize);
+                memcpy(rowBottom, tempRow.data(), rowSize);
+            }
+            return true;
+        }
+        return false;
+    }
+
     bool ViewportWindow::is_empty() const noexcept
     {
         return canvases.empty();

@@ -490,6 +490,14 @@ namespace chroma {
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Transform")) {
+            if (ImGui::MenuItem("Flip", "Ctrl+F")) {
+                get_window<ViewportWindow>("Viewport")->FlipLayerBuffer(device, 16, 16);
+                printf("it flipped!");
+            }
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMenuBar();
 
         ImGui::PushOverrideID(32);
