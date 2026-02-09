@@ -36,6 +36,11 @@ namespace chroma {
         // uniform_info.size = sizeof(float) * 24; // mat4 and 2 vec
     }
 
+    void ViewportWindow::ready() noexcept
+    {
+        App::get_instance()->connect_signal("create_canvas_requested", this, &ViewportWindow::new_canvas);
+    }
+
     void ViewportWindow::display() noexcept
     {
         ImGui::Begin(label.c_str(), nullptr, flags);
@@ -60,10 +65,10 @@ namespace chroma {
             cmd = std::make_unique<BrushCommand>();
         }
 
-        const ColorPickerWindow &color_pick = App::get_instance()->color_picker;
+        // const ColorPickerWindow &color_pick = App::get_instance()->color_picker;
 
-        cmd->set_main_color(color_pick.main_color);
-        cmd->set_second_color(color_pick.second_color);
+        // cmd->set_main_color(color_pick.main_color);
+        // cmd->set_second_color(color_pick.second_color);
 
         uint64_t modal = 0;
         if (ImGui::BeginTabBar("##ViewportTabs",
@@ -300,8 +305,8 @@ namespace chroma {
         data[14] = -(far + near) / (far - near);
         data[15] = 1.0f;
 
-        color_pick.main_color.upload(&data[16]);
-        color_pick.second_color.upload(&data[20]);
+        // color_pick.main_color.upload(&data[16]);
+        // color_pick.second_color.upload(&data[20]);
 
         SDL_PushGPUVertexUniformData(
             cmd_buffer,
@@ -341,23 +346,23 @@ namespace chroma {
         SDL_EndGPUCopyPass(copy_pass);
     }
 
-    bool ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
+    void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
-        Canvas &canvas = canvases.emplace_back(width, height);
+        canvases.emplace_back(width, height);
 
-        if (!canvas.layers[0].texture) {
-            return false;
-        }
+        // if (!canvas.layers[0].texture) {
+        //     return false;
+        // }
 
-        if (!canvas.layers[0].buffer) {
-            return false;
-        }
+        // if (!canvas.layers[0].buffer) {
+        //     return false;
+        // }
 
-        if (!canvas.preview) {
-            return false;
-        }
+        // if (!canvas.preview) {
+        //     return false;
+        // }
 
-        return true;
+        // return true;
     }
 
     bool ViewportWindow::is_empty() const noexcept

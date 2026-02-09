@@ -26,8 +26,6 @@ namespace chroma {
             virtual void display() noexcept override final;
 
             void add_color(const Color &color) noexcept;
-
-            Signal<Color> color_selected;
     };
 
 }

@@ -43,43 +43,43 @@ namespace chroma {
             //     return (T*)windows.at(label).get();
             // }
 
-            // template<typename... A>
-            // void add_signal(const std::string &name) {
-            //     std::size_t hash = typeid(void(*)(A...)).hash_code();
-            //     signals.insert_or_assign(name, Signal());
-            //     signal_hash.insert_or_assign(name, hash);
-            // }
+            template<typename... A>
+            void add_signal(const std::string &name) {
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
+                signals.insert_or_assign(name, Signal());
+                signal_hash.insert_or_assign(name, hash);
+            }
 
-            // template<typename... A>
-            // void connect_signal(const std::string &name, const std::function<void(A...)> &func) {
-            //     std::size_t hash = typeid(void(*)(A...)).hash_code();
-            //     if (!signals.contains(name)) {
-            //         return;
-            //     }
-            //     if (signal_hash[name] != hash) {
-            //         return;
-            //     }
-            //     signals[name].connect((void(*)())func.template target<void(A...)>());
-            // }
+            template<typename O, typename... A>
+            void connect_signal(const std::string &name, O *object, void (O::*func)(A...)) {
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
+                if (!signals.contains(name)) {
+                    return;
+                }
+                if (signal_hash[name] != hash) {
+                    return;
+                }
+                signals[name].connect(object, func);
+            }
 
-            // void disconnect_signal(const std::string &name, void(*func)()) {
-            //     if (!signals.contains(name)) {
-            //         return;
-            //     }
-            //     signals[name].disconnect((void(*)())func);
-            // }
+            void disconnect_signal(const std::string &name, void *object) {
+                if (!signals.contains(name)) {
+                    return;
+                }
+                signals[name].disconnect(object);
+            }
 
-            // template<typename... A>
-            // void emit_signal(const std::string &name, A&&... args) {
-            //     std::size_t hash = typeid(void(*)(A...)).hash_code();
-            //     if (!signals.contains(name)) {
-            //         return;
-            //     }
-            //     if (signal_hash[name] != hash) {
-            //         return;
-            //     }
-            //     signals[name].emit(std::forward<A>(args)...);
-            // }
+            template<typename... A>
+            void emit_signal(const std::string &name, A&&... args) {
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
+                if (!signals.contains(name)) {
+                    return;
+                }
+                if (signal_hash[name] != hash) {
+                    return;
+                }
+                signals[name].emit(std::forward<A>(args)...);
+            }
 
             static App* get_instance() noexcept;
             static SDL_GPUDevice* get_device() noexcept;
@@ -121,15 +121,15 @@ namespace chroma {
             lua_State *state;
         
         public:
-            ColorPickerWindow color_picker;
-            PaletteWindow palette;
-            ViewportWindow viewport;
+            // ColorPickerWindow color_picker;
+            // PaletteWindow palette;
+            // ViewportWindow viewport;
 
-            Signal<int, int> canvas_created;
+            // Signal<int, int> canvas_created;
 
-            // std::unordered_map<std::string, std::unique_ptr<Window>> windows;
-            // std::unordered_map<std::string, Signal> signals;
-            // std::unordered_map<std::string, std::size_t> signal_hash;
+            std::unordered_map<std::string, std::unique_ptr<Window>> windows;
+            std::unordered_map<std::string, Signal> signals;
+            std::unordered_map<std::string, std::size_t> signal_hash;
 
             static App* instance;
     };

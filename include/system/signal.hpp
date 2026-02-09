@@ -8,10 +8,9 @@
 
 namespace chroma {
 
-    template<typename... Args>
     class Signal {
-        std::vector<std::function<void(std::decay_t<Args>...)>> connected;
-        // std::vector<void(*)()> connected;
+        std::vector<void(*)()> connected;
+        std::vector<void*> objects;
 
         public:
             Signal() noexcept = default;
@@ -23,40 +22,34 @@ namespace chroma {
             Signal &operator=(const Signal &other) noexcept = default;
             Signal &operator=(Signal &&other) noexcept = default;
 
-            void connect(const std::function<void(std::decay_t<Args>...)> &func) noexcept {
-                connected.emplace_back(std::move(func));
+            template<typename O, typename... Args>
+            void connect(O *object, void (O::*func)(Args...)) noexcept
+            {
+                connected.push_back((void(*)())func);
+                objects.push_back(object);
             }
 
-            template<typename... A>
-            void emit(A&&... args) const noexcept {
-                for (const auto &con : connected) {
-                    con(std::forward<A>(args)...);
+            void disconnect(void *object) noexcept
+            {
+                auto it = objects.begin();
+                for (; it != objects.end(); it++) {
+                    if (*it == object) {
+                        break;
+                    }
+                }
+                
+                size_t diff = it - objects.begin();
+                objects.erase(it);
+                connected.erase(connected.begin() + diff);
+            }
+
+            template<typename... Args>
+            void emit(Args&&... args) const noexcept
+            {
+                for (size_t i = 0; i < connected.size(); i++) {
+                    void(*fn)(void*, Args...) = (void(*)(void*, Args...))connected[i];
+                    fn(objects[i], std::forward<Args>(args)...);
                 }
             }
-
-            // void connect(void (*func)()) noexcept {
-            //     connected.emplace_back(std::move(func));
-            // }
-
-            // void disconnect(void (*func)()) noexcept {
-            //     auto it = connected.begin();
-            //     for (; it != connected.end(); it++) {
-            //         if (*it == func) {
-            //             break;
-            //         }
-            //     }
-                
-            //     connected.erase(it);
-            // }
-
-            // template <typename... A>
-            // void emit(A&&... args) const noexcept {
-            //     std::cout << "emit" << std::endl;
-            //     for (const auto &con : connected) {
-            //         void(*ptr)(A...) = (void(*)(A...))con;
-            //         std::cout << ptr << std::endl;
-            //         ptr(std::forward<A>(args)...);
-            //     }
-            // }
     };
 }

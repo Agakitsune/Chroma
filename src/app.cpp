@@ -69,21 +69,24 @@ namespace chroma {
 
         lua::register_chroma_api(state);
 
-        color_picker.ready();
-        palette.ready();
-        viewport.ready();
+        // color_picker.ready();
+        // palette.ready();
+        // viewport.ready();
 
-        canvas_created.connect([this](int w, int h) {
-            viewport.new_canvas(w, h);
-        });
+        // canvas_created.connect([this](int w, int h) {
+        //     viewport.new_canvas(w, h);
+        // });
 
-        // windows["Viewport"] = std::make_unique<ViewportWindow>();
-        // windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
-        // windows["Palette"] = std::make_unique<PaletteWindow>();
+        windows["Viewport"] = std::make_unique<ViewportWindow>();
+        windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
+        windows["Palette"] = std::make_unique<PaletteWindow>();
 
-        // for (const auto &[_n, win] : windows) {
-        //     win->ready();
-        // }
+        for (const auto &[_n, win] : windows) {
+            win->ready();
+        }
+
+        add_signal<uint32_t, uint32_t>("create_canvas_requested");
+        // add_signal<const std::string &>("save_canvas_requested");
 
         return 0;
     }
@@ -181,13 +184,13 @@ namespace chroma {
 
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
 
-            color_picker.display();
-            palette.display();
-            viewport.display();
+            // color_picker.display();
+            // palette.display();
+            // viewport.display();
 
-            // for (const auto& [label, window] : windows) {
-            //     window->display();
-            // }
+            for (const auto& [label, window] : windows) {
+                window->display();
+            }
 
             // if (preview_pass) {
             //     SDL_EndGPURenderPass(preview_pass);
@@ -503,8 +506,7 @@ namespace chroma {
 
             if (ImGui::Button("OK", ImVec2(140, 0))) {
                 // Create new file with specified width and height
-                canvas_created.emit(w, h);
-                // get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
+                emit_signal("create_canvas_requested", w, h);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
