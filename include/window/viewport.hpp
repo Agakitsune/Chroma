@@ -31,11 +31,16 @@ namespace chroma {
             ViewportWindow() noexcept;
             virtual ~ViewportWindow() noexcept = default;
 
+            virtual void ready() noexcept override final;
             virtual void display() noexcept override final;
 
-            bool new_canvas(uint32_t width, uint32_t height) noexcept;
+            void new_canvas(uint32_t width, uint32_t height) noexcept;
             bool is_empty() const noexcept;
 
             Canvas &get_canvas() noexcept;
+        
+        private:
+            void _on_main_color_changed(const Color &clr) noexcept;
+            void _on_second_color_changed(const Color &clr) noexcept;
     };
 }

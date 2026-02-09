@@ -33,7 +33,7 @@ namespace chroma {
     App::~App() noexcept {
         lua_close(state);
 
-        windows.clear(); // Release all windows and their resources
+        // windows.clear(); // Release all windows and their resources
 
         SDL_WaitForGPUIdle(device);
 
@@ -69,6 +69,16 @@ namespace chroma {
 
         lua::register_chroma_api(state);
 
+        // color_picker.ready();
+        // palette.ready();
+        // viewport.ready();
+
+        // canvas_created.connect([this](int w, int h) {
+        //     viewport.new_canvas(w, h);
+        // });
+
+        add_signal<uint32_t, uint32_t>("create_canvas_requested");
+
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
         windows["Palette"] = std::make_unique<PaletteWindow>();
@@ -76,6 +86,11 @@ namespace chroma {
         for (const auto &[_n, win] : windows) {
             win->ready();
         }
+
+        // add_signal<const std::string &>("save_canvas_requested");
+
+        emit_signal("main_color_selected", WHITE);
+        emit_signal("second_color_selected", BLACK);
 
         return 0;
     }
@@ -172,6 +187,10 @@ namespace chroma {
             }
 
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+
+            // color_picker.display();
+            // palette.display();
+            // viewport.display();
 
             for (const auto& [label, window] : windows) {
                 window->display();
@@ -491,7 +510,7 @@ namespace chroma {
 
             if (ImGui::Button("OK", ImVec2(140, 0))) {
                 // Create new file with specified width and height
-                get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
+                emit_signal("create_canvas_requested", w, h);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
