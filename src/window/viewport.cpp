@@ -45,6 +45,7 @@ namespace chroma {
     void ViewportWindow::ready() noexcept
     {
         App::get_instance()->connect_signal("create_canvas_requested", this, &ViewportWindow::new_canvas);
+        App::get_instance()->connect_signal("save_canvas_requested", this, &ViewportWindow::save_canvas);
 
         App::get_instance()->connect_signal("main_color_changed", this, &ViewportWindow::_on_main_color_changed);
         App::get_instance()->connect_signal("second_color_changed", this, &ViewportWindow::_on_second_color_changed);
@@ -399,10 +400,9 @@ namespace chroma {
         // return true;
     }
 
-    bool ViewportWindow::save_canvas(const char *label, const char *extension) noexcept
+    void ViewportWindow::save_canvas(const std::string &label, const std::string &extension) noexcept
     {
-        std::string full_name = label;
-        full_name += extension;
+        std::string full_name = label + extension;
         Canvas &canvas = canvases[selected];
 
         std::filesystem::path path = "./" + full_name;
@@ -416,14 +416,8 @@ namespace chroma {
         void *pixels = canvas.layers[0].data;
         SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
         
-        if (SDL_SaveBMP(surface, path.c_str())) {
-            SDL_DestroySurface(surface);
-            return false;
-        }
-
+        SDL_SaveBMP(surface, path.c_str());
         SDL_DestroySurface(surface);
-
-        return true;
     }
 
     bool ViewportWindow::is_empty() const noexcept

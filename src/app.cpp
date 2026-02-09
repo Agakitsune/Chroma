@@ -3,6 +3,10 @@
 
 #include "app.hpp"
 
+#include "menu/newitem.hpp"
+#include "menu/saveitem.hpp"
+#include "menu/exititem.hpp"
+
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "backends/imgui_impl_sdl3.h"
@@ -27,7 +31,7 @@ struct ImGui_ImplSDLGPU3_Data
     uint32_t                     TexTransferBufferSize  = 0;
 };
 
-static char name[1024] = {0};
+// static char name[1024] = {0};
 
 namespace chroma {
     App* App::instance = nullptr;
@@ -35,7 +39,7 @@ namespace chroma {
     App::~App() noexcept {
         //lua_close(state);
 
-        // windows.clear(); // Release all windows and their resources
+        windows.clear(); // Release all windows and their resources
 
         SDL_WaitForGPUIdle(device);
 
@@ -80,6 +84,7 @@ namespace chroma {
         // });
 
         add_signal<uint32_t, uint32_t>("create_canvas_requested");
+        add_signal<const std::string &, const std::string &>("save_canvas_requested");
 
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
@@ -88,6 +93,13 @@ namespace chroma {
         for (const auto &[_n, win] : windows) {
             win->ready();
         }
+
+        add_menu<NewMenuItem>("File");
+        // Add open here
+        separator("File");
+        add_menu<SaveMenuItem>("File");
+        separator("File");
+        add_menu<ExitMenuItem>("File");
 
         // add_signal<const std::string &>("save_canvas_requested");
 
@@ -474,138 +486,160 @@ namespace chroma {
 
         ImGui::BeginMenuBar();
 
-        if (ImGui::BeginMenu("File")) {
-            // ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_N); // doesn't woerk, need to find another way
-            if (ImGui::MenuItem("New", "Ctrl+N")) {
-                // New file action
-                ImGui::PushOverrideID(32);
-                ImGui::OpenPopup("New");
-                w = 16;
-                h = 16;
-                ImGui::PopID();
+        for (auto &[menu, items] : menu_bar) {
+            if (ImGui::BeginMenu(menu.c_str())) {
+                for (auto &item : items) {
+                    if (item) {
+                        item->menubar();
+                    } else {
+                        ImGui::Separator();
+                    }
+                }
+                ImGui::EndMenu();
             }
-            if (ImGui::MenuItem("Open", "Ctrl+O")) {
-                // New file action
-                ImGui::PushOverrideID(33);
-                ImGui::OpenPopup("Open");
-                // w = 16;
-                // h = 16;
-                ImGui::PopID();
-            }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Save", "Ctrl+S", nullptr, !get_window<ViewportWindow>("Viewport")->is_empty())) {
-                // New file action
-                ImGui::PushOverrideID(34);
-                ImGui::OpenPopup("Save");
-                // w = 16;
-                // h = 16;
-                ImGui::PopID();
-            }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Exit")) {
-                done = true;
-            }
-            ImGui::EndMenu();
         }
+
+        // if (ImGui::BeginMenu("File")) {
+        //     // ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_N); // doesn't woerk, need to find another way
+        //     if (ImGui::MenuItem("New", "Ctrl+N")) {
+        //         // New file action
+        //         ImGui::PushOverrideID(32);
+        //         ImGui::OpenPopup("New");
+        //         w = 16;
+        //         h = 16;
+        //         ImGui::PopID();
+        //     }
+        //     if (ImGui::MenuItem("Open", "Ctrl+O")) {
+        //         // New file action
+        //         ImGui::PushOverrideID(33);
+        //         ImGui::OpenPopup("Open");
+        //         // w = 16;
+        //         // h = 16;
+        //         ImGui::PopID();
+        //     }
+        //     ImGui::Separator();
+        //     if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                
+        //         // New file action
+        //         ImGui::PushOverrideID(34);
+        //         ImGui::OpenPopup("Save");
+        //         // w = 16;
+        //         // h = 16;
+        //         ImGui::PopID();
+        //     }
+        //     ImGui::Separator();
+        //     if (ImGui::MenuItem("Exit")) {
+        //         done = true;
+        //     }
+        //     ImGui::EndMenu();
+        // }
 
         ImGui::EndMenuBar();
 
-        ImGui::PushOverrideID(32);
-
-        if (ImGui::BeginPopupModal("New", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::SeparatorText("Size");
-
-            ImGui::Text("Width:");
-
-            ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::SameLine();
-            ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
-
-            ImGui::Text("Height:");
-
-            ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::SameLine();
-            ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
-
-            if (ImGui::Button("OK", ImVec2(140, 0))) {
-                // Create new file with specified width and height
-                emit_signal("create_canvas_requested", w, h);
-                ImGui::CloseCurrentPopup();
+        for (auto &[menu, items] : menu_bar) {
+            for (auto &item : items) {
+                if (item) {
+                    item->display();
+                }
             }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-                ImGui::CloseCurrentPopup();
-            }
-
-            ImGui::EndPopup();
         }
 
-        ImGui::PopID();
+        // ImGui::PushOverrideID(32);
 
-        ImGui::PushOverrideID(33);
+        // if (ImGui::BeginPopupModal("New", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        //     ImGui::SeparatorText("Size");
 
-        if (ImGui::BeginPopupModal("Open", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text("Not implemented yet");
-            if (ImGui::Button("close")) {
-                ImGui::CloseCurrentPopup();
-            }
-            // ImGui::SeparatorText("Size");
+        //     ImGui::Text("Width:");
 
-            // ImGui::Text("Width:");
+        //     ImGui::SetNextItemWidth(-FLT_MIN);
+        //     ImGui::SameLine();
+        //     ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
 
-            // ImGui::SetNextItemWidth(-FLT_MIN);
-            // ImGui::SameLine();
-            // ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
+        //     ImGui::Text("Height:");
 
-            // ImGui::Text("Height:");
+        //     ImGui::SetNextItemWidth(-FLT_MIN);
+        //     ImGui::SameLine();
+        //     ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
 
-            // ImGui::SetNextItemWidth(-FLT_MIN);
-            // ImGui::SameLine();
-            // ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
+        //     if (ImGui::Button("OK", ImVec2(140, 0))) {
+        //         // Create new file with specified width and height
+        //         emit_signal("create_canvas_requested", w, h);
+        //         ImGui::CloseCurrentPopup();
+        //     }
+        //     ImGui::SetItemDefaultFocus();
+        //     ImGui::SameLine();
+        //     if (ImGui::Button("Cancel", ImVec2(140, 0))) {
+        //         ImGui::CloseCurrentPopup();
+        //     }
 
-            // if (ImGui::Button("OK", ImVec2(140, 0))) {
-            //     // Create new file with specified width and height
-            //     get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
-            //     ImGui::CloseCurrentPopup();
-            // }
-            // ImGui::SetItemDefaultFocus();
-            // ImGui::SameLine();
-            // if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-            //     ImGui::CloseCurrentPopup();
-            // }
+        //     ImGui::EndPopup();
+        // }
 
-            ImGui::EndPopup();
-        }
+        // ImGui::PopID();
 
-        ImGui::PopID();
+        // ImGui::PushOverrideID(33);
 
-        ImGui::PushOverrideID(34);
+        // if (ImGui::BeginPopupModal("Open", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        //     ImGui::Text("Not implemented yet");
+        //     if (ImGui::Button("close")) {
+        //         ImGui::CloseCurrentPopup();
+        //     }
+        //     // ImGui::SeparatorText("Size");
 
-        if (ImGui::BeginPopupModal("Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::InputText("File name", name, 1024);
-            if (ImGui::BeginCombo("File type", ".bmp")) {
-                ImGui::Selectable(".bmp");
-                ImGui::EndCombo();
-            }
+        //     // ImGui::Text("Width:");
 
-            std::cout << name << std::endl;
+        //     // ImGui::SetNextItemWidth(-FLT_MIN);
+        //     // ImGui::SameLine();
+        //     // ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
 
-            if (ImGui::Button("Save", ImVec2(140, 0))) {
-                // Create new file with specified width and height
-                get_window<ViewportWindow>("Viewport")->save_canvas(name, ".bmp");
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-                ImGui::CloseCurrentPopup();
-            }
+        //     // ImGui::Text("Height:");
 
-            ImGui::EndPopup();
-        }
+        //     // ImGui::SetNextItemWidth(-FLT_MIN);
+        //     // ImGui::SameLine();
+        //     // ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
 
-        ImGui::PopID();
+        //     // if (ImGui::Button("OK", ImVec2(140, 0))) {
+        //     //     // Create new file with specified width and height
+        //     //     get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
+        //     //     ImGui::CloseCurrentPopup();
+        //     // }
+        //     // ImGui::SetItemDefaultFocus();
+        //     // ImGui::SameLine();
+        //     // if (ImGui::Button("Cancel", ImVec2(140, 0))) {
+        //     //     ImGui::CloseCurrentPopup();
+        //     // }
+
+        //     ImGui::EndPopup();
+        // }
+
+        // ImGui::PopID();
+
+        // ImGui::PushOverrideID(34);
+
+        // if (ImGui::BeginPopupModal("Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        //     ImGui::InputText("File name", name, 1024);
+        //     if (ImGui::BeginCombo("File type", ".bmp")) {
+        //         ImGui::Selectable(".bmp");
+        //         ImGui::EndCombo();
+        //     }
+
+        //     std::cout << name << std::endl;
+
+        //     if (ImGui::Button("Save", ImVec2(140, 0))) {
+        //         // Create new file with specified width and height
+        //         // get_window<ViewportWindow>("Viewport")->save_canvas(name, ".bmp");
+        //         ImGui::CloseCurrentPopup();
+        //     }
+        //     ImGui::SetItemDefaultFocus();
+        //     ImGui::SameLine();
+        //     if (ImGui::Button("Cancel", ImVec2(140, 0))) {
+        //         ImGui::CloseCurrentPopup();
+        //     }
+
+        //     ImGui::EndPopup();
+        // }
+
+        // ImGui::PopID();
 
         // Menubar possibly here i dunno
 

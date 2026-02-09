@@ -12,8 +12,7 @@
 
 #include "system/signal.hpp"
 
-extern "C" {
-}
+#include "menu/menuitem.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -78,6 +77,23 @@ namespace chroma {
                 signals[name].emit(std::forward<A>(args)...);
             }
 
+            template<typename I>
+            void add_menu(const std::string &menu)
+            {
+                // if (!menu_bar.contains(menu)) {
+                //     menu_bar[menu]menu, std::vector<std::unique_ptr<MenuItem>>());
+                // }
+                menu_bar[menu].push_back(std::make_unique<I>());
+            }
+
+            void separator(const std::string &menu)
+            {
+                // if (!menu_bar.contains(menu)) {
+                //     menu_bar.insert(menu, std::vector<std::unique_ptr<MenuItem>>());
+                // }
+                menu_bar[menu].emplace_back(nullptr);
+            }
+
             static App* get_instance() noexcept;
             static SDL_GPUDevice* get_device() noexcept;
             static SDL_GPUCommandBuffer *get_command_buffer() noexcept;
@@ -119,6 +135,8 @@ namespace chroma {
             std::unordered_map<std::string, std::unique_ptr<Window>> windows;
             std::unordered_map<std::string, Signal> signals;
             std::unordered_map<std::string, std::size_t> signal_hash;
+
+            std::unordered_map<std::string, std::vector<std::unique_ptr<MenuItem>>> menu_bar;
 
             static App* instance;
     };
