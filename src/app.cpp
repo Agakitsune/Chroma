@@ -28,6 +28,7 @@ struct ImGui_ImplSDLGPU3_Data
 };
 
 static char name[1024] = {0};
+static char *save_format = ".bmp";
 
 namespace chroma {
     App* App::instance = nullptr;
@@ -565,8 +566,17 @@ namespace chroma {
 
         if (ImGui::BeginPopupModal("Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
             ImGui::InputText("File name", name, 1024);
-            if (ImGui::BeginCombo("File type", ".bmp")) {
-                ImGui::Selectable(".bmp");
+            if (ImGui::BeginCombo("File type", save_format)) {
+                // ImGui::Selectable(".bmp");
+                // ImGui::Selectable(".png");
+                if (ImGui::Selectable(".bmp", strcmp(save_format, ".bmp") == 0))
+                    save_format = ".bmp"; // Update the state
+                if (ImGui::Selectable(".png", strcmp(save_format, ".png") == 0))
+                    save_format = ".png"; // Update the state
+                if (ImGui::Selectable(".jpg", strcmp(save_format, ".jpg") == 0))
+                    save_format = ".jpg"; // Update the state
+                if (ImGui::Selectable(".tga", strcmp(save_format, ".tga") == 0))
+                    save_format = ".tga"; // Update the state
                 ImGui::EndCombo();
             }
 
@@ -574,7 +584,7 @@ namespace chroma {
 
             if (ImGui::Button("Save", ImVec2(140, 0))) {
                 // Create new file with specified width and height
-                get_window<ViewportWindow>("Viewport")->save_canvas(name, ".bmp");
+                get_window<ViewportWindow>("Viewport")->save_canvas(name, save_format);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
