@@ -22,11 +22,15 @@ namespace chroma {
     )
     {
         App::get_instance()->add_signal<const Color &>("color_picked");
+
+        App::get_instance()->add_signal<const Color &>("main_color_changed");
+        App::get_instance()->add_signal<const Color &>("secondary_color_changed");
     }
 
     void ColorPickerWindow::ready() noexcept
     {
-        App::get_instance()->connect_signal("color_selected", this, &ColorPickerWindow::_on_main_color_selected);
+        App::get_instance()->connect_signal("main_color_selected", this, &ColorPickerWindow::_on_main_color_selected);
+        App::get_instance()->connect_signal("second_color_changed", this, &ColorPickerWindow::_on_second_color_selected);
     }
 
     void ColorPickerWindow::display() noexcept
@@ -195,7 +199,13 @@ namespace chroma {
         ImGui::End();
     }
 
-    void ColorPickerWindow::_on_main_color_selected(const Color &clr) {
+    void ColorPickerWindow::_on_main_color_selected(const Color &clr) noexcept {
         main_color = clr;
+        App::get_instance()->emit_signal<const Color&>("main_color_changed", clr);
+    }
+
+    void ColorPickerWindow::_on_second_color_selected(const Color &clr) noexcept {
+        second_color = clr;
+        App::get_instance()->emit_signal<const Color&>("second_color_changed", clr);
     }
 }

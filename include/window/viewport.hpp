@@ -38,5 +38,9 @@ namespace chroma {
             bool is_empty() const noexcept;
 
             Canvas &get_canvas() noexcept;
+        
+        private:
+            void _on_main_color_changed(const Color &clr) noexcept;
+            void _on_second_color_changed(const Color &clr) noexcept;
     };
 }

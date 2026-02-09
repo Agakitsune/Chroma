@@ -18,6 +18,7 @@ namespace chroma {
             Color main_color;
             Color second_color;
         private:
-            void _on_main_color_selected(const Color &clr);
+            void _on_main_color_selected(const Color &clr) noexcept;
+            void _on_second_color_selected(const Color &clr) noexcept;
     };
 }

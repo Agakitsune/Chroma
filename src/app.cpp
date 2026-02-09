@@ -77,6 +77,8 @@ namespace chroma {
         //     viewport.new_canvas(w, h);
         // });
 
+        add_signal<uint32_t, uint32_t>("create_canvas_requested");
+
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
         windows["Palette"] = std::make_unique<PaletteWindow>();
@@ -85,8 +87,10 @@ namespace chroma {
             win->ready();
         }
 
-        add_signal<uint32_t, uint32_t>("create_canvas_requested");
         // add_signal<const std::string &>("save_canvas_requested");
+
+        emit_signal("main_color_selected", WHITE);
+        emit_signal("second_color_selected", BLACK);
 
         return 0;
     }

@@ -23,6 +23,7 @@ namespace chroma {
         ImGuiWindowFlags_NoMove
     )
     {
+        cmd = std::make_unique<BrushCommand>(); // default command
         // SDL_GPUDevice *device = App::get_device();
 
         // SDL_GPUTransferBufferCreateInfo transfer_info = {};
@@ -39,6 +40,9 @@ namespace chroma {
     void ViewportWindow::ready() noexcept
     {
         App::get_instance()->connect_signal("create_canvas_requested", this, &ViewportWindow::new_canvas);
+
+        App::get_instance()->connect_signal("main_color_changed", this, &ViewportWindow::_on_main_color_changed);
+        App::get_instance()->connect_signal("second_color_changed", this, &ViewportWindow::_on_second_color_changed);
     }
 
     void ViewportWindow::display() noexcept
@@ -61,9 +65,9 @@ namespace chroma {
         SDL_GPUDevice *device = App::get_device();
         SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
 
-        if (cmd == nullptr) {
-            cmd = std::make_unique<BrushCommand>();
-        }
+        // if (cmd == nullptr) {
+        //     cmd = std::make_unique<BrushCommand>();
+        // }
 
         // const ColorPickerWindow &color_pick = App::get_instance()->color_picker;
 
@@ -305,8 +309,8 @@ namespace chroma {
         data[14] = -(far + near) / (far - near);
         data[15] = 1.0f;
 
-        // color_pick.main_color.upload(&data[16]);
-        // color_pick.second_color.upload(&data[20]);
+        cmd->get_main_color().upload(&data[16]);
+        cmd->get_second_color().upload(&data[20]);
 
         SDL_PushGPUVertexUniformData(
             cmd_buffer,
@@ -348,6 +352,7 @@ namespace chroma {
 
     void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
+        std::cout << "canne a pehce" << std::endl;
         canvases.emplace_back(width, height);
 
         // if (!canvas.layers[0].texture) {
@@ -373,6 +378,16 @@ namespace chroma {
     Canvas &ViewportWindow::get_canvas() noexcept
     {
         return canvases[selected];
-    } 
+    }
 
+    void ViewportWindow::_on_main_color_changed(const Color &clr) noexcept
+    {
+        cmd->set_main_color(clr);
+    }
+
+    void ViewportWindow::_on_second_color_changed(const Color &clr) noexcept
+    {
+        cmd->set_second_color(clr);
+    }
+    
 }
