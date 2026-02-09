@@ -66,7 +66,7 @@ namespace chroma {
             }
 
             template<typename... A>
-            void emit_signal(const std::string &name, A&&... args) {
+            void emit_signal(const std::string &name, A... args) {
                 std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 if (!signals.contains(name)) {
                     return;
