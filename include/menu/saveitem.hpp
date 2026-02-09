@@ -4,6 +4,7 @@
 #include "menu/menuitem.hpp"
 
 #include <filesystem>
+#include <vector>
 
 namespace chroma {
 
@@ -14,9 +15,14 @@ namespace chroma {
         std::filesystem::path home;
         std::filesystem::path current;
 
+        std::vector<std::filesystem::path> directories;
+        std::vector<std::filesystem::path> files;
+
         public:
             SaveMenuItem() noexcept;
             ~SaveMenuItem() noexcept;
+
+            void query_current_directory() noexcept;
 
             virtual void menubar() noexcept override final;
             virtual void display() noexcept override final;
