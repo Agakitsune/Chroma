@@ -39,3 +39,10 @@
 
 # debug information files
 *.dwo
+
+*.ini
+*.json
+*.png
+
+# Cmake files
+build/
