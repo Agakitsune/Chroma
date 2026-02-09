@@ -81,6 +81,7 @@ FetchContent_MakeAvailable(
 
 file(GLOB CPP_SOURCES
     src/*.cpp
+    src/menu/*.cpp
     src/window/*.cpp
     src/lua/*.cpp
     src/lua/imgui/*.cpp

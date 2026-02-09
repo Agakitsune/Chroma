@@ -20,11 +20,17 @@ namespace chroma {
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoMove
     )
-    {}
+    {
+        App::get_instance()->add_signal<const Color &>("color_picked");
 
-    void ColorPickerWindow::ready() noexcept {
-        std::function<void(const Color &)> a = std::bind(&ColorPickerWindow::_on_main_color_selected, this, std::placeholders::_1);
-        App::get_instance()->connect_signal<const Color &>("color_selected", a);
+        App::get_instance()->add_signal<const Color &>("main_color_changed");
+        App::get_instance()->add_signal<const Color &>("secondary_color_changed");
+    }
+
+    void ColorPickerWindow::ready() noexcept
+    {
+        App::get_instance()->connect_signal("main_color_selected", this, &ColorPickerWindow::_on_main_color_selected);
+        App::get_instance()->connect_signal("second_color_changed", this, &ColorPickerWindow::_on_second_color_selected);
     }
 
     void ColorPickerWindow::display() noexcept
@@ -93,7 +99,7 @@ namespace chroma {
 
             if (right_clicked) {
                 ImGui::ColorConvertHSVtoRGB(H, S, V, main_color[0], main_color[1], main_color[2]);
-                App::get_instance()->get_window<PaletteWindow>("Palette")->add_color(Color{R, G, B, main_color[3]});
+                App::get_instance()->emit_signal("color_picked", main_color);
             }
         }
 
@@ -193,7 +199,13 @@ namespace chroma {
         ImGui::End();
     }
 
-    void ColorPickerWindow::_on_main_color_selected(const Color &clr) {
+    void ColorPickerWindow::_on_main_color_selected(const Color &clr) noexcept {
         main_color = clr;
+        App::get_instance()->emit_signal<const Color&>("main_color_changed", clr);
+    }
+
+    void ColorPickerWindow::_on_second_color_selected(const Color &clr) noexcept {
+        second_color = clr;
+        App::get_instance()->emit_signal<const Color&>("second_color_changed", clr);
     }
 }

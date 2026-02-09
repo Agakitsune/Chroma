@@ -25,6 +25,16 @@ namespace chroma {
             {
                 second = color;
             }
+
+            virtual Color get_main_color() noexcept override final
+            {
+                return main;
+            }
+
+            virtual Color get_second_color() noexcept override final
+            {
+                return second;
+            }
     };
 
 }

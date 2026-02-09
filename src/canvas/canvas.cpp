@@ -6,6 +6,8 @@
 
 #include <cstring>
 
+#define TILE_SIZE 32
+
 namespace chroma {
 
     Layer::~Layer() noexcept
@@ -59,9 +61,9 @@ namespace chroma {
     {
         SDL_GPUDevice *device = App::get_device();
 
-        const uint64_t buffer_size = (width * height) << 2; // RGBA8
-        const uint64_t tile_x = (width >> 6) + ((width & 63) ? 1 : 0);
-        const uint64_t tile_y = (height >> 6) + ((height & 63) ? 1 : 0);
+        const uint64_t buffer_size = (width * height) * 4; // RGBA8
+        const uint64_t tile_x = (width / TILE_SIZE) + ((width & (TILE_SIZE - 1)) ? 1 : 0);
+        const uint64_t tile_y = (height / TILE_SIZE) + ((height & (TILE_SIZE - 1)) ? 1 : 0);
         const uint64_t dirty_flags_size = tile_x * tile_y;
 
         SDL_GPUTextureCreateInfo texture_info = {};
@@ -81,6 +83,7 @@ namespace chroma {
         buffer_info.props = 0;
 
         Layer &layer = layers.emplace_back();
+        TileTransfer transfer;
 
         layer.data = new uint8_t[buffer_size];
         layer.dirty_flags = new bool[dirty_flags_size];
@@ -89,9 +92,17 @@ namespace chroma {
             layer.data[i] = 0;
         }
 
-        for (uint64_t i = 0; i < dirty_flags_size; ++i) {
-            layer.dirty_flags[i] = true; // Upload everything at the end of the frame
-        }
+        transfer.index = 0;
+        transfer.w = width;
+        transfer.h = height;
+        transfer.x = 0;
+        transfer.y = 0;
+
+        pending_uploads.push_back(transfer);
+
+        // for (uint64_t i = 0; i < dirty_flags_size; ++i) {
+        //     layer.dirty_flags[i] = true; // Upload everything at the end of the frame
+        // }
 
         layer.texture = SDL_CreateGPUTexture(
             device,
@@ -121,13 +132,13 @@ namespace chroma {
     }
 
     Canvas::Canvas(Canvas&&other) noexcept
-    : width(other.width),
-    height(other.height),
-    name(std::move(other.name)),
-    stack(std::move(other.stack)),
-    pending(std::move(other.pending)),
+    : name(std::move(other.name)),
     layers(std::move(other.layers)),
     preview(other.preview),
+    stack(std::move(other.stack)),
+    pending(std::move(other.pending)),
+    width(other.width),
+    height(other.height),
     stack_index(other.stack_index),
     layer(other.layer),
     offset(other.offset),
@@ -162,15 +173,15 @@ namespace chroma {
     {
         const Layer &layer = layers[this->layer];
 
-        const uint64_t div_x = x >> 6;
-        const uint64_t div_y = y >> 6;
-        const uint64_t mod_x = x & 63;
-        const uint64_t mod_y = y & 63;
+        const uint64_t div_x = x / TILE_SIZE;
+        const uint64_t div_y = y / TILE_SIZE;
+        const uint64_t mod_x = x & (TILE_SIZE - 1);
+        const uint64_t mod_y = y & (TILE_SIZE - 1);
 
-        const uint64_t div_width = width >> 6;
-        const uint64_t div_height = height >> 6;
-        const uint64_t mod_width = width & 63;
-        const uint64_t mod_height = height & 63;
+        const uint64_t div_width = width / TILE_SIZE;
+        const uint64_t div_height = height / TILE_SIZE;
+        const uint64_t mod_width = width & (TILE_SIZE - 1);
+        const uint64_t mod_height = height & (TILE_SIZE - 1);
 
         uint64_t index = 0;
         const uint8_t *base = nullptr;
@@ -179,28 +190,28 @@ namespace chroma {
 
         if (div_x < div_width && div_y < div_height) {
             // Full 64x64 tile
-            index = (div_x << 6) + (div_y * (div_width << 6));
+            index = (div_x * TILE_SIZE) + (div_y * (div_width * TILE_SIZE));
 
-            base = layer.data + (index << 2);
-            ret.download(base + (((mod_y << 6) + mod_x) << 2));
+            base = layer.data + (index * 4);
+            ret.download(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
         } else {
-            index = (div_width << 6) + (div_height << 6); // Skip all full tiles
+            index = (div_width * TILE_SIZE) + (div_height * TILE_SIZE); // Skip all full tiles
 
             if (div_y == div_height) {
                 // Skip last partial row
-                index += div_height * (mod_width << 6);
+                index += div_height * (mod_width * TILE_SIZE);
 
-                index += div_x * (mod_height << 6);
+                index += div_x * (mod_height * TILE_SIZE);
             } else {
-                index += div_y * (mod_height << 6);
+                index += div_y * (mod_height * TILE_SIZE);
             }
 
-            base = layer.data + (index << 2);
+            base = layer.data + (index * 4);
 
             if (div_x == div_width) {
-                ret.download(base + (((mod_y * mod_width) + mod_x) << 2));
+                ret.download(base + (((mod_y * mod_width) + mod_x) * 4));
             } else {
-                ret.download(base + (((mod_y << 6) + mod_x) << 2));
+                ret.download(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
             }
         }
 
@@ -211,53 +222,76 @@ namespace chroma {
     {
         const Layer &layer = layers[this->layer];
 
-        const uint64_t div_x = x >> 6;
-        const uint64_t div_y = y >> 6;
-        const uint64_t mod_x = x & 63;
-        const uint64_t mod_y = y & 63;
+        const uint64_t div_x = x / TILE_SIZE;
+        const uint64_t div_y = y / TILE_SIZE;
+        const uint64_t mod_x = x & (TILE_SIZE - 1);
+        const uint64_t mod_y = y & (TILE_SIZE - 1);
 
-        const uint64_t div_width = width >> 6;
-        const uint64_t div_height = height >> 6;
-        const uint64_t mod_width = width & 63;
-        const uint64_t mod_height = height & 63;
+        const uint64_t div_width = width / TILE_SIZE;
+        const uint64_t div_height = height / TILE_SIZE;
+        const uint64_t mod_width = width & (TILE_SIZE - 1);
+        const uint64_t mod_height = height & (TILE_SIZE - 1);
 
-        uint64_t index = 0;
-        uint64_t flag_index = 0;
+        // uint64_t index = 0;
         uint8_t *base = nullptr;
+
+        bool new_transfer = true;
+
+        TileTransfer transfer;
+
+        transfer.x = div_x * TILE_SIZE;
+        transfer.y = div_y * TILE_SIZE;
+
+        // transfer.index = 
 
         if (div_x < div_width && div_y < div_height) {
             // Full 64x64 tile
-            index = (div_x << 6) + (div_y * (div_width << 6));
-            flag_index = div_x + div_y * div_width;
+            transfer.index = (div_x * TILE_SIZE * TILE_SIZE) + (div_y * (div_width * TILE_SIZE * TILE_SIZE));
 
-            base = layer.data + (index << 2);
-            color.upload(base + (((mod_y << 6) + mod_x) << 2));
+            transfer.w = TILE_SIZE;
+            transfer.h = TILE_SIZE;
+            
+            // color.upload(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
         } else {
-            index = (div_width << 6) * (div_height << 6); // Skip all full tiles
-            flag_index = div_width * div_height;
+            transfer.index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); // Skip all full tiles
+            // flag_index = div_width * div_height;
 
             if (div_y == div_height) {
                 // Skip last partial row
-                index += div_height * (mod_width << 6);
-                flag_index += div_height;
+                transfer.index += div_height * (mod_width * TILE_SIZE);
 
-                index += div_x * (mod_height << 6);
-                flag_index += div_x;
+                transfer.index += div_x * (mod_height * TILE_SIZE);
+                transfer.h = mod_height;
             } else {
-                index += div_y * (mod_height << 6);
-                flag_index += div_y;
+                transfer.index += div_y * (mod_height * TILE_SIZE);
+                transfer.h = TILE_SIZE;
             }
 
-            base = layer.data + (index << 2);
+            // base = layer.data + (index * 4);
+        }
 
-            if (div_x == div_width) {
-                color.upload(base + (((mod_y * mod_width) + mod_x) << 2));
-            } else {
-                color.upload(base + (((mod_y << 6) + mod_x) << 2));
+        base = layer.data + (transfer.index * 4);
+
+        if (div_x == div_width) {
+            color.upload(base + (((mod_y * mod_width) + mod_x) * 4));
+            transfer.w = mod_width;
+        } else {
+            color.upload(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
+            transfer.w = TILE_SIZE;
+        }
+
+        for (const TileTransfer &t : pending_uploads) {
+            if (transfer.index == t.index) {
+                new_transfer = false;
+                break;
             }
         }
 
-        layer.dirty_flags[flag_index] = true;
+        if (new_transfer) {
+            pending_uploads.push_back(transfer);
+        }
+
+        // layer.dirty_flags[flag_index] = true;
     }
 
     void Canvas::add_command(std::unique_ptr<ICommand> &&cmd) noexcept
@@ -311,10 +345,10 @@ namespace chroma {
     {
         SDL_GPUDevice *device = App::get_device();
 
-        const uint64_t div_width = width >> 6;
-        const uint64_t div_height = height >> 6;
-        const uint64_t mod_width = width & 63;
-        const uint64_t mod_height = height & 63;
+        const uint64_t div_width = width / TILE_SIZE;
+        const uint64_t div_height = height / TILE_SIZE;
+        const uint64_t mod_width = width & (TILE_SIZE - 1);
+        const uint64_t mod_height = height & (TILE_SIZE - 1);
 
         uint64_t index = 0;
 
@@ -328,165 +362,210 @@ namespace chroma {
         destination.z = 0;
         destination.d = 1;
 
-        for (Layer &layer : layers) {
-            mapping = SDL_MapGPUTransferBuffer(
-                device,
-                layer.buffer,
-                true
+        const Layer &layer = layers[this->layer];
+
+        source.transfer_buffer = layer.buffer;
+        destination.texture = layer.texture;
+
+        mapping = SDL_MapGPUTransferBuffer(
+            device,
+            layer.buffer,
+            true
+        );
+
+        for (const TileTransfer &transfer : pending_uploads) {
+            const uint32_t s = transfer.index * 4;
+            const uint8_t *base = layer.data + s;
+            uint8_t *dst = (uint8_t*)mapping + s;
+
+            source.offset = s;
+            source.pixels_per_row = transfer.w;
+            source.rows_per_layer = transfer.h;
+
+            destination.w = transfer.w;
+            destination.h = transfer.h;
+            destination.x = transfer.x;
+            destination.y = transfer.y;
+
+            std::memcpy(
+                dst, base, transfer.w * transfer.h * 4
             );
 
-            source.transfer_buffer = layer.buffer;
-            destination.texture = layer.texture;
-
-            for (uint64_t y = 0; y < div_height; ++y) {
-                for (uint64_t x = 0; x < div_width; ++x) {
-                    const uint64_t flag_index = x + y * div_width;
-
-                    if (layer.dirty_flags[flag_index]) {
-                        layer.dirty_flags[flag_index] = false;
-
-                        index = (x << 6) + (y * (div_width << 6));
-                        const uint8_t *base = layer.data + (index << 2);
-
-                        uint8_t *dst = (uint8_t*)mapping + (index << 2);
-                        std::memcpy(
-                            dst,
-                            base,
-                            64 * 64 * 4
-                        );
-
-                        source.offset = index << 2;
-                        source.pixels_per_row = 64;
-                        source.rows_per_layer = 64;
-
-                        destination.w = 64;
-                        destination.h = 64;
-                        destination.x = x << 6;
-                        destination.y = y << 6;
-
-                        SDL_UploadToGPUTexture(
-                            pass,
-                            &source,
-                            &destination,
-                            true
-                        );
-                    }
-                }
-            }
-
-            for (uint64_t y = 0; y < div_height; ++y) {
-                const uint64_t flag_index = div_width * div_height + y;
-
-                if (layer.dirty_flags[flag_index]) {
-                    layer.dirty_flags[flag_index] = false;
-
-                    index = (div_width << 6) * (div_height << 6); // Skip all full tiles
-                    index += y * (mod_width << 6);
-
-                    const uint8_t *base = layer.data + (index << 2);
-
-                    uint8_t *dst = (uint8_t*)mapping + (index << 2);
-                    std::memcpy(
-                        dst,
-                        base,
-                        mod_width * 64 * 4
-                    );
-
-                    source.offset = index << 2;
-                    source.pixels_per_row = mod_width;
-                    source.rows_per_layer = 64;
-
-                    destination.w = mod_width;
-                    destination.h = 64;
-                    destination.x = div_width << 6;
-                    destination.y = y << 6;
-
-                    SDL_UploadToGPUTexture(
-                        pass,
-                        &source,
-                        &destination,
-                        true
-                    );
-                }
-            }
-
-            for (uint64_t x = 0; x < div_width; ++x) {
-                const uint64_t flag_index = x + div_height + div_height * div_width;
-
-                if (layer.dirty_flags[flag_index]) {
-                    layer.dirty_flags[flag_index] = false;
-
-                    index = (div_width << 6) * (div_height << 6); // Skip all full tiles
-                    index += div_height * (mod_width << 6);
-                    index += x * (mod_height << 6);
-
-                    const uint8_t *base = layer.data + (index << 2);
-
-                    uint8_t *dst = (uint8_t*)mapping + (index << 2);
-                    std::memcpy(
-                        dst,
-                        base,
-                        64 * mod_height * 4
-                    );
-
-                    source.offset = index << 2;
-                    source.pixels_per_row = 64;
-                    source.rows_per_layer = mod_height;
-
-                    destination.w = 64;
-                    destination.h = mod_height;
-                    destination.x = x << 6;
-                    destination.y = div_height << 6;
-
-                    SDL_UploadToGPUTexture(
-                        pass,
-                        &source,
-                        &destination,
-                        true
-                    );
-                }
-            }
-
-            const uint64_t flag_index = div_width * div_height + div_height + div_width;
-
-            if (layer.dirty_flags[flag_index]) {
-                layer.dirty_flags[flag_index] = false;
-
-                index = (div_width << 6) * (div_height << 6); // Skip all full tiles
-                index += div_width * (mod_height << 6);
-                index += div_height * (mod_width << 6);
-
-                const uint8_t *base = layer.data + (index << 2);
-
-                uint8_t *dst = (uint8_t*)mapping + (index << 2);
-                std::memcpy(
-                    dst,
-                    base,
-                    mod_width * mod_height * 4
-                );
-
-                source.offset = index << 2;
-                source.pixels_per_row = mod_width;
-                source.rows_per_layer = mod_height;
-
-                destination.w = mod_width;
-                destination.h = mod_height;
-                destination.x = div_width << 6;
-                destination.y = div_height<< 6;
-
-                SDL_UploadToGPUTexture(
-                    pass,
-                    &source,
-                    &destination,
-                    true
-                );
-            }
-
-            SDL_UnmapGPUTransferBuffer(
-                device,
-                layer.buffer
+            SDL_UploadToGPUTexture(
+                pass,
+                &source,
+                &destination,
+                false
             );
         }
+
+        SDL_UnmapGPUTransferBuffer(
+            device,
+            layer.buffer
+        );
+
+        pending_uploads.clear();
+
+        // for (Layer &layer : layers) {
+        //     mapping = SDL_MapGPUTransferBuffer(
+        //         device,
+        //         layer.buffer,
+        //         true
+        //     );
+
+        //     source.transfer_buffer = layer.buffer;
+        //     destination.texture = layer.texture;
+
+        //     for (uint64_t y = 0; y < div_height; ++y) {
+        //         for (uint64_t x = 0; x < div_width; ++x) {
+        //             const uint64_t flag_index = x + y * div_width;
+
+        //             if (layer.dirty_flags[flag_index]) {
+        //                 layer.dirty_flags[flag_index] = false;
+
+        //                 index = (x * TILE_SIZE) + (y * (div_width * TILE_SIZE));
+        //                 const uint8_t *base = layer.data + (index * 4);
+
+        //                 uint8_t *dst = (uint8_t*)mapping + (index * 4);
+        //                 std::memcpy(
+        //                     dst,
+        //                     base,
+        //                     TILE_SIZE * TILE_SIZE * 4
+        //                 );
+
+        //                 source.offset = index * 4;
+        //                 source.pixels_per_row = TILE_SIZE;
+        //                 source.rows_per_layer = TILE_SIZE;
+
+        //                 destination.w = TILE_SIZE;
+        //                 destination.h = TILE_SIZE;
+        //                 destination.x = x * TILE_SIZE;
+        //                 destination.y = y * TILE_SIZE;
+
+        //                 SDL_UploadToGPUTexture(
+        //                     pass,
+        //                     &source,
+        //                     &destination,
+        //                     true
+        //                 );
+        //             }
+        //         }
+        //     }
+
+        //     for (uint64_t y = 0; y < div_height; ++y) {
+        //         const uint64_t flag_index = div_width * div_height + y;
+
+        //         if (layer.dirty_flags[flag_index]) {
+        //             layer.dirty_flags[flag_index] = false;
+
+        //             index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); // Skip all full tiles
+        //             index += y * (mod_width * TILE_SIZE);
+
+        //             const uint8_t *base = layer.data + (index * 4);
+
+        //             uint8_t *dst = (uint8_t*)mapping + (index * 4);
+        //             std::memcpy(
+        //                 dst,
+        //                 base,
+        //                 mod_width * TILE_SIZE * 4
+        //             );
+
+        //             source.offset = index * 4;
+        //             source.pixels_per_row = mod_width;
+        //             source.rows_per_layer = TILE_SIZE;
+
+        //             destination.w = mod_width;
+        //             destination.h = TILE_SIZE;
+        //             destination.x = div_width * TILE_SIZE;
+        //             destination.y = y * TILE_SIZE;
+
+        //             SDL_UploadToGPUTexture(
+        //                 pass,
+        //                 &source,
+        //                 &destination,
+        //                 true
+        //             );
+        //         }
+        //     }
+
+        //     for (uint64_t x = 0; x < div_width; ++x) {
+        //         const uint64_t flag_index = x + div_height + div_height * div_width;
+
+        //         if (layer.dirty_flags[flag_index]) {
+        //             layer.dirty_flags[flag_index] = false;
+
+        //             index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); // Skip all full tiles
+        //             index += div_height * (mod_width * TILE_SIZE);
+        //             index += x * (mod_height * TILE_SIZE);
+
+        //             const uint8_t *base = layer.data + (index * 4);
+
+        //             uint8_t *dst = (uint8_t*)mapping + (index * 4);
+        //             std::memcpy(
+        //                 dst,
+        //                 base,
+        //                 TILE_SIZE * mod_height * 4
+        //             );
+
+        //             source.offset = index * 4;
+        //             source.pixels_per_row = TILE_SIZE;
+        //             source.rows_per_layer = mod_height;
+
+        //             destination.w = TILE_SIZE;
+        //             destination.h = mod_height;
+        //             destination.x = x * TILE_SIZE;
+        //             destination.y = div_height * TILE_SIZE;
+
+        //             SDL_UploadToGPUTexture(
+        //                 pass,
+        //                 &source,
+        //                 &destination,
+        //                 true
+        //             );
+        //         }
+        //     }
+
+        //     const uint64_t flag_index = div_width * div_height + div_height + div_width;
+
+        //     if (layer.dirty_flags[flag_index]) {
+        //         layer.dirty_flags[flag_index] = false;
+
+        //         index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); // Skip all full tiles
+        //         index += div_width * (mod_height * TILE_SIZE);
+        //         index += div_height * (mod_width * TILE_SIZE);
+
+        //         const uint8_t *base = layer.data + (index * 4);
+
+        //         uint8_t *dst = (uint8_t*)mapping + (index * 4);
+        //         std::memcpy(
+        //             dst,
+        //             base,
+        //             mod_width * mod_height * 4
+        //         );
+
+        //         source.offset = index * 4;
+        //         source.pixels_per_row = mod_width;
+        //         source.rows_per_layer = mod_height;
+
+        //         destination.w = mod_width;
+        //         destination.h = mod_height;
+        //         destination.x = div_width * TILE_SIZE;
+        //         destination.y = div_height* TILE_SIZE;
+
+        //         SDL_UploadToGPUTexture(
+        //             pass,
+        //             &source,
+        //             &destination,
+        //             true
+        //         );
+        //     }
+
+        //     SDL_UnmapGPUTransferBuffer(
+        //         device,
+        //         layer.buffer
+        //     );
+        // }
+
     }
 
 }
