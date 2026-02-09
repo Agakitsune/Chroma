@@ -13,9 +13,6 @@
 #include "system/signal.hpp"
 
 extern "C" {
-    #include "lua.h"
-    #include "lualib.h"
-    #include "lauxlib.h"
 }
 
 #include <unordered_map>
@@ -118,14 +115,6 @@ namespace chroma {
             bool done = false;
             bool idle = false;
 
-            lua_State *state;
-        
-        public:
-            // ColorPickerWindow color_picker;
-            // PaletteWindow palette;
-            // ViewportWindow viewport;
-
-            // Signal<int, int> canvas_created;
 
             std::unordered_map<std::string, std::unique_ptr<Window>> windows;
             std::unordered_map<std::string, Signal> signals;
