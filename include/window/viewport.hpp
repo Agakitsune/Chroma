@@ -34,6 +34,7 @@ namespace chroma {
             virtual void display() noexcept override final;
 
             bool new_canvas(uint32_t width, uint32_t height) noexcept;
+            bool save_canvas(const char *label, const char *extension) noexcept;
             bool is_empty() const noexcept;
 
             Canvas &get_canvas() noexcept;

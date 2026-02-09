@@ -12,6 +12,12 @@
 
 #include "canvas/command/brush_command.hpp"
 
+#include <filesystem>
+
+#include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
+// #include <SDL3/SDL.h>
+
 namespace chroma {
 
     ViewportWindow::ViewportWindow() noexcept
@@ -249,8 +255,32 @@ namespace chroma {
                 discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) || ImGui::IsMouseDown(ImGuiMouseButton_Right);
             }
         }
+        
+        
 
         if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
+            // if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S))
+            //     ImGui::OpenPopup("MyPopup");
+            // if (ImGui::BeginPopup("MyPopup"))
+            // {
+            //     ImGui::Text("Hello popup !");
+            //     void *pixels = canvas.layers[0].data;
+            //     // void* pixels = SDL_MapGPUTransferBuffer(device, canvas.layers[0].buffer, false);
+            //     SDL_Surface* surface = SDL_CreateSurfaceFrom(16, 16, SDL_PIXELFORMAT_RGBA32, pixels, 16 * 4);
+            //     // if (SDL_FlipSurface(surface, SDL_FLIP_VERTICAL) == true);
+            //     //     ImGui::Text("FLIPED SURFACE");
+            //     if (SDL_SaveBMP(surface, "./chroma.bmp") == true)
+            //         ImGui::Text("BMP SAVED");
+                
+            //     if (ImGui::Button("cool :)")) {
+            //         ImGui::CloseCurrentPopup();
+            //     }
+            //     SDL_DestroySurface(surface);
+            //     // SDL_UnmapGPUTransferBuffer(device, transfer_buffer);
+
+            //     ImGui::EndPopup();
+            // }
+
             CursorManager::set_cursor(Cursor::Cross);
 
             dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
@@ -360,6 +390,56 @@ namespace chroma {
         return true;
     }
 
+    bool ViewportWindow::save_canvas(const char *label, const char *extension) noexcept
+    {
+        std::string full_name = label;
+        full_name += extension;
+        Canvas &canvas = canvases[selected];
+
+
+
+        canvas.name = full_name;
+        canvas.dirty = false;
+
+        std::string file_path = SDL_GetBasePath() + full_name;
+        const char *path = file_path.c_str();
+
+        std::cout << full_name << std::endl;
+        std::cout << "PATH: \"" << path << "\"" << std::endl;
+
+        void *pixels = canvas.layers[0].data;
+        SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
+        
+        if (strcmp(extension, ".bmp") == 0) {
+            if (SDL_SaveBMP(surface, path)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
+        }
+        if (strcmp(extension, ".png") == 0) {
+            if (SDL_SavePNG(surface, path)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
+        }
+        if (strcmp(extension, ".jpg") == 0) {
+            if (IMG_SaveJPG(surface, path, 100)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
+        }
+        if (strcmp(extension, ".tga") == 0) {
+            if (IMG_SaveTGA(surface, path)) {
+                SDL_DestroySurface(surface);
+                return false;
+            }
+        }
+
+        SDL_DestroySurface(surface);
+
+        return true;
+    }
+
     bool ViewportWindow::is_empty() const noexcept
     {
         return canvases.empty();
@@ -368,6 +448,6 @@ namespace chroma {
     Canvas &ViewportWindow::get_canvas() noexcept
     {
         return canvases[selected];
-    } 
+    }
 
 }

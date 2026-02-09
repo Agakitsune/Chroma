@@ -7,7 +7,7 @@
 #include "imgui_internal.h"
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_sdlgpu3.h"
-#include "lua/api.hpp"
+//#include "lua/api.hpp"
 
 #include "cursor.hpp"
 
@@ -27,11 +27,14 @@ struct ImGui_ImplSDLGPU3_Data
     uint32_t                     TexTransferBufferSize  = 0;
 };
 
+static char name[1024] = {0};
+static char *save_format = ".bmp";
+
 namespace chroma {
     App* App::instance = nullptr;
 
     App::~App() noexcept {
-        lua_close(state);
+        //lua_close(state);
 
         windows.clear(); // Release all windows and their resources
 
@@ -60,14 +63,14 @@ namespace chroma {
             return err;
         }
 
-        state = luaL_newstate();
-        if (!state) {
-            return -1;
-        }
+        //state = luaL_newstate();
+        //if (!state) {
+        //    return -1;
+        //}
 
-        luaL_openlibs(state);
+        //luaL_openlibs(state);
 
-        lua::register_chroma_api(state);
+        //lua::register_chroma_api(state);
 
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
@@ -463,6 +466,23 @@ namespace chroma {
                 h = 16;
                 ImGui::PopID();
             }
+            if (ImGui::MenuItem("Open", "Ctrl+O")) {
+                // New file action
+                ImGui::PushOverrideID(33);
+                ImGui::OpenPopup("Open");
+                // w = 16;
+                // h = 16;
+                ImGui::PopID();
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Save", "Ctrl+S", nullptr, !get_window<ViewportWindow>("Viewport")->is_empty())) {
+                // New file action
+                ImGui::PushOverrideID(34);
+                ImGui::OpenPopup("Save");
+                // w = 16;
+                // h = 16;
+                ImGui::PopID();
+            }
             ImGui::Separator();
             if (ImGui::MenuItem("Exit")) {
                 done = true;
@@ -492,6 +512,79 @@ namespace chroma {
             if (ImGui::Button("OK", ImVec2(140, 0))) {
                 // Create new file with specified width and height
                 get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(140, 0))) {
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
+
+        ImGui::PushOverrideID(33);
+
+        if (ImGui::BeginPopupModal("Open", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::Text("Not implemented yet");
+            if (ImGui::Button("close")) {
+                ImGui::CloseCurrentPopup();
+            }
+            // ImGui::SeparatorText("Size");
+
+            // ImGui::Text("Width:");
+
+            // ImGui::SetNextItemWidth(-FLT_MIN);
+            // ImGui::SameLine();
+            // ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
+
+            // ImGui::Text("Height:");
+
+            // ImGui::SetNextItemWidth(-FLT_MIN);
+            // ImGui::SameLine();
+            // ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
+
+            // if (ImGui::Button("OK", ImVec2(140, 0))) {
+            //     // Create new file with specified width and height
+            //     get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
+            //     ImGui::CloseCurrentPopup();
+            // }
+            // ImGui::SetItemDefaultFocus();
+            // ImGui::SameLine();
+            // if (ImGui::Button("Cancel", ImVec2(140, 0))) {
+            //     ImGui::CloseCurrentPopup();
+            // }
+
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
+
+        ImGui::PushOverrideID(34);
+
+        if (ImGui::BeginPopupModal("Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::InputText("File name", name, 1024);
+            if (ImGui::BeginCombo("File type", save_format)) {
+                // ImGui::Selectable(".bmp");
+                // ImGui::Selectable(".png");
+                if (ImGui::Selectable(".bmp", strcmp(save_format, ".bmp") == 0))
+                    save_format = ".bmp"; // Update the state
+                if (ImGui::Selectable(".png", strcmp(save_format, ".png") == 0))
+                    save_format = ".png"; // Update the state
+                if (ImGui::Selectable(".jpg", strcmp(save_format, ".jpg") == 0))
+                    save_format = ".jpg"; // Update the state
+                if (ImGui::Selectable(".tga", strcmp(save_format, ".tga") == 0))
+                    save_format = ".tga"; // Update the state
+                ImGui::EndCombo();
+            }
+
+            std::cout << name << std::endl;
+
+            if (ImGui::Button("Save", ImVec2(140, 0))) {
+                // Create new file with specified width and height
+                get_window<ViewportWindow>("Viewport")->save_canvas(name, save_format);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
