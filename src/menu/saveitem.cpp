@@ -176,7 +176,10 @@ namespace chroma {
             ImGui::SameLine();
             if (ImGui::Button("Save", ImVec2(140, 0))) {
                 // Create new file with specified width and height
-                App::get_instance()->emit_signal<const std::string &, const std::string &>("save_canvas_requested", name, ".bmp");
+                App::get_instance()->emit_signal<const std::filesystem::path &,
+                    const std::filesystem::path &,
+                    FileFormat>
+                    ("save_canvas_requested", current, std::string(name) + extensions[selected], formats[selected]);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
