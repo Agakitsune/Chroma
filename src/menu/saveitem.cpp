@@ -168,6 +168,10 @@ namespace chroma {
                 std::filesystem::path file = name;
                 FileFormat fmt = formats[selected];
 
+                if (file.empty()) {
+                    return;
+                }
+
                 if (file.has_extension()) {
                     fmt = fetch_format(file.extension());
                     std::cout << fmt << std::endl;
