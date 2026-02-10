@@ -38,10 +38,11 @@ namespace chroma {
 
             void new_canvas(uint32_t width, uint32_t height) noexcept;
             void save_canvas(const std::filesystem::path &directory, const std::filesystem::path &file, FileFormat format) noexcept;
+            void open_canvas(const std::filesystem::path &directory, const std::filesystem::path &file, FileFormat format) noexcept;
             bool is_empty() const noexcept;
 
-            void fliph();
-            void flipv();
+            void fliph() noexcept;
+            void flipv() noexcept;
 
             Canvas &get_canvas() noexcept;
         

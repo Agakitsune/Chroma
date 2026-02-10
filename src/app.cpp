@@ -4,6 +4,7 @@
 #include "app.hpp"
 
 #include "menu/newitem.hpp"
+#include "menu/openitem.hpp"
 #include "menu/saveitem.hpp"
 #include "menu/exititem.hpp"
 #include "menu/flipitem.hpp"
@@ -87,6 +88,7 @@ namespace chroma {
 
         add_signal<uint32_t, uint32_t>("create_canvas_requested");
         add_signal<const std::filesystem::path &, const std::filesystem::path &, FileFormat>("save_canvas_requested");
+        add_signal<const std::filesystem::path &, const std::filesystem::path &, FileFormat>("open_canvas_requested");
 
         add_signal("edit_fliph");
         add_signal("edit_flipv");
@@ -100,7 +102,7 @@ namespace chroma {
         }
 
         add_menu<NewMenuItem>("File");
-        // Add open here
+        add_menu<OpenMenuItem>("File");
         separator("File");
         add_menu<SaveMenuItem>("File");
         separator("File");

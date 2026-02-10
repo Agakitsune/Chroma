@@ -15,6 +15,7 @@
 #include "menu/fileformat.hpp"
 
 #include <filesystem>
+#include <cstring>
 
 #include <SDL3/SDL_surface.h>
 #include <SDL3_image/SDL_image.h>
@@ -49,6 +50,7 @@ namespace chroma {
     {
         App::get_instance()->connect_signal("create_canvas_requested", this, &ViewportWindow::new_canvas);
         App::get_instance()->connect_signal("save_canvas_requested", this, &ViewportWindow::save_canvas);
+        App::get_instance()->connect_signal("open_canvas_requested", this, &ViewportWindow::open_canvas);
 
         App::get_instance()->connect_signal("main_color_changed", this, &ViewportWindow::_on_main_color_changed);
         App::get_instance()->connect_signal("second_color_changed", this, &ViewportWindow::_on_second_color_changed);
@@ -451,7 +453,43 @@ namespace chroma {
         SDL_UnmapGPUTransferBuffer(device, canvas.layers[0].buffer);
     }
 
-    void ViewportWindow::fliph() {
+    void ViewportWindow::open_canvas(const std::filesystem::path &directory, const std::filesystem::path &file, FileFormat format) noexcept
+    {
+        std::filesystem::path file_path = directory / file;
+        const char *path = file_path.c_str();
+
+        SDL_IOStream *stream = SDL_IOFromFile(path, "r");
+        SDL_Surface *surface = nullptr;
+        SDL_GPUDevice *device = App::get_device();
+
+        switch (format) {
+            case BMP: {
+                surface = IMG_LoadBMP_IO(stream);
+            } break;
+            case JPG: {
+                surface = IMG_LoadJPG_IO(stream);
+            } break;
+            case PNG: {
+                surface = IMG_LoadPNG_IO(stream);
+            } break;
+            case TGA: {
+                surface = IMG_LoadTGA_IO(stream);
+            } break;
+        }
+
+        SDL_Surface *output = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
+
+        canvases.emplace_back(output);
+
+        canvases.back().name = file;
+
+        SDL_DestroySurface(output);
+        SDL_DestroySurface(surface);
+        SDL_CloseIO(stream);
+    }
+
+    void ViewportWindow::fliph() noexcept
+    {
         Canvas &canvas = canvases[selected];
         const Layer &layer = canvas.layers[canvas.layer];
         
@@ -468,7 +506,8 @@ namespace chroma {
             canvas.refresh();
     }    
 
-    void ViewportWindow::flipv() {
+    void ViewportWindow::flipv() noexcept
+    {
         Canvas &canvas = canvases[selected];
         const Layer &layer = canvas.layers[canvas.layer];
         
