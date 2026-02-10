@@ -83,9 +83,6 @@ namespace chroma {
 
         for (const auto& entry : dir_iter) {
             std::string name = entry.path().filename();
-            if (name.starts_with(".")) {
-                continue;
-            }
             if (entry.is_directory()) {
                 directories.push_back(entry.path());
             } else if (entry.is_regular_file() && entry.path().has_extension() && is_image(entry.path().extension())) {
@@ -125,8 +122,14 @@ namespace chroma {
             ImGui::SetNextItemWidth(-FLT_MIN);
             ImGui::InputText("##directory", directory, 4096);
 
+            // ImGui::SameLine();
+            ImGui::Checkbox("Show hidden", &hidden);
+
             ImGui::BeginChild("filesystem", ImVec2(600, 350), ImGuiChildFlags_Borders);
             for (const auto &dir : directories) {
+                if (!hidden && dir.filename().string().starts_with(".")) {
+                    continue;
+                }
                 if (ImGui::Selectable(dir.filename().c_str())) {
                     current = dir;
                     std::strcpy(directory, current.c_str());

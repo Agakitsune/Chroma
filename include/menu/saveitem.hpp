@@ -21,6 +21,8 @@ namespace chroma {
 
         uint32_t selected = 0;
 
+        bool hidden = false;
+
         public:
             SaveMenuItem() noexcept;
             ~SaveMenuItem() noexcept;
