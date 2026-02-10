@@ -74,17 +74,6 @@ namespace chroma {
         delete[] directory;
     }
 
-    bool SaveMenuItem::is_image(const std::string &ext) const noexcept
-    {
-        for (const char *e : extensions) {
-            int res = std::strcmp(ext.c_str(), e);
-            if (res == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     void SaveMenuItem::query_current_directory() noexcept
     {
         directories.clear();
@@ -176,14 +165,49 @@ namespace chroma {
             ImGui::SameLine();
             if (ImGui::Button("Save", ImVec2(140, 0))) {
                 // Create new file with specified width and height
+                std::filesystem::path file = name;
+                FileFormat fmt = formats[selected];
+
+                if (file.has_extension()) {
+                    fmt = fetch_format(file.extension());
+                    std::cout << fmt << std::endl;
+                    if (fmt == FileFormat::Count) {
+                        ImGui::CloseCurrentPopup();
+                        ImGui::PushOverrideID(33);
+                        ImGui::OpenPopup("ExtFailure");
+                        ImGui::PopID();
+                    }
+                    return;
+                } else {
+                    if (selected > 0) {
+                        file += extensions[selected];
+                    } else {
+                        file += ".png"; // default to png
+                        fmt = FileFormat::PNG;
+                    }
+                }
+
                 App::get_instance()->emit_signal<const std::filesystem::path &,
                     const std::filesystem::path &,
                     FileFormat>
-                    ("save_canvas_requested", current, std::string(name) + extensions[selected], formats[selected]);
+                    ("save_canvas_requested", current, file, fmt);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SetItemDefaultFocus();
             ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(140, 0))) {
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
+        }
+        ImGui::PopID();
+
+        ImGui::PushOverrideID(33);
+        if (ImGui::BeginPopupModal("ExtFailure", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+            std::filesystem::path full = current / name;
+            ImGui::Text("Can't save '%s': '%s' isn't supported", full.c_str(), full.extension().c_str());
+
             if (ImGui::Button("Cancel", ImVec2(140, 0))) {
                 ImGui::CloseCurrentPopup();
             }

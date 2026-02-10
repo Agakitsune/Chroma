@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace chroma {
 
     enum FileFormat {
@@ -30,5 +32,8 @@ namespace chroma {
         PNG,
         TGA
     };
+
+    bool is_image(const std::string &ext) noexcept;
+    FileFormat fetch_format(const std::string &ext) noexcept;
 
 }
