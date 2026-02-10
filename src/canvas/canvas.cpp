@@ -568,4 +568,25 @@ namespace chroma {
 
     }
 
+    // void Canvas::upload(SDL_GPUCopyPass *pass) noexcept {
+    //     if (pending_uploads.empty()) return;
+
+    //     for (const auto& transfer : pending_uploads) {
+    //         SDL_GPUTextureTransferInfo transferInfo{};
+    //         transferInfo.transfer_buffer = layers[transfer.index].buffer; // Assuming Layer holds the buffer
+    //         transferInfo.offset = 0; // Or calculate based on tile logic
+
+    //         SDL_GPUTextureRegion region{};
+    //         region.texture = layers[transfer.index].texture;
+    //         region.w = transfer.w;
+    //         region.h = transfer.h;
+    //         region.x = transfer.x;
+    //         region.y = transfer.y;
+
+    //         SDL_UploadToGPUTexture(pass, &transferInfo, &region, false);
+    //     }
+    //     pending_uploads.clear(); 
+    // }
+
+
 }
