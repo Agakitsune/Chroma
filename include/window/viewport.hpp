@@ -8,9 +8,11 @@
 #include "SDL3/SDL.h"
 
 #include "canvas/canvas.hpp"
+#include "menu/fileformat.hpp"
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace chroma {
 
@@ -31,14 +33,19 @@ namespace chroma {
             ViewportWindow() noexcept;
             virtual ~ViewportWindow() noexcept = default;
 
+            virtual void ready() noexcept override final;
             virtual void display() noexcept override final;
 
-            bool new_canvas(uint32_t width, uint32_t height) noexcept;
-            bool save_canvas(const char *label, const char *extension) noexcept;
+            void new_canvas(uint32_t width, uint32_t height) noexcept;
+            void save_canvas(const std::filesystem::path &directory, const std::filesystem::path &file, FileFormat format) noexcept;
             bool is_empty() const noexcept;
             bool VerticalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height);
             bool HorizontalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height);
 
             Canvas &get_canvas() noexcept;
+        
+        private:
+            void _on_main_color_changed(const Color &clr) noexcept;
+            void _on_second_color_changed(const Color &clr) noexcept;
     };
 }

@@ -12,8 +12,7 @@
 
 #include "system/signal.hpp"
 
-extern "C" {
-}
+#include "menu/menuitem.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -34,41 +33,41 @@ namespace chroma {
             int init() noexcept;
             int run() noexcept;
 
-            template <typename T>
-            T *get_window(const std::string &label) const noexcept {
-                if (!windows.contains(label)) return nullptr;
-                return (T*)windows.at(label).get();
-            }
+            // template <typename T>
+            // T *get_window(const std::string &label) const noexcept {
+            //     if (!windows.contains(label)) return nullptr;
+            //     return (T*)windows.at(label).get();
+            // }
 
             template<typename... A>
             void add_signal(const std::string &name) {
-                std::size_t hash = typeid(void(*)(A...)).hash_code();
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 signals.insert_or_assign(name, Signal());
                 signal_hash.insert_or_assign(name, hash);
             }
 
-            template<typename... A>
-            void connect_signal(const std::string &name, const std::function<void(A...)> &func) {
-                std::size_t hash = typeid(void(*)(A...)).hash_code();
+            template<typename O, typename... A>
+            void connect_signal(const std::string &name, O *object, void (O::*func)(A...)) {
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 if (!signals.contains(name)) {
                     return;
                 }
                 if (signal_hash[name] != hash) {
                     return;
                 }
-                signals[name].connect((void(*)())func.template target<void(A...)>());
+                signals[name].connect(object, func);
             }
 
-            void disconnect_signal(const std::string &name, void(*func)()) {
+            void disconnect_signal(const std::string &name, void *object) {
                 if (!signals.contains(name)) {
                     return;
                 }
-                signals[name].disconnect((void(*)())func);
+                signals[name].disconnect(object);
             }
 
             template<typename... A>
-            void emit_signal(const std::string &name, A&&... args) {
-                std::size_t hash = typeid(void(*)(A...)).hash_code();
+            void emit_signal(const std::string &name, A... args) {
+                std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 if (!signals.contains(name)) {
                     return;
                 }
@@ -76,6 +75,23 @@ namespace chroma {
                     return;
                 }
                 signals[name].emit(std::forward<A>(args)...);
+            }
+
+            template<typename I>
+            void add_menu(const std::string &menu)
+            {
+                // if (!menu_bar.contains(menu)) {
+                //     menu_bar[menu]menu, std::vector<std::unique_ptr<MenuItem>>());
+                // }
+                menu_bar[menu].push_back(std::make_unique<I>());
+            }
+
+            void separator(const std::string &menu)
+            {
+                // if (!menu_bar.contains(menu)) {
+                //     menu_bar.insert(menu, std::vector<std::unique_ptr<MenuItem>>());
+                // }
+                menu_bar[menu].emplace_back(nullptr);
             }
 
             static App* get_instance() noexcept;
@@ -119,6 +135,8 @@ namespace chroma {
             std::unordered_map<std::string, std::unique_ptr<Window>> windows;
             std::unordered_map<std::string, Signal> signals;
             std::unordered_map<std::string, std::size_t> signal_hash;
+
+            std::unordered_map<std::string, std::vector<std::unique_ptr<MenuItem>>> menu_bar;
 
             static App* instance;
     };
