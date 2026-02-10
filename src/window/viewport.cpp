@@ -265,7 +265,7 @@ namespace chroma {
                 canvas.dirty = true;
 
                 // Prepare new command
-                cmd = std::make_unique<BrushCommand>();
+                cmd = std::move(tmp);
             } else {
                 discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) || ImGui::IsMouseDown(ImGuiMouseButton_Right);
             }
