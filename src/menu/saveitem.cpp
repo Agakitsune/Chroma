@@ -74,6 +74,17 @@ namespace chroma {
         delete[] directory;
     }
 
+    bool SaveMenuItem::is_image(const std::string &ext) const noexcept
+    {
+        for (const char *e : extensions) {
+            int res = std::strcmp(ext.c_str(), e);
+            if (res == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void SaveMenuItem::query_current_directory() noexcept
     {
         directories.clear();
@@ -88,7 +99,7 @@ namespace chroma {
             }
             if (entry.is_directory()) {
                 directories.push_back(entry.path());
-            } else {
+            } else if (entry.is_regular_file() && entry.path().has_extension() && is_image(entry.path().extension())) {
                 files.push_back(entry.path());
             }
         }
@@ -109,6 +120,8 @@ namespace chroma {
 
     void SaveMenuItem::display() noexcept
     {
+        constexpr uint32_t ext_size = sizeof(extensions) / sizeof(extensions[0]);
+
         ImGui::PushOverrideID(33);
         if (ImGui::BeginPopupModal("Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
             // std::filesystem::directory_iterator dir_iter(current);
@@ -123,7 +136,7 @@ namespace chroma {
             ImGui::SetNextItemWidth(-FLT_MIN);
             ImGui::InputText("##directory", directory, 4096);
 
-            ImGui::BeginChild("filesystem", ImVec2(500, 350), ImGuiChildFlags_Borders);
+            ImGui::BeginChild("filesystem", ImVec2(600, 350), ImGuiChildFlags_Borders);
             for (const auto &dir : directories) {
                 if (ImGui::Selectable(dir.filename().c_str())) {
                     current = dir;
@@ -133,6 +146,10 @@ namespace chroma {
                 }
             }
             for (const auto &file : files) {
+                if ((selected > 0) && std::strcmp(file.extension().c_str(), extensions[selected]) != 0) {
+                    continue;
+                }
+
                 if (ImGui::Selectable(file.filename().c_str())) {
                     std::strcpy(name, file.filename().c_str());
                 }
@@ -146,9 +163,13 @@ namespace chroma {
             
             ImGui::Text("File type: ");
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(70);
-            if (ImGui::BeginCombo("##filetype", ".bmp")) {
-                ImGui::Selectable(".bmp");
+            ImGui::SetNextItemWidth(100);
+            if (ImGui::BeginCombo("##filetype", extensions[selected])) {
+                for (uint32_t i = 0; i < ext_size; i++) {
+                    if (ImGui::Selectable(extensions[i], i == selected)) {
+                        selected = i;
+                    }
+                }
                 ImGui::EndCombo();
             }
 

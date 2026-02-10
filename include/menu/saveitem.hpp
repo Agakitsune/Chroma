@@ -2,6 +2,7 @@
 #pragma once
 
 #include "menu/menuitem.hpp"
+#include "menu/fileformat.hpp"
 
 #include <filesystem>
 #include <vector>
@@ -17,6 +18,10 @@ namespace chroma {
 
         std::vector<std::filesystem::path> directories;
         std::vector<std::filesystem::path> files;
+
+        uint32_t selected = 0;
+
+        bool is_image(const std::string &ext) const noexcept;
 
         public:
             SaveMenuItem() noexcept;
