@@ -85,7 +85,7 @@ namespace chroma {
         // });
 
         add_signal<uint32_t, uint32_t>("create_canvas_requested");
-        add_signal<const std::string &, const std::string &>("save_canvas_requested");
+        add_signal<const std::filesystem::path &, const std::filesystem::path &, FileFormat>("save_canvas_requested");
 
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();

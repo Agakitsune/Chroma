@@ -12,6 +12,8 @@
 
 #include "canvas/command/brush_command.hpp"
 
+#include "menu/fileformat.hpp"
+
 #include <filesystem>
 
 #include <SDL3/SDL_surface.h>
@@ -383,7 +385,6 @@ namespace chroma {
 
     void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
-        std::cout << "canne a pehce" << std::endl;
         canvases.emplace_back(width, height);
 
         // if (!canvas.layers[0].texture) {
@@ -401,49 +402,44 @@ namespace chroma {
         // return true;
     }
 
-    void ViewportWindow::save_canvas(const std::string &label, const std::string &extension) noexcept
+    void ViewportWindow::save_canvas(
+        const std::filesystem::path &directory,
+        const std::filesystem::path &file,
+        FileFormat format
+    ) noexcept
     {
-        std::string full_name = label + extension;
         Canvas &canvas = canvases[selected];
 
-
-
-        canvas.name = full_name;
+        canvas.name = file;
         canvas.dirty = false;
 
-        std::string file_path = SDL_GetBasePath() + full_name;
+        std::filesystem::path file_path = directory / file;
         const char *path = file_path.c_str();
-
-        std::cout << full_name << std::endl;
-        std::cout << "PATH: \"" << path << "\"" << std::endl;
 
         void *pixels = canvas.layers[0].data;
         SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
-        
-        /*if (strcmp(extension, ".bmp") == 0) {
-            if (SDL_SaveBMP(surface, path)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
+
+        bool result = false;
+
+        switch (format) {
+            case BMP: {
+                result = IMG_SaveBMP(surface, path);
+            } break;
+            case JPG: {
+                result = IMG_SaveJPG(surface, path, 100);
+            } break;
+            case PNG: {
+                result = IMG_SavePNG(surface, path);
+            } break;
+            case TGA: {
+                result = IMG_SaveTGA(surface, path);
+            } break;
         }
-        if (strcmp(extension, ".png") == 0) {
-            if (SDL_SavePNG(surface, path)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
+
+        std::cout << "succ: " << result << std::endl;
+        if (!result) {
+            std::cout << SDL_GetError() << std::endl;
         }
-        if (strcmp(extension, ".jpg") == 0) {
-            if (IMG_SaveJPG(surface, path, 100)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
-        }
-        if (strcmp(extension, ".tga") == 0) {
-            if (IMG_SaveTGA(surface, path)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
-        }*/
 
         SDL_DestroySurface(surface);
     }
