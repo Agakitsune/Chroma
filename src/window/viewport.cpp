@@ -440,29 +440,49 @@ namespace chroma {
         return true;
     }
 
-    bool ViewportWindow::FlipLayerBuffer(SDL_GPUDevice* device, int width, int height) {
-
+    bool ViewportWindow::HorizontalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height) {
         Canvas &canvas = canvases[selected];
-        // 1. Map the buffer to get a pointer to the raw pixel data
-        // Use cycle = false because we are modifying the existing data
-        void* mapPtr = canvas.layers[0].data;
+        Layer &layer = canvas.layers[canvas.layer];
         
-        if (mapPtr) {
-            uint32_t* pixels = static_cast<uint32_t*>(mapPtr);
+        if (layer.data) {
+            uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
+            
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width / 2; ++x) {
+                    int leftIdx = y * width + x;
+                    int rightIdx = y * width + (width - 1 - x);
+
+                    uint32_t temp = pixels[leftIdx];
+                    pixels[leftIdx] = pixels[rightIdx];
+                    pixels[rightIdx] = temp;
+                }
+            }
+
+            canvas.request_refresh(0, 0, 0, width, height);
+            return true;
+        }
+        return false;
+    }    
+
+    bool ViewportWindow::VerticalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height) {
+        Canvas &canvas = canvases[selected];
+        Layer &layer = canvas.layers[canvas.layer];
+        
+        if (layer.data) {
+            uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
             size_t rowSize = width * sizeof(uint32_t);
-        
-            // 2. Allocate a temporary row buffer for the swap
             std::vector<uint8_t> tempRow(rowSize);
-
+        
             for (int y = 0; y < height / 2; ++y) {
-                uint8_t* rowTop = reinterpret_cast<uint8_t*>(&pixels[y * width]);
-                uint8_t* rowBottom = reinterpret_cast<uint8_t*>(&pixels[(height - 1 - y) * width]);
+                uint32_t* rowTop = &pixels[y * width];
+                uint32_t* rowBottom = &pixels[(height - 1 - y) * width];
 
-                // 3. Perform the swap
                 memcpy(tempRow.data(), rowTop, rowSize);
                 memcpy(rowTop, rowBottom, rowSize);
                 memcpy(rowBottom, tempRow.data(), rowSize);
             }
+
+            canvas.request_refresh(0, 0, 0, width, height);
             return true;
         }
         return false;

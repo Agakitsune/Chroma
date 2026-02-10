@@ -491,9 +491,18 @@ namespace chroma {
         }
 
         if (ImGui::BeginMenu("Transform")) {
-            if (ImGui::MenuItem("Flip", "Ctrl+F")) {
-                get_window<ViewportWindow>("Viewport")->FlipLayerBuffer(device, 16, 16);
+            if (ImGui::MenuItem("Vertical Flip", "Ctrl+F")) {
+                ImGui::PushOverrideID(35);
+                get_window<ViewportWindow>("Viewport")->VerticalFlipLayerBuffer(device, 16, 16);
                 printf("it flipped!");
+                ImGui::PopID();
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Horizontal Flip", "Ctrl+H")) {
+                ImGui::PushOverrideID(36);
+                get_window<ViewportWindow>("Viewport")->HorizontalFlipLayerBuffer(device, 16, 16);
+                printf("it flipped!");
+                ImGui::PopID();
             }
             ImGui::EndMenu();
         }
