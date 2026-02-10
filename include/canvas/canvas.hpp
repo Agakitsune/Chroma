@@ -57,6 +57,7 @@ namespace chroma {
         bool dirty = false;
 
         Canvas(uint32_t width, uint32_t height) noexcept;
+        Canvas(SDL_Surface *surface) noexcept;
         ~Canvas() noexcept;
 
         Canvas(const Canvas&) = delete;
