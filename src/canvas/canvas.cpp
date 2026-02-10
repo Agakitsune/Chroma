@@ -121,6 +121,67 @@ namespace chroma {
         );
     }
 
+    Canvas::Canvas(SDL_Surface *surface) noexcept
+    : width(surface->w), height(surface->h)
+    {
+        SDL_GPUDevice *device = App::get_device();
+
+        const uint64_t buffer_size = (width * height) * 4; // RGBA8
+        const uint64_t tile_x = (width / TILE_SIZE) + ((width & (TILE_SIZE - 1)) ? 1 : 0);
+        const uint64_t tile_y = (height / TILE_SIZE) + ((height & (TILE_SIZE - 1)) ? 1 : 0);
+        const uint64_t dirty_flags_size = tile_x * tile_y;
+
+        SDL_GPUTextureCreateInfo texture_info = {};
+        texture_info.type = SDL_GPU_TEXTURETYPE_2D;
+        texture_info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+        texture_info.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
+        texture_info.width = width;
+        texture_info.height = height;
+        texture_info.layer_count_or_depth = 1;
+        texture_info.num_levels = 1;
+        texture_info.sample_count = SDL_GPU_SAMPLECOUNT_1;
+        texture_info.props = 0;
+
+        SDL_GPUTransferBufferCreateInfo buffer_info = {};
+        buffer_info.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+        buffer_info.size = buffer_size;
+        buffer_info.props = 0;
+
+        Layer &layer = layers.emplace_back();
+        TileTransfer transfer;
+
+        transfer.offset = 0;
+        transfer.w = width;
+        transfer.h = height;
+        transfer.x = 0;
+        transfer.y = 0;
+
+        pending_uploads.push_back(transfer);
+
+        layer.texture = SDL_CreateGPUTexture(
+            device,
+            &texture_info
+        );
+
+        layer.buffer = SDL_CreateGPUTransferBuffer(
+            device,
+            &buffer_info
+        );
+
+        uint8_t *mapping = (uint8_t *)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+
+        std::memcpy(mapping, surface->pixels, width * height * 4);
+        
+        SDL_UnmapGPUTransferBuffer(device, layer.buffer);
+
+        texture_info.usage |= SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
+
+        preview = SDL_CreateGPUTexture(
+            device,
+            &texture_info
+        );
+    }
+
     Canvas::~Canvas() noexcept
     {
         SDL_GPUDevice *device = App::get_device();
