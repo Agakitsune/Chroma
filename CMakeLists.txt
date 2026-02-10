@@ -83,8 +83,8 @@ file(GLOB CPP_SOURCES
     src/*.cpp
     src/menu/*.cpp
     src/window/*.cpp
-    src/lua/*.cpp
-    src/lua/imgui/*.cpp
+    # src/lua/*.cpp
+    # src/lua/imgui/*.cpp
     src/canvas/*.cpp
     src/canvas/command/*.cpp
 )
