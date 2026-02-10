@@ -189,7 +189,8 @@ namespace chroma {
             if (ImGui::BeginTable("##ModalButtons", 3, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_NoBordersInBody)) {
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Save", ImVec2(-FLT_MIN, 0))) {
-                    // Save file
+                    ImGui::CloseCurrentPopup();
+                    App::get_instance()->emit_signal("popup_save");
                 }
                 ImGui::SetItemDefaultFocus();
 

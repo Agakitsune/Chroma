@@ -94,13 +94,18 @@ namespace chroma {
         std::stable_sort(files.begin(), files.end(), path_less_compare{});
     }
 
+    void SaveMenuItem::open_popup() noexcept
+    {
+        ImGui::PushOverrideID(33);
+        ImGui::OpenPopup("Save");
+        ImGui::PopID();
+        query_current_directory();
+    }
+
     void SaveMenuItem::menubar() noexcept
     {
         if (ImGui::MenuItem("Save", "Ctrl+S")) {
-            ImGui::PushOverrideID(33);
-            ImGui::OpenPopup("Save");
-            ImGui::PopID();
-            query_current_directory();
+            open_popup();
         }
     }
 

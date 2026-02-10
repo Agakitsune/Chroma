@@ -93,6 +93,8 @@ namespace chroma {
         add_signal("edit_fliph");
         add_signal("edit_flipv");
 
+        add_signal("popup_save");
+
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
         windows["Palette"] = std::make_unique<PaletteWindow>();
@@ -104,11 +106,13 @@ namespace chroma {
         add_menu<NewMenuItem>("File");
         add_menu<OpenMenuItem>("File");
         separator("File");
-        add_menu<SaveMenuItem>("File");
+        SaveMenuItem *save_menu = add_menu<SaveMenuItem>("File");
         separator("File");
         add_menu<ExitMenuItem>("File");
 
         add_menu<FlipMenuItem>("Edit");
+
+        connect_signal("popup_save", save_menu, &SaveMenuItem::open_popup);
 
         emit_signal<const Color &>("main_color_selected", WHITE);
         emit_signal<const Color &>("second_color_selected", BLACK);

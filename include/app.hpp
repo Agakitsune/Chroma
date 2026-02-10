@@ -78,12 +78,13 @@ namespace chroma {
             }
 
             template<typename I>
-            void add_menu(const std::string &menu)
+            I *add_menu(const std::string &menu)
             {
                 // if (!menu_bar.contains(menu)) {
                 //     menu_bar[menu]menu, std::vector<std::unique_ptr<MenuItem>>());
                 // }
                 menu_bar[menu].push_back(std::make_unique<I>());
+                return (I*)menu_bar[menu].back().get();
             }
 
             void separator(const std::string &menu)

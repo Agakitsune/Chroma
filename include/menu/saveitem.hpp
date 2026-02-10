@@ -29,6 +29,8 @@ namespace chroma {
 
             void query_current_directory() noexcept;
 
+            void open_popup() noexcept;
+
             virtual void menubar() noexcept override final;
             virtual void display() noexcept override final;
     };
