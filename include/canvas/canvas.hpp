@@ -76,6 +76,8 @@ namespace chroma {
 
         void upload(SDL_GPUCopyPass *pass) noexcept;
 
+        void refresh() noexcept;
+
         private:
             struct TileTransfer {
                 uint32_t index;

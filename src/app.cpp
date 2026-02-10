@@ -3,11 +3,16 @@
 
 #include "app.hpp"
 
+#include "menu/newitem.hpp"
+#include "menu/saveitem.hpp"
+#include "menu/exititem.hpp"
+#include "menu/flipitem.hpp"
+
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_sdlgpu3.h"
-#include "lua/api.hpp"
+//#include "lua/api.hpp"
 
 #include "cursor.hpp"
 
@@ -27,13 +32,16 @@ struct ImGui_ImplSDLGPU3_Data
     uint32_t                     TexTransferBufferSize  = 0;
 };
 
+// static char name[1024] = {0};
+// static char *save_format = ".bmp";
+
 namespace chroma {
     App* App::instance = nullptr;
 
     App::~App() noexcept {
-        lua_close(state);
+        //lua_close(state);
 
-        // windows.clear(); // Release all windows and their resources
+        windows.clear(); // Release all windows and their resources
 
         SDL_WaitForGPUIdle(device);
 
@@ -60,14 +68,14 @@ namespace chroma {
             return err;
         }
 
-        state = luaL_newstate();
-        if (!state) {
-            return -1;
-        }
+        //state = luaL_newstate();
+        //if (!state) {
+        //    return -1;
+        //}
 
-        luaL_openlibs(state);
+        //luaL_openlibs(state);
 
-        lua::register_chroma_api(state);
+        //lua::register_chroma_api(state);
 
         // color_picker.ready();
         // palette.ready();
@@ -78,6 +86,10 @@ namespace chroma {
         // });
 
         add_signal<uint32_t, uint32_t>("create_canvas_requested");
+        add_signal<const std::filesystem::path &, const std::filesystem::path &, FileFormat>("save_canvas_requested");
+
+        add_signal("edit_fliph");
+        add_signal("edit_flipv");
 
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
@@ -87,7 +99,14 @@ namespace chroma {
             win->ready();
         }
 
-        // add_signal<const std::string &>("save_canvas_requested");
+        add_menu<NewMenuItem>("File");
+        // Add open here
+        separator("File");
+        add_menu<SaveMenuItem>("File");
+        separator("File");
+        add_menu<ExitMenuItem>("File");
+
+        add_menu<FlipMenuItem>("Edit");
 
         emit_signal("main_color_selected", WHITE);
         emit_signal("second_color_selected", BLACK);
@@ -472,59 +491,28 @@ namespace chroma {
 
         ImGui::BeginMenuBar();
 
-        if (ImGui::BeginMenu("File")) {
-            // ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_N); // doesn't woerk, need to find another way
-            if (ImGui::MenuItem("New", "Ctrl+N")) {
-                // New file action
-                ImGui::PushOverrideID(32);
-                ImGui::OpenPopup("New");
-                w = 16;
-                h = 16;
-                ImGui::PopID();
+        for (auto &[menu, items] : menu_bar) {
+            if (ImGui::BeginMenu(menu.c_str())) {
+                for (auto &item : items) {
+                    if (item) {
+                        item->menubar();
+                    } else {
+                        ImGui::Separator();
+                    }
+                }
+                ImGui::EndMenu();
             }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Exit")) {
-                done = true;
-            }
-            ImGui::EndMenu();
         }
 
         ImGui::EndMenuBar();
 
-        ImGui::PushOverrideID(32);
-
-        if (ImGui::BeginPopupModal("New", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::SeparatorText("Size");
-
-            ImGui::Text("Width:");
-
-            ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::SameLine();
-            ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
-
-            ImGui::Text("Height:");
-
-            ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::SameLine();
-            ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
-
-            if (ImGui::Button("OK", ImVec2(140, 0))) {
-                // Create new file with specified width and height
-                emit_signal("create_canvas_requested", w, h);
-                ImGui::CloseCurrentPopup();
+        for (auto &[menu, items] : menu_bar) {
+            for (auto &item : items) {
+                if (item) {
+                    item->display();
+                }
             }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-                ImGui::CloseCurrentPopup();
-            }
-
-            ImGui::EndPopup();
         }
-
-        ImGui::PopID();
-
-        // Menubar possibly here i dunno
 
         ImGui::End();
 

@@ -8,9 +8,11 @@
 #include "SDL3/SDL.h"
 
 #include "canvas/canvas.hpp"
+#include "menu/fileformat.hpp"
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace chroma {
 
@@ -35,7 +37,11 @@ namespace chroma {
             virtual void display() noexcept override final;
 
             void new_canvas(uint32_t width, uint32_t height) noexcept;
+            void save_canvas(const std::filesystem::path &directory, const std::filesystem::path &file, FileFormat format) noexcept;
             bool is_empty() const noexcept;
+
+            void fliph();
+            void flipv();
 
             Canvas &get_canvas() noexcept;
         

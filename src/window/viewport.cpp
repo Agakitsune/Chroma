@@ -12,6 +12,14 @@
 
 #include "canvas/command/brush_command.hpp"
 
+#include "menu/fileformat.hpp"
+
+#include <filesystem>
+
+#include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
+// #include <SDL3/SDL.h>
+
 namespace chroma {
 
     ViewportWindow::ViewportWindow() noexcept
@@ -40,9 +48,13 @@ namespace chroma {
     void ViewportWindow::ready() noexcept
     {
         App::get_instance()->connect_signal("create_canvas_requested", this, &ViewportWindow::new_canvas);
+        App::get_instance()->connect_signal("save_canvas_requested", this, &ViewportWindow::save_canvas);
 
         App::get_instance()->connect_signal("main_color_changed", this, &ViewportWindow::_on_main_color_changed);
         App::get_instance()->connect_signal("second_color_changed", this, &ViewportWindow::_on_second_color_changed);
+
+        App::get_instance()->connect_signal("edit_fliph", this, &ViewportWindow::fliph);
+        App::get_instance()->connect_signal("edit_flipv", this, &ViewportWindow::flipv);
     }
 
     void ViewportWindow::display() noexcept
@@ -258,8 +270,32 @@ namespace chroma {
                 discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) || ImGui::IsMouseDown(ImGuiMouseButton_Right);
             }
         }
+        
+        
 
         if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
+            // if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S))
+            //     ImGui::OpenPopup("MyPopup");
+            // if (ImGui::BeginPopup("MyPopup"))
+            // {
+            //     ImGui::Text("Hello popup !");
+            //     void *pixels = canvas.layers[0].data;
+            //     // void* pixels = SDL_MapGPUTransferBuffer(device, canvas.layers[0].buffer, false);
+            //     SDL_Surface* surface = SDL_CreateSurfaceFrom(16, 16, SDL_PIXELFORMAT_RGBA32, pixels, 16 * 4);
+            //     // if (SDL_FlipSurface(surface, SDL_FLIP_VERTICAL) == true);
+            //     //     ImGui::Text("FLIPED SURFACE");
+            //     if (SDL_SaveBMP(surface, "./chroma.bmp") == true)
+            //         ImGui::Text("BMP SAVED");
+                
+            //     if (ImGui::Button("cool :)")) {
+            //         ImGui::CloseCurrentPopup();
+            //     }
+            //     SDL_DestroySurface(surface);
+            //     // SDL_UnmapGPUTransferBuffer(device, transfer_buffer);
+
+            //     ImGui::EndPopup();
+            // }
+
             CursorManager::set_cursor(Cursor::Cross);
 
             dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
@@ -352,7 +388,6 @@ namespace chroma {
 
     void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
-        std::cout << "canne a pehce" << std::endl;
         canvases.emplace_back(width, height);
 
         // if (!canvas.layers[0].texture) {
@@ -368,6 +403,92 @@ namespace chroma {
         // }
 
         // return true;
+    }
+
+    void ViewportWindow::save_canvas(
+        const std::filesystem::path &directory,
+        const std::filesystem::path &file,
+        FileFormat format
+    ) noexcept
+    {
+        Canvas &canvas = canvases[selected];
+
+        canvas.name = file;
+        canvas.dirty = false;
+
+        std::filesystem::path file_path = directory / file;
+        const char *path = file_path.c_str();
+
+        void *pixels = canvas.layers[0].data;
+        SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
+
+        bool result = false;
+
+        switch (format) {
+            case BMP: {
+                result = IMG_SaveBMP(surface, path);
+            } break;
+            case JPG: {
+                result = IMG_SaveJPG(surface, path, 100);
+            } break;
+            case PNG: {
+                result = IMG_SavePNG(surface, path);
+            } break;
+            case TGA: {
+                result = IMG_SaveTGA(surface, path);
+            } break;
+        }
+
+        std::cout << "succ: " << result << std::endl;
+        if (!result) {
+            std::cout << SDL_GetError() << std::endl;
+        }
+
+        SDL_DestroySurface(surface);
+    }
+
+    void ViewportWindow::fliph() {
+        Canvas &canvas = canvases[selected];
+        Layer &layer = canvas.layers[canvas.layer];
+        
+        if (layer.data) {
+            uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
+            
+            for (int y = 0; y < canvas.width; ++y) {
+                for (int x = 0; x < canvas.height / 2; ++x) {
+                    int leftIdx = y * canvas.width + x;
+                    int rightIdx = y * canvas.width + (canvas.width - 1 - x);
+
+                    uint32_t temp = pixels[leftIdx];
+                    pixels[leftIdx] = pixels[rightIdx];
+                    pixels[rightIdx] = temp;
+                }
+            }
+
+            canvas.refresh();
+        }
+    }    
+
+    void ViewportWindow::flipv() {
+        Canvas &canvas = canvases[selected];
+        Layer &layer = canvas.layers[canvas.layer];
+        
+        if (layer.data) {
+            uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
+            size_t rowSize = canvas.width * sizeof(uint32_t);
+            std::vector<uint8_t> tempRow(rowSize);
+        
+            for (int y = 0; y < canvas.height / 2; ++y) {
+                uint32_t* rowTop = &pixels[y * canvas.width];
+                uint32_t* rowBottom = &pixels[(canvas.height - 1 - y) * canvas.width];
+
+                memcpy(tempRow.data(), rowTop, rowSize);
+                memcpy(rowTop, rowBottom, rowSize);
+                memcpy(rowBottom, tempRow.data(), rowSize);
+            }
+
+            canvas.refresh();
+        }
     }
 
     bool ViewportWindow::is_empty() const noexcept

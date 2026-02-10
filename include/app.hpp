@@ -12,11 +12,7 @@
 
 #include "system/signal.hpp"
 
-extern "C" {
-    #include "lua.h"
-    #include "lualib.h"
-    #include "lauxlib.h"
-}
+#include "menu/menuitem.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -70,7 +66,7 @@ namespace chroma {
             }
 
             template<typename... A>
-            void emit_signal(const std::string &name, A&&... args) {
+            void emit_signal(const std::string &name, A... args) {
                 std::size_t hash = typeid(void(*)(std::decay_t<A>...)).hash_code();
                 if (!signals.contains(name)) {
                     return;
@@ -79,6 +75,23 @@ namespace chroma {
                     return;
                 }
                 signals[name].emit(std::forward<A>(args)...);
+            }
+
+            template<typename I>
+            void add_menu(const std::string &menu)
+            {
+                // if (!menu_bar.contains(menu)) {
+                //     menu_bar[menu]menu, std::vector<std::unique_ptr<MenuItem>>());
+                // }
+                menu_bar[menu].push_back(std::make_unique<I>());
+            }
+
+            void separator(const std::string &menu)
+            {
+                // if (!menu_bar.contains(menu)) {
+                //     menu_bar.insert(menu, std::vector<std::unique_ptr<MenuItem>>());
+                // }
+                menu_bar[menu].emplace_back(nullptr);
             }
 
             static App* get_instance() noexcept;
@@ -118,18 +131,12 @@ namespace chroma {
             bool done = false;
             bool idle = false;
 
-            lua_State *state;
-        
-        public:
-            // ColorPickerWindow color_picker;
-            // PaletteWindow palette;
-            // ViewportWindow viewport;
-
-            // Signal<int, int> canvas_created;
 
             std::unordered_map<std::string, std::unique_ptr<Window>> windows;
             std::unordered_map<std::string, Signal> signals;
             std::unordered_map<std::string, std::size_t> signal_hash;
+
+            std::unordered_map<std::string, std::vector<std::unique_ptr<MenuItem>>> menu_bar;
 
             static App* instance;
     };
