@@ -80,7 +80,7 @@ namespace chroma {
 
         private:
             struct TileTransfer {
-                uint32_t index;
+                uint32_t offset;
 
                 uint32_t w;
                 uint32_t h;
