@@ -568,6 +568,19 @@ namespace chroma {
 
     }
 
+    void Canvas::refresh() noexcept
+    {
+        TileTransfer transfer;
+
+        transfer.index = 0;
+        transfer.w = width;
+        transfer.h = height;
+        transfer.x = 0;
+        transfer.y = 0;
+
+        pending_uploads.push_back(transfer);
+    }
+
     // void Canvas::upload(SDL_GPUCopyPass *pass) noexcept {
     //     if (pending_uploads.empty()) return;
 

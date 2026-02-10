@@ -76,9 +76,7 @@ namespace chroma {
 
         void upload(SDL_GPUCopyPass *pass) noexcept;
 
-        void request_refresh(uint32_t layer_index, uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
-            pending_uploads.push_back({layer_index, w, h, x, y});
-        }
+        void refresh() noexcept;
 
         private:
             struct TileTransfer {
