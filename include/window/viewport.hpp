@@ -39,8 +39,9 @@ namespace chroma {
             void new_canvas(uint32_t width, uint32_t height) noexcept;
             void save_canvas(const std::filesystem::path &directory, const std::filesystem::path &file, FileFormat format) noexcept;
             bool is_empty() const noexcept;
-            bool VerticalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height);
-            bool HorizontalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height);
+
+            void fliph();
+            void flipv();
 
             Canvas &get_canvas() noexcept;
         

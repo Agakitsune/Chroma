@@ -52,6 +52,9 @@ namespace chroma {
 
         App::get_instance()->connect_signal("main_color_changed", this, &ViewportWindow::_on_main_color_changed);
         App::get_instance()->connect_signal("second_color_changed", this, &ViewportWindow::_on_second_color_changed);
+
+        App::get_instance()->connect_signal("edit_fliph", this, &ViewportWindow::fliph);
+        App::get_instance()->connect_signal("edit_flipv", this, &ViewportWindow::flipv);
     }
 
     void ViewportWindow::display() noexcept
@@ -444,67 +447,17 @@ namespace chroma {
         SDL_DestroySurface(surface);
     }
 
-    bool ViewportWindow::save_canvas(const char *label, const char *extension) noexcept
-    {
-        std::string full_name = label;
-        full_name += extension;
-        Canvas &canvas = canvases[selected];
-
-
-
-        canvas.name = full_name;
-        canvas.dirty = false;
-
-        std::string file_path = SDL_GetBasePath() + full_name;
-        const char *path = file_path.c_str();
-
-        std::cout << full_name << std::endl;
-        std::cout << "PATH: \"" << path << "\"" << std::endl;
-
-        void *pixels = canvas.layers[0].data;
-        SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
-        
-        if (strcmp(extension, ".bmp") == 0) {
-            if (SDL_SaveBMP(surface, path)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
-        }
-        if (strcmp(extension, ".png") == 0) {
-            if (SDL_SavePNG(surface, path)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
-        }
-        if (strcmp(extension, ".jpg") == 0) {
-            if (IMG_SaveJPG(surface, path, 100)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
-        }
-        if (strcmp(extension, ".tga") == 0) {
-            if (IMG_SaveTGA(surface, path)) {
-                SDL_DestroySurface(surface);
-                return false;
-            }
-        }
-
-        SDL_DestroySurface(surface);
-
-        return true;
-    }
-
-    bool ViewportWindow::HorizontalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height) {
+    void ViewportWindow::fliph() {
         Canvas &canvas = canvases[selected];
         Layer &layer = canvas.layers[canvas.layer];
         
         if (layer.data) {
             uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
             
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width / 2; ++x) {
-                    int leftIdx = y * width + x;
-                    int rightIdx = y * width + (width - 1 - x);
+            for (int y = 0; y < canvas.width; ++y) {
+                for (int x = 0; x < canvas.height / 2; ++x) {
+                    int leftIdx = y * canvas.width + x;
+                    int rightIdx = y * canvas.width + (canvas.width - 1 - x);
 
                     uint32_t temp = pixels[leftIdx];
                     pixels[leftIdx] = pixels[rightIdx];
@@ -512,34 +465,30 @@ namespace chroma {
                 }
             }
 
-            canvas.request_refresh(0, 0, 0, width, height);
-            return true;
+            canvas.refresh();
         }
-        return false;
     }    
 
-    bool ViewportWindow::VerticalFlipLayerBuffer(SDL_GPUDevice* device, int width, int height) {
+    void ViewportWindow::flipv() {
         Canvas &canvas = canvases[selected];
         Layer &layer = canvas.layers[canvas.layer];
         
         if (layer.data) {
             uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
-            size_t rowSize = width * sizeof(uint32_t);
+            size_t rowSize = canvas.width * sizeof(uint32_t);
             std::vector<uint8_t> tempRow(rowSize);
         
-            for (int y = 0; y < height / 2; ++y) {
-                uint32_t* rowTop = &pixels[y * width];
-                uint32_t* rowBottom = &pixels[(height - 1 - y) * width];
+            for (int y = 0; y < canvas.height / 2; ++y) {
+                uint32_t* rowTop = &pixels[y * canvas.width];
+                uint32_t* rowBottom = &pixels[(canvas.height - 1 - y) * canvas.width];
 
                 memcpy(tempRow.data(), rowTop, rowSize);
                 memcpy(rowTop, rowBottom, rowSize);
                 memcpy(rowBottom, tempRow.data(), rowSize);
             }
 
-            canvas.request_refresh(0, 0, 0, width, height);
-            return true;
+            canvas.refresh();
         }
-        return false;
     }
 
     bool ViewportWindow::is_empty() const noexcept

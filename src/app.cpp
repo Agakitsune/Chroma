@@ -6,6 +6,7 @@
 #include "menu/newitem.hpp"
 #include "menu/saveitem.hpp"
 #include "menu/exititem.hpp"
+#include "menu/flipitem.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -87,6 +88,9 @@ namespace chroma {
         add_signal<uint32_t, uint32_t>("create_canvas_requested");
         add_signal<const std::filesystem::path &, const std::filesystem::path &, FileFormat>("save_canvas_requested");
 
+        add_signal("edit_fliph");
+        add_signal("edit_flipv");
+
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
         windows["Palette"] = std::make_unique<PaletteWindow>();
@@ -101,6 +105,8 @@ namespace chroma {
         add_menu<SaveMenuItem>("File");
         separator("File");
         add_menu<ExitMenuItem>("File");
+
+        add_menu<FlipMenuItem>("Edit");
 
         emit_signal("main_color_selected", WHITE);
         emit_signal("second_color_selected", BLACK);
@@ -498,23 +504,6 @@ namespace chroma {
             }
         }
 
-        if (ImGui::BeginMenu("Transform")) {
-            if (ImGui::MenuItem("Vertical Flip", "Ctrl+F")) {
-                ImGui::PushOverrideID(35);
-                get_window<ViewportWindow>("Viewport")->VerticalFlipLayerBuffer(device, 16, 16);
-                printf("it flipped!");
-                ImGui::PopID();
-            }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Horizontal Flip", "Ctrl+H")) {
-                ImGui::PushOverrideID(36);
-                get_window<ViewportWindow>("Viewport")->HorizontalFlipLayerBuffer(device, 16, 16);
-                printf("it flipped!");
-                ImGui::PopID();
-            }
-            ImGui::EndMenu();
-        }
-
         ImGui::EndMenuBar();
 
         for (auto &[menu, items] : menu_bar) {
@@ -524,187 +513,6 @@ namespace chroma {
                 }
             }
         }
-
-        // ImGui::PushOverrideID(32);
-
-        // if (ImGui::BeginPopupModal("New", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        //     ImGui::SeparatorText("Size");
-
-        //     ImGui::Text("Width:");
-
-        //     ImGui::SetNextItemWidth(-FLT_MIN);
-        //     ImGui::SameLine();
-        //     ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
-
-        //     ImGui::Text("Height:");
-
-        //     ImGui::SetNextItemWidth(-FLT_MIN);
-        //     ImGui::SameLine();
-        //     ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
-
-        //     if (ImGui::Button("OK", ImVec2(140, 0))) {
-        //         // Create new file with specified width and height
-        //         emit_signal("create_canvas_requested", w, h);
-        //         ImGui::CloseCurrentPopup();
-        //     }
-        //     ImGui::SetItemDefaultFocus();
-        //     ImGui::SameLine();
-        //     if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-        //         ImGui::CloseCurrentPopup();
-        //     }
-
-        //     ImGui::EndPopup();
-        // }
-
-        // ImGui::PopID();
-
-        // ImGui::PushOverrideID(33);
-
-        // if (ImGui::BeginPopupModal("Open", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        //     ImGui::Text("Not implemented yet");
-        //     if (ImGui::Button("close")) {
-        //         ImGui::CloseCurrentPopup();
-        //     }
-        //     // ImGui::SeparatorText("Size");
-
-        //     // ImGui::Text("Width:");
-
-        //     // ImGui::SetNextItemWidth(-FLT_MIN);
-        //     // ImGui::SameLine();
-        //     // ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
-
-        //     // ImGui::Text("Height:");
-
-        //     // ImGui::SetNextItemWidth(-FLT_MIN);
-        //     // ImGui::SameLine();
-        //     // ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
-
-        //     // if (ImGui::Button("OK", ImVec2(140, 0))) {
-        //     //     // Create new file with specified width and height
-        //     //     get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
-        //     //     ImGui::CloseCurrentPopup();
-        //     // }
-        //     // ImGui::SetItemDefaultFocus();
-        //     // ImGui::SameLine();
-        //     // if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-        //     //     ImGui::CloseCurrentPopup();
-        //     // }
-
-        //     ImGui::EndPopup();
-        // }
-
-        // ImGui::PopID();
-
-        // ImGui::PushOverrideID(34);
-
-        /*if (ImGui::BeginPopupModal("Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::InputText("File name", name, 1024);
-            if (ImGui::BeginCombo("File type", save_format)) {
-                // ImGui::Selectable(".bmp");
-                // ImGui::Selectable(".png");
-                if (ImGui::Selectable(".bmp", strcmp(save_format, ".bmp") == 0))
-                    save_format = ".bmp"; // Update the state
-                if (ImGui::Selectable(".png", strcmp(save_format, ".png") == 0))
-                    save_format = ".png"; // Update the state
-                if (ImGui::Selectable(".jpg", strcmp(save_format, ".jpg") == 0))
-                    save_format = ".jpg"; // Update the state
-                if (ImGui::Selectable(".tga", strcmp(save_format, ".tga") == 0))
-                    save_format = ".tga"; // Update the state
-                ImGui::EndCombo();
-            }*/
-
-        //     std::cout << name << std::endl;
-
-            /*if (ImGui::Button("Save", ImVec2(140, 0))) {
-                // Create new file with specified width and height
-                get_window<ViewportWindow>("Viewport")->save_canvas(name, save_format);
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-                ImGui::CloseCurrentPopup();
-            }*/
-
-        //     ImGui::EndPopup();
-        // }
-
-        // ImGui::PopID();
-
-        ImGui::PushOverrideID(33);
-
-        if (ImGui::BeginPopupModal("Open", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text("Not implemented yet");
-            if (ImGui::Button("close")) {
-                ImGui::CloseCurrentPopup();
-            }
-            // ImGui::SeparatorText("Size");
-
-            // ImGui::Text("Width:");
-
-            // ImGui::SetNextItemWidth(-FLT_MIN);
-            // ImGui::SameLine();
-            // ImGui::InputScalar("##width", ImGuiDataType_U32, &w, nullptr, nullptr, "%upx"); // Need to store w and h in a better way
-
-            // ImGui::Text("Height:");
-
-            // ImGui::SetNextItemWidth(-FLT_MIN);
-            // ImGui::SameLine();
-            // ImGui::InputScalar("##height", ImGuiDataType_U32, &h, nullptr, nullptr, "%upx");
-
-            // if (ImGui::Button("OK", ImVec2(140, 0))) {
-            //     // Create new file with specified width and height
-            //     get_window<ViewportWindow>("Viewport")->new_canvas(w, h);
-            //     ImGui::CloseCurrentPopup();
-            // }
-            // ImGui::SetItemDefaultFocus();
-            // ImGui::SameLine();
-            // if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-            //     ImGui::CloseCurrentPopup();
-            // }
-
-            ImGui::EndPopup();
-        }
-
-        ImGui::PopID();
-
-        ImGui::PushOverrideID(34);
-
-        if (ImGui::BeginPopupModal("Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::InputText("File name", name, 1024);
-            if (ImGui::BeginCombo("File type", save_format)) {
-                // ImGui::Selectable(".bmp");
-                // ImGui::Selectable(".png");
-                if (ImGui::Selectable(".bmp", strcmp(save_format, ".bmp") == 0))
-                    save_format = ".bmp"; // Update the state
-                if (ImGui::Selectable(".png", strcmp(save_format, ".png") == 0))
-                    save_format = ".png"; // Update the state
-                if (ImGui::Selectable(".jpg", strcmp(save_format, ".jpg") == 0))
-                    save_format = ".jpg"; // Update the state
-                if (ImGui::Selectable(".tga", strcmp(save_format, ".tga") == 0))
-                    save_format = ".tga"; // Update the state
-                ImGui::EndCombo();
-            }
-
-            std::cout << name << std::endl;
-
-            if (ImGui::Button("Save", ImVec2(140, 0))) {
-                // Create new file with specified width and height
-                get_window<ViewportWindow>("Viewport")->save_canvas(name, save_format);
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(140, 0))) {
-                ImGui::CloseCurrentPopup();
-            }
-
-            ImGui::EndPopup();
-        }
-
-        ImGui::PopID();
-
-        // Menubar possibly here i dunno
 
         ImGui::End();
 
