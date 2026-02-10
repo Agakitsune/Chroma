@@ -259,6 +259,12 @@ namespace chroma {
                 }
             } else if (brushing) {
                 cmd->end(x, y, old);
+
+                auto tmp = std::make_unique<BrushCommand>();
+
+                tmp->set_main_color(cmd->get_main_color());
+                tmp->set_second_color(cmd->get_second_color());
+
                 canvas.add_command(std::move(cmd));
                 brushing = false;
 
