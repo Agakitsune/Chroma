@@ -413,13 +413,15 @@ namespace chroma {
     {
         Canvas &canvas = canvases[selected];
 
-        canvas.name = file;
-        canvas.dirty = false;
+        SDL_GPUDevice *device = App::get_device();
 
         std::filesystem::path file_path = directory / file;
         const char *path = file_path.c_str();
 
-        void *pixels = canvas.layers[0].data;
+        canvas.name = file;
+        canvas.dirty = false;
+
+        void *pixels = SDL_MapGPUTransferBuffer(device, canvas.layers[0].buffer, true);
         SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
 
         bool result = false;
@@ -439,56 +441,42 @@ namespace chroma {
             } break;
         }
 
-        std::cout << "succ: " << result << std::endl;
-        if (!result) {
-            std::cout << SDL_GetError() << std::endl;
-        }
-
         SDL_DestroySurface(surface);
+        SDL_UnmapGPUTransferBuffer(device, canvas.layers[0].buffer);
     }
 
     void ViewportWindow::fliph() {
         Canvas &canvas = canvases[selected];
-        Layer &layer = canvas.layers[canvas.layer];
+        const Layer &layer = canvas.layers[canvas.layer];
         
-        if (layer.data) {
-            uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
-            
-            for (int y = 0; y < canvas.width; ++y) {
-                for (int x = 0; x < canvas.height / 2; ++x) {
-                    int leftIdx = y * canvas.width + x;
-                    int rightIdx = y * canvas.width + (canvas.width - 1 - x);
+        SDL_GPUDevice *device = App::get_device();
 
-                    uint32_t temp = pixels[leftIdx];
-                    pixels[leftIdx] = pixels[rightIdx];
-                    pixels[rightIdx] = temp;
-                }
-            }
+        void *pixels = SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+        SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
+
+        SDL_FlipSurface(surface, SDL_FlipMode::SDL_FLIP_HORIZONTAL);
+
+        SDL_DestroySurface(surface);
+        SDL_UnmapGPUTransferBuffer(device, layer.buffer);
 
             canvas.refresh();
-        }
     }    
 
     void ViewportWindow::flipv() {
         Canvas &canvas = canvases[selected];
-        Layer &layer = canvas.layers[canvas.layer];
+        const Layer &layer = canvas.layers[canvas.layer];
         
-        if (layer.data) {
-            uint32_t* pixels = reinterpret_cast<uint32_t*>(layer.data);
-            size_t rowSize = canvas.width * sizeof(uint32_t);
-            std::vector<uint8_t> tempRow(rowSize);
-        
-            for (int y = 0; y < canvas.height / 2; ++y) {
-                uint32_t* rowTop = &pixels[y * canvas.width];
-                uint32_t* rowBottom = &pixels[(canvas.height - 1 - y) * canvas.width];
+        SDL_GPUDevice *device = App::get_device();
 
-                memcpy(tempRow.data(), rowTop, rowSize);
-                memcpy(rowTop, rowBottom, rowSize);
-                memcpy(rowBottom, tempRow.data(), rowSize);
-            }
+        void *pixels = SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+        SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
+
+        SDL_FlipSurface(surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
+
+        SDL_DestroySurface(surface);
+        SDL_UnmapGPUTransferBuffer(device, layer.buffer);
 
             canvas.refresh();
-        }
     }
 
     bool ViewportWindow::is_empty() const noexcept
