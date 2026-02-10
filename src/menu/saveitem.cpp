@@ -182,14 +182,13 @@ namespace chroma {
 
                 if (file.has_extension()) {
                     fmt = fetch_format(file.extension());
-                    std::cout << fmt << std::endl;
                     if (fmt == FileFormat::Count) {
                         ImGui::CloseCurrentPopup();
                         ImGui::PushOverrideID(33);
                         ImGui::OpenPopup("ExtFailure");
                         ImGui::PopID();
+                        return;
                     }
-                    return;
                 } else {
                     if (selected > 0) {
                         file += extensions[selected];
