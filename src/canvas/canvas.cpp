@@ -56,6 +56,8 @@ namespace chroma {
         return *this;
     }
 
+    
+
     Canvas::Canvas(uint32_t width, uint32_t height) noexcept
     : width(width), height(height)
     {
@@ -85,24 +87,13 @@ namespace chroma {
         Layer &layer = layers.emplace_back();
         TileTransfer transfer;
 
-        layer.data = new uint8_t[buffer_size];
-        layer.dirty_flags = new bool[dirty_flags_size];
-
-        for (uint64_t i = 0; i < buffer_size; ++i) {
-            layer.data[i] = 0;
-        }
-
-        transfer.index = 0;
+        transfer.offset = 0;
         transfer.w = width;
         transfer.h = height;
         transfer.x = 0;
         transfer.y = 0;
 
         pending_uploads.push_back(transfer);
-
-        // for (uint64_t i = 0; i < dirty_flags_size; ++i) {
-        //     layer.dirty_flags[i] = true; // Upload everything at the end of the frame
-        // }
 
         layer.texture = SDL_CreateGPUTexture(
             device,
@@ -113,6 +104,14 @@ namespace chroma {
             device,
             &buffer_info
         );
+
+        uint64_t *mapping = (uint64_t *)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+        
+        for (uint64_t i = 0; i < buffer_size / 8; i++) {
+            mapping = 0;
+        }
+
+        SDL_UnmapGPUTransferBuffer(device, layer.buffer);
 
         texture_info.usage |= SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
 
@@ -173,47 +172,16 @@ namespace chroma {
     {
         const Layer &layer = layers[this->layer];
 
-        const uint64_t div_x = x / TILE_SIZE;
-        const uint64_t div_y = y / TILE_SIZE;
-        const uint64_t mod_x = x & (TILE_SIZE - 1);
-        const uint64_t mod_y = y & (TILE_SIZE - 1);
+        SDL_GPUDevice *device = App::get_device();
 
-        const uint64_t div_width = width / TILE_SIZE;
-        const uint64_t div_height = height / TILE_SIZE;
-        const uint64_t mod_width = width & (TILE_SIZE - 1);
-        const uint64_t mod_height = height & (TILE_SIZE - 1);
-
-        uint64_t index = 0;
-        const uint8_t *base = nullptr;
+        uint8_t *mapping = (uint8_t*)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
 
         Color ret;
 
-        if (div_x < div_width && div_y < div_height) {
-            // Full 64x64 tile
-            index = (div_x * TILE_SIZE) + (div_y * (div_width * TILE_SIZE));
+        mapping += (x + y * width) * 4;
+        ret.download(mapping);
 
-            base = layer.data + (index * 4);
-            ret.download(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
-        } else {
-            index = (div_width * TILE_SIZE) + (div_height * TILE_SIZE); // Skip all full tiles
-
-            if (div_y == div_height) {
-                // Skip last partial row
-                index += div_height * (mod_width * TILE_SIZE);
-
-                index += div_x * (mod_height * TILE_SIZE);
-            } else {
-                index += div_y * (mod_height * TILE_SIZE);
-            }
-
-            base = layer.data + (index * 4);
-
-            if (div_x == div_width) {
-                ret.download(base + (((mod_y * mod_width) + mod_x) * 4));
-            } else {
-                ret.download(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
-            }
-        }
+        SDL_UnmapGPUTransferBuffer(device, layer.buffer);
 
         return ret;
     }
@@ -232,56 +200,24 @@ namespace chroma {
         const uint64_t mod_width = width & (TILE_SIZE - 1);
         const uint64_t mod_height = height & (TILE_SIZE - 1);
 
-        // uint64_t index = 0;
-        uint8_t *base = nullptr;
+        SDL_GPUDevice *device = App::get_device();
 
-        bool new_transfer = true;
+        uint8_t *mapping = (uint8_t*)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
 
         TileTransfer transfer;
+        bool new_transfer = true;
 
+        mapping += (x + y * width) * 4;
+        color.upload(mapping);
+
+        transfer.offset = (div_y * width + div_x) * TILE_SIZE * 4;
         transfer.x = div_x * TILE_SIZE;
         transfer.y = div_y * TILE_SIZE;
-
-        // transfer.index = 
-
-        if (div_x < div_width && div_y < div_height) {
-            // Full 64x64 tile
-            transfer.index = (div_x * TILE_SIZE * TILE_SIZE) + (div_y * (div_width * TILE_SIZE * TILE_SIZE));
-
-            transfer.w = TILE_SIZE;
-            transfer.h = TILE_SIZE;
-            
-            // color.upload(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
-        } else {
-            transfer.index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); // Skip all full tiles
-            // flag_index = div_width * div_height;
-
-            if (div_y == div_height) {
-                // Skip last partial row
-                transfer.index += div_height * (mod_width * TILE_SIZE);
-
-                transfer.index += div_x * (mod_height * TILE_SIZE);
-                transfer.h = mod_height;
-            } else {
-                transfer.index += div_y * (mod_height * TILE_SIZE);
-                transfer.h = TILE_SIZE;
-            }
-
-            // base = layer.data + (index * 4);
-        }
-
-        base = layer.data + (transfer.index * 4);
-
-        if (div_x == div_width) {
-            color.upload(base + (((mod_y * mod_width) + mod_x) * 4));
-            transfer.w = mod_width;
-        } else {
-            color.upload(base + (((mod_y * TILE_SIZE) + mod_x) * 4));
-            transfer.w = TILE_SIZE;
-        }
+        transfer.w = (div_x == div_width) ? mod_width : TILE_SIZE;
+        transfer.h = (div_y == div_height) ? mod_height : TILE_SIZE;
 
         for (const TileTransfer &t : pending_uploads) {
-            if (transfer.index == t.index) {
+            if (transfer.offset == t.offset) {
                 new_transfer = false;
                 break;
             }
@@ -291,7 +227,7 @@ namespace chroma {
             pending_uploads.push_back(transfer);
         }
 
-        // layer.dirty_flags[flag_index] = true;
+        SDL_UnmapGPUTransferBuffer(device, layer.buffer);
     }
 
     void Canvas::add_command(std::unique_ptr<ICommand> &&cmd) noexcept
@@ -343,16 +279,16 @@ namespace chroma {
 
     void Canvas::upload(SDL_GPUCopyPass *pass) noexcept
     {
+        const Layer &layer = layers[this->layer];
+
+        // const uint64_t div_width = width / TILE_SIZE;
+        // const uint64_t div_height = height / TILE_SIZE;
+        // const uint64_t mod_width = width & (TILE_SIZE - 1);
+        // const uint64_t mod_height = height & (TILE_SIZE - 1);
+
         SDL_GPUDevice *device = App::get_device();
 
-        const uint64_t div_width = width / TILE_SIZE;
-        const uint64_t div_height = height / TILE_SIZE;
-        const uint64_t mod_width = width & (TILE_SIZE - 1);
-        const uint64_t mod_height = height & (TILE_SIZE - 1);
-
-        uint64_t index = 0;
-
-        void *mapping = nullptr;
+        // uint8_t *mapping = (uint8_t*)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
 
         SDL_GPUTextureTransferInfo source = {};
         SDL_GPUTextureRegion destination = {};
@@ -362,34 +298,18 @@ namespace chroma {
         destination.z = 0;
         destination.d = 1;
 
-        const Layer &layer = layers[this->layer];
-
         source.transfer_buffer = layer.buffer;
         destination.texture = layer.texture;
 
-        mapping = SDL_MapGPUTransferBuffer(
-            device,
-            layer.buffer,
-            true
-        );
-
         for (const TileTransfer &transfer : pending_uploads) {
-            const uint32_t s = transfer.index * 4;
-            const uint8_t *base = layer.data + s;
-            uint8_t *dst = (uint8_t*)mapping + s;
-
-            source.offset = s;
-            source.pixels_per_row = transfer.w;
-            source.rows_per_layer = transfer.h;
+            source.offset = transfer.offset;
+            source.pixels_per_row = width;
+            source.rows_per_layer = 0;
 
             destination.w = transfer.w;
             destination.h = transfer.h;
             destination.x = transfer.x;
             destination.y = transfer.y;
-
-            std::memcpy(
-                dst, base, transfer.w * transfer.h * 4
-            );
 
             SDL_UploadToGPUTexture(
                 pass,
@@ -399,12 +319,9 @@ namespace chroma {
             );
         }
 
-        SDL_UnmapGPUTransferBuffer(
-            device,
-            layer.buffer
-        );
-
         pending_uploads.clear();
+
+        // SDL_UnmapGPUTransferBuffer(device, layer.buffer);
 
         // for (Layer &layer : layers) {
         //     mapping = SDL_MapGPUTransferBuffer(
@@ -572,7 +489,7 @@ namespace chroma {
     {
         TileTransfer transfer;
 
-        transfer.index = 0;
+        transfer.offset = 0;
         transfer.w = width;
         transfer.h = height;
         transfer.x = 0;
@@ -580,26 +497,5 @@ namespace chroma {
 
         pending_uploads.push_back(transfer);
     }
-
-    // void Canvas::upload(SDL_GPUCopyPass *pass) noexcept {
-    //     if (pending_uploads.empty()) return;
-
-    //     for (const auto& transfer : pending_uploads) {
-    //         SDL_GPUTextureTransferInfo transferInfo{};
-    //         transferInfo.transfer_buffer = layers[transfer.index].buffer; // Assuming Layer holds the buffer
-    //         transferInfo.offset = 0; // Or calculate based on tile logic
-
-    //         SDL_GPUTextureRegion region{};
-    //         region.texture = layers[transfer.index].texture;
-    //         region.w = transfer.w;
-    //         region.h = transfer.h;
-    //         region.x = transfer.x;
-    //         region.y = transfer.y;
-
-    //         SDL_UploadToGPUTexture(pass, &transferInfo, &region, false);
-    //     }
-    //     pending_uploads.clear(); 
-    // }
-
 
 }

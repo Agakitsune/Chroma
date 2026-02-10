@@ -108,8 +108,8 @@ namespace chroma {
 
         add_menu<FlipMenuItem>("Edit");
 
-        emit_signal("main_color_selected", WHITE);
-        emit_signal("second_color_selected", BLACK);
+        emit_signal<const Color &>("main_color_selected", WHITE);
+        emit_signal<const Color &>("second_color_selected", BLACK);
 
         return 0;
     }
@@ -266,6 +266,8 @@ namespace chroma {
             }
     
             SDL_SubmitGPUCommandBuffer(cmd_buffer);
+
+            SDL_WaitForGPUIdle(device); // Not ideal, but not a high render application
 
             const uint64_t end_tick = SDL_GetTicks();
             delta = end_tick - tick;
