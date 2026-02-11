@@ -13,5 +13,6 @@ namespace chroma {
             ~UndoRedoMenuItem() noexcept = default;
 
             virtual void menubar() noexcept override final;
+            virtual void shortcuts() noexcept override final;
     };
 }

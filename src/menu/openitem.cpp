@@ -97,11 +97,16 @@ namespace chroma {
     void OpenMenuItem::menubar() noexcept
     {
         if (ImGui::MenuItem("Open", "Ctrl+O")) {
-            ImGui::PushOverrideID(37);
-            ImGui::OpenPopup("Open");
-            ImGui::PopID();
-            query_current_directory();
+            action();
         }
+    }
+
+    void OpenMenuItem::action() noexcept
+    {
+        ImGui::PushOverrideID(37);
+        ImGui::OpenPopup("Open");
+        ImGui::PopID();
+        query_current_directory();
     }
 
     void OpenMenuItem::display() noexcept
@@ -243,4 +248,10 @@ namespace chroma {
         }
         ImGui::PopID();
     }
+
+    void OpenMenuItem::shortcuts() {
+        if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_O)) {
+            action();
+        }
+    } 
 }

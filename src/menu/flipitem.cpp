@@ -17,4 +17,14 @@ namespace chroma {
             App::get_instance()->emit_signal("edit_flipv");
         }
     }
+
+    void FlipMenuItem::shortcuts() noexcept
+    {
+        if (ImGui::IsKeyChordPressed(ImGuiMod_Shift | ImGuiKey_H)) {
+            App::get_instance()->emit_signal("edit_fliph");
+        }
+        if (ImGui::IsKeyChordPressed(ImGuiMod_Shift | ImGuiKey_V)) {
+            App::get_instance()->emit_signal("edit_flipv");
+        }
+    }
 }
