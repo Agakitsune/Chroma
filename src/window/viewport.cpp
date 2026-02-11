@@ -82,14 +82,14 @@ namespace chroma {
         SDL_GPUDevice *device = App::get_device();
         SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
 
-        // if (cmd == nullptr) {
-        //     cmd = std::make_unique<BrushCommand>();
-        // }
 
-        // const ColorPickerWindow &color_pick = App::get_instance()->color_picker;
-
-        // cmd->set_main_color(color_pick.main_color);
-        // cmd->set_second_color(color_pick.second_color);
+        if (marked < canvases.size()) {
+            canvases.erase(canvases.begin() + marked);
+            if (selected == canvases.size() && selected > 0) {
+                selected--;
+            }
+            marked = canvases.size();
+        }
 
         uint64_t modal = 0;
         if (ImGui::BeginTabBar("##ViewportTabs",
@@ -173,7 +173,7 @@ namespace chroma {
                         ImGui::OpenPopup("Warning");
                         ImGui::PopID();
                     } else {
-                        canvases.erase(canvases.begin() + i);
+                        marked = i;
                         --i;
                     }
                 }
@@ -199,10 +199,7 @@ namespace chroma {
 
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Discard", ImVec2(-FLT_MIN, 0))) {
-                    canvases.erase(canvases.begin() + selected);
-                    if (selected == canvases.size() && selected > 0) {
-                        selected--;
-                    }
+                    marked = selected;
                     ImGui::CloseCurrentPopup();
                 }
 
@@ -401,6 +398,7 @@ namespace chroma {
     void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
         canvases.emplace_back(width, height);
+        marked = canvases.size();
 
         // if (!canvas.layers[0].texture) {
         //     return false;
