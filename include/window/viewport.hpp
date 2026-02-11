@@ -43,6 +43,8 @@ namespace chroma {
 
             void fliph() noexcept;
             void flipv() noexcept;
+            void undo() noexcept;
+            void redo() noexcept;
 
             Canvas &get_canvas() noexcept;
         
