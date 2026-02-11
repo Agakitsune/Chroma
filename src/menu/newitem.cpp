@@ -11,12 +11,17 @@ namespace chroma {
     void NewMenuItem::menubar() noexcept
     {
         if (ImGui::MenuItem("New", "Ctrl+N")) {
-            ImGui::PushOverrideID(32);
-            ImGui::OpenPopup("New");
-            w = 16;
-            h = 16;
-            ImGui::PopID();
+            action();
         }
+    }
+
+    void NewMenuItem::action() noexcept
+    {
+        ImGui::PushOverrideID(32);
+        ImGui::OpenPopup("New");
+        w = 16;
+        h = 16;
+        ImGui::PopID();
     }
 
     void NewMenuItem::display() noexcept
@@ -52,4 +57,10 @@ namespace chroma {
         }
         ImGui::PopID();
     }
+
+    void NewMenuItem::shortcuts() {
+        if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_N)) {
+            action();
+        }
+    } 
 }

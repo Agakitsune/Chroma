@@ -17,4 +17,14 @@ namespace chroma {
             App::get_instance()->emit_signal("edit_redo");
         }
     }
+
+    void UndoRedoMenuItem::shortcuts() noexcept
+    {
+        if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Z)) {
+            App::get_instance()->emit_signal("edit_undo");
+        }
+        if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Y)) {
+            App::get_instance()->emit_signal("edit_redo");
+        }
+    }
 }

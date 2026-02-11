@@ -30,6 +30,8 @@ namespace chroma {
             void query_current_directory() noexcept;
 
             virtual void menubar() noexcept override final;
+            virtual void action() noexcept override final;
             virtual void display() noexcept override final;
+            virtual void shortcuts() noexcept override final;
     };
 }

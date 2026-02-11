@@ -117,7 +117,7 @@ namespace chroma {
         separator("Edit");
         add_menu<FlipMenuItem>("Edit");
 
-        connect_signal("popup_save", save_menu, &SaveMenuItem::open_popup);
+        connect_signal("popup_save", save_menu, &SaveMenuItem::action);
 
         emit_signal<const Color &>("main_color_selected", WHITE);
         emit_signal<const Color &>("second_color_selected", BLACK);
@@ -165,6 +165,14 @@ namespace chroma {
             ImGui_ImplSDLGPU3_NewFrame();
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
+
+            for (auto &[menu, items] : menu_bar) {
+                for (auto &item : items) {
+                    if (item) {
+                        item->shortcuts();
+                    }
+                }
+            }
 
             ImGui_ImplSDLGPU3_Data *bd = (ImGui_ImplSDLGPU3_Data*)io.BackendRendererUserData;
 

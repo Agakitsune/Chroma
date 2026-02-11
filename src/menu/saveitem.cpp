@@ -94,19 +94,19 @@ namespace chroma {
         std::stable_sort(files.begin(), files.end(), path_less_compare{});
     }
 
-    void SaveMenuItem::open_popup() noexcept
+    void SaveMenuItem::menubar() noexcept
+    {
+        if (ImGui::MenuItem("Save", "Ctrl+S")) {
+            action();
+        }
+    }
+
+    void SaveMenuItem::action() noexcept
     {
         ImGui::PushOverrideID(33);
         ImGui::OpenPopup("Save");
         ImGui::PopID();
         query_current_directory();
-    }
-
-    void SaveMenuItem::menubar() noexcept
-    {
-        if (ImGui::MenuItem("Save", "Ctrl+S")) {
-            open_popup();
-        }
     }
 
     void SaveMenuItem::display() noexcept
@@ -226,5 +226,11 @@ namespace chroma {
             ImGui::EndPopup();
         }
         ImGui::PopID();
+    }
+
+    void SaveMenuItem::shortcuts() {
+        if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S)) {
+            action();
+        }
     }
 }
