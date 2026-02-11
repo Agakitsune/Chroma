@@ -8,6 +8,7 @@
 #include "menu/saveitem.hpp"
 #include "menu/exititem.hpp"
 #include "menu/flipitem.hpp"
+#include "menu/undoredoitem.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -92,6 +93,8 @@ namespace chroma {
 
         add_signal("edit_fliph");
         add_signal("edit_flipv");
+        add_signal("edit_undo");
+        add_signal("edit_redo");
 
         add_signal("popup_save");
 
@@ -110,6 +113,8 @@ namespace chroma {
         separator("File");
         add_menu<ExitMenuItem>("File");
 
+        add_menu<UndoRedoMenuItem>("Edit");
+        separator("Edit");
         add_menu<FlipMenuItem>("Edit");
 
         connect_signal("popup_save", save_menu, &SaveMenuItem::open_popup);

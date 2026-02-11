@@ -57,6 +57,9 @@ namespace chroma {
 
         App::get_instance()->connect_signal("edit_fliph", this, &ViewportWindow::fliph);
         App::get_instance()->connect_signal("edit_flipv", this, &ViewportWindow::flipv);
+
+        App::get_instance()->connect_signal("edit_undo", this, &ViewportWindow::undo);
+        App::get_instance()->connect_signal("edit_redo", this, &ViewportWindow::redo);
     }
 
     void ViewportWindow::display() noexcept
@@ -504,7 +507,7 @@ namespace chroma {
         SDL_DestroySurface(surface);
         SDL_UnmapGPUTransferBuffer(device, layer.buffer);
 
-            canvas.refresh();
+        canvas.refresh();
     }    
 
     void ViewportWindow::flipv() noexcept
@@ -522,7 +525,32 @@ namespace chroma {
         SDL_DestroySurface(surface);
         SDL_UnmapGPUTransferBuffer(device, layer.buffer);
 
-            canvas.refresh();
+        canvas.refresh();
+    }
+
+    void ViewportWindow::undo() noexcept
+    {
+        Canvas &canvas = canvases[selected];
+        canvas.undo();
+        // const Layer &layer = canvas.layers[canvas.layer];
+        
+        // SDL_GPUDevice *device = App::get_device();
+
+        // void *pixels = SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+        // SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
+
+        // SDL_FlipSurface(surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
+
+        // SDL_DestroySurface(surface);
+        // SDL_UnmapGPUTransferBuffer(device, layer.buffer);
+
+        // canvas.refresh();
+    }
+
+    void ViewportWindow::redo() noexcept
+    {
+        Canvas &canvas = canvases[selected];
+        canvas.redo();
     }
 
     bool ViewportWindow::is_empty() const noexcept
