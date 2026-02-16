@@ -35,6 +35,14 @@ cmake --build . && ./chroma
 
 ![Chroma Demo](screenshots/new_file.gif)
 
+`Flip image`:
+
+![Chroma Demo](screenshots/flips.gif)
+
+`Colorpicker`:
+
+![Chroma Demo](screenshots/colorpicker.gif)
+
 
 ## Contributing
 
