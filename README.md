@@ -72,11 +72,25 @@ cmake --build . && ./chroma
 
 ![Chroma Demo](screenshots/colorpicker.gif)
 
+## Project Structure
 
-## Contributing
+```
+Chroma/
+├── build/       
+├── include/          
+├── screenshots/             
+└── src/         
+```
 
-Pull requests are welcome.
+## Technical Stack
+
+| Component      | Technologies                                                                 |
+| -------------- | -----------------------------------------------------------------------------|
+| Language       | C++ (Standard 20)                                                            |
+| Graphics API   | SDL3 GPU (Hardware-accelerated rendering)                                    |
+| User Interface | Dear ImGui                                                                   |
+
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+This project is private and proprietary.
