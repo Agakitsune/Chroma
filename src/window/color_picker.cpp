@@ -99,7 +99,7 @@ namespace chroma {
 
             if (right_clicked) {
                 ImGui::ColorConvertHSVtoRGB(H, S, V, main_color[0], main_color[1], main_color[2]);
-                App::get_instance()->emit_signal("color_picked", main_color);
+                App::get_instance()->emit_signal<const Color &>("color_picked", main_color);
             }
         }
 
