@@ -29,6 +29,13 @@ cmake --build . && ./chroma
 
 `Scroll`: Zoom in/out.
 
+## Features
+
+`New canva`:
+
+![Chroma Demo](screenshots/new_file.gif)
+
+
 ## Contributing
 
 Pull requests are welcome.
