@@ -1,4 +1,13 @@
-
+/**
+ * @file brush_command.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Handling drawing brush behavior
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "canvas/command/brush_command.hpp"
 
 #include "SDL3/SDL.h"

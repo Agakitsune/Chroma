@@ -1,4 +1,13 @@
-
+/**
+ * @file canvas.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Handle canva logic and ability to draw over
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "canvas/canvas.hpp"
 
 #include "app.hpp"
