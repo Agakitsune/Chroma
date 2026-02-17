@@ -18,7 +18,10 @@
 #define TILE_SIZE 32
 
 namespace chroma {
-
+/**
+ * @brief Destroy the Layer:: Layer object
+ * 
+ */
     Layer::~Layer() noexcept
     {
         SDL_GPUDevice *device = App::get_device();
@@ -36,7 +39,11 @@ namespace chroma {
             delete[] dirty_flags;
         }
     }
-
+/**
+ * @brief Construct a new Layer:: Layer object
+ * 
+ * @param other 
+ */
     Layer::Layer(Layer&&other) noexcept
     : data(other.data),
     dirty_flags(other.dirty_flags),
@@ -48,7 +55,12 @@ namespace chroma {
         other.buffer = nullptr;
         other.texture = nullptr;
     }
-
+/**
+ * @brief Overload = operator to communicate data between layers
+ * 
+ * @param other 
+ * @return Layer& 
+ */
     Layer& Layer::operator=(Layer&&other) noexcept
     {
         if (this != &other) {
@@ -66,7 +78,12 @@ namespace chroma {
     }
 
     
-
+/**
+ * @brief Construct a new Canvas:: Canvas object
+ * 
+ * @param width 
+ * @param height 
+ */
     Canvas::Canvas(uint32_t width, uint32_t height) noexcept
     : width(width), height(height)
     {
@@ -129,7 +146,11 @@ namespace chroma {
             &texture_info
         );
     }
-
+/**
+ * @brief Construct a new Canvas:: Canvas object
+ * 
+ * @param surface 
+ */
     Canvas::Canvas(SDL_Surface *surface) noexcept
     : width(surface->w), height(surface->h)
     {
@@ -190,7 +211,10 @@ namespace chroma {
             &texture_info
         );
     }
-
+/**
+ * @brief Destroy the Canvas:: Canvas object
+ * 
+ */
     Canvas::~Canvas() noexcept
     {
         SDL_GPUDevice *device = App::get_device();
@@ -199,7 +223,11 @@ namespace chroma {
             SDL_ReleaseGPUTexture(device, preview);
         }
     }
-
+/**
+ * @brief Construct a new Canvas:: Canvas object
+ * 
+ * @param other 
+ */
     Canvas::Canvas(Canvas&&other) noexcept
     : name(std::move(other.name)),
     layers(std::move(other.layers)),
@@ -216,7 +244,12 @@ namespace chroma {
     {
         other.preview = nullptr;
     }
-
+/**
+ * @brief Transfer data between layers
+ * 
+ * @param other 
+ * @return Canvas& 
+ */
     Canvas& Canvas::operator=(Canvas&&other) noexcept
     {
         if (this != &other) {
@@ -237,7 +270,13 @@ namespace chroma {
         }
         return *this;
     }
-
+/**
+ * @brief Provides a global access to canva colors
+ * 
+ * @param x 
+ * @param y 
+ * @return Color 
+ */
     Color Canvas::get_color(uint32_t x, uint32_t y) const noexcept
     {
         const Layer &layer = layers[this->layer];
@@ -255,7 +294,13 @@ namespace chroma {
 
         return ret;
     }
-
+/**
+ * @brief Set layer colors
+ * 
+ * @param x 
+ * @param y 
+ * @param color 
+ */
     void Canvas::set_color(uint32_t x, uint32_t y, const Color &color) noexcept
     {
         const Layer &layer = layers[this->layer];
@@ -299,7 +344,11 @@ namespace chroma {
 
         SDL_UnmapGPUTransferBuffer(device, layer.buffer);
     }
-
+/**
+ * @brief Push command in list of user actions
+ * 
+ * @param cmd 
+ */
     void Canvas::add_command(std::unique_ptr<ICommand> &&cmd) noexcept
     {
         // Remove undone commands
@@ -310,7 +359,10 @@ namespace chroma {
 
         pending.push(std::move(cmd));
     }
-
+/**
+ * @brief Pop command from list of user actions
+ * 
+ */
     void Canvas::execute_pending() noexcept
     {
         while (!pending.empty()) {
@@ -324,7 +376,10 @@ namespace chroma {
             pending.pop();
         }
     }
-
+/**
+ * @brief Check if possible to undo an action, if so, proceide, if not, nothing happens
+ * 
+ */
     void Canvas::undo() noexcept
     {
         if (stack_index == 0) {
@@ -335,7 +390,10 @@ namespace chroma {
         cmd.undo(*this);
         --stack_index;
     }
-
+/**
+ * @brief Check if possible to replay an action, if so, proceide, if not, nothing happens
+ * 
+ */
     void Canvas::redo() noexcept
     {
         if (stack_index >= stack.size()) {
@@ -346,7 +404,11 @@ namespace chroma {
         cmd.redo(*this);
         ++stack_index;
     }
-
+/**
+ * @brief submit canva to GPU for rendering
+ * 
+ * @param pass 
+ */
     void Canvas::upload(SDL_GPUCopyPass *pass) noexcept
     {
         const Layer &layer = layers[this->layer];
@@ -554,7 +616,10 @@ namespace chroma {
         // }
 
     }
-
+/**
+ * @brief Call this function to update visually the canva content
+ * 
+ */
     void Canvas::refresh() noexcept
     {
         TileTransfer transfer;

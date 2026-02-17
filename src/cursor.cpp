@@ -138,6 +138,10 @@ namespace chroma {
 
     std::unique_ptr<CursorManager> CursorManager::instance = nullptr;
 
+/**
+ * @brief Construct a new Cursor Manager:: Cursor Manager object
+ * 
+ */
     CursorManager::CursorManager() noexcept {
         cursors.resize(static_cast<size_t>(Cursor::Count), nullptr);
 
@@ -192,7 +196,10 @@ namespace chroma {
             }
         }
     }
-
+/**
+ * @brief Destroy the Cursor Manager:: Cursor Manager object
+ * 
+ */
     CursorManager::~CursorManager() noexcept {
         for (SDL_Cursor* cursor : cursors) {
             if (cursor) {
@@ -200,14 +207,22 @@ namespace chroma {
             }
         }
     }
-
+/**
+ * @brief 
+ * 
+ * @return Provides a global access to CursorManager
+ */
     CursorManager& CursorManager::get_instance() noexcept {
         if (!instance) {
             instance = std::unique_ptr<CursorManager>(new CursorManager());
         }
         return *instance;
     }
-
+/**
+ * @brief 
+ * 
+ * @param cursor Set a cursor instance
+ */
     void CursorManager::set_cursor(Cursor cursor) noexcept {
         CursorManager &mgr = get_instance();
 
@@ -218,7 +233,10 @@ namespace chroma {
 
         mgr.cursor = cursor;
     }
-
+/**
+ * @brief update cursor
+ * 
+ */
     void CursorManager::update() noexcept {
         CursorManager &mgr = get_instance();
 

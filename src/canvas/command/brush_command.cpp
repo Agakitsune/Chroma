@@ -95,7 +95,10 @@ static const uint32_t spirv_frag[] = {
 };
 
 namespace chroma {
-
+/**
+ * @brief Construct a new Brush Command:: Brush Command object
+ * 
+ */
     BrushCommand::BrushCommand() noexcept {
         SDL_GPUDevice *device = App::get_device();
 
@@ -204,7 +207,10 @@ namespace chroma {
 
         this->pipeline = SDL_CreateGPUGraphicsPipeline(device, &pipeline_info);
     }
-
+/**
+ * @brief Destroy the Brush Command:: Brush Command object
+ * 
+ */
     BrushCommand::~BrushCommand() noexcept {
         SDL_GPUDevice *device = App::get_device();
 
@@ -228,7 +234,13 @@ namespace chroma {
             instance_buffer = nullptr;
         }
     }
-
+/**
+ * @brief Add selected brush color to canva
+ * 
+ * @param x 
+ * @param y 
+ * @param color 
+ */
     void BrushCommand::add(uint32_t x, uint32_t y, const Color &color) noexcept {
         positions.push_back({(float)x, (float)y});
         previous_colors.push_back(color);
@@ -283,7 +295,14 @@ namespace chroma {
 
         SDL_ReleaseGPUTransferBuffer(device, transfer_buffer);
     }
-
+/**
+ * @brief Checks if a specific (x, y) coordinate is part of the recorded brush stroke. 
+ * 
+ * @param x 
+ * @param y 
+ * @return true 
+ * @return false 
+ */
     bool BrushCommand::contains(uint32_t x, uint32_t y) const noexcept {
         for (size_t i = 0; i < positions.size(); ++i) {
             if (positions[i].x == x && positions[i].y == y) {
@@ -292,14 +311,22 @@ namespace chroma {
         }
         return false;
     }
-
+/**
+ * @brief Replace a previously removed color
+ * 
+ * @param canvas 
+ */
     void BrushCommand::redo(Canvas &canvas) noexcept {
         for (size_t i = 0; i < positions.size(); ++i) {
             const Pos &pos = positions[i];
             canvas.set_color(pos.x, pos.y, main);
         }
     }
-
+/**
+ * @brief Revert last action to date
+ * 
+ * @param canvas 
+ */
     void BrushCommand::undo(Canvas &canvas) noexcept {
         for (size_t i = 0; i < positions.size(); ++i) {
             const Pos &pos = positions[i];
@@ -307,21 +334,43 @@ namespace chroma {
             canvas.set_color(pos.x, pos.y, old_color);
         }
     }
-
+/**
+ * @brief Add color upon startup
+ * 
+ * @param x 
+ * @param y 
+ * @param color 
+ */
     void BrushCommand::start(uint32_t x, uint32_t y, const Color &color) noexcept {
         add(x, y, color);
     }
-
+/**
+ * @brief Update brushing painting
+ * 
+ * @param x 
+ * @param y 
+ * @param color 
+ */
     void BrushCommand::update(uint32_t x, uint32_t y, const Color &color) noexcept {
         if (!contains(x, y)) {
             add(x, y, color);
         }
     }
-
+/**
+ * @brief Notify an end to the brushing painting
+ * 
+ * @param x 
+ * @param y 
+ * @param color 
+ */
     void BrushCommand::end(uint32_t x, uint32_t y, const Color &color) noexcept {
         update(x, y, color);
     }
 
+/**
+ * @brief discard color
+ * 
+ */
     void BrushCommand::discard() noexcept {
         positions.clear();
         // SDL_GPUDevice *device = App::get_device();
@@ -331,7 +380,11 @@ namespace chroma {
         //     instance_buffer = nullptr;
         // }
     }
-
+/**
+ * @brief handles the immediate-mode rendering of the brush stroke by binding the instanced vertex data and executing a draw call on SDL3 GPU render pass.
+ * 
+ * @param render_pass 
+ */
     void BrushCommand::preview(SDL_GPURenderPass *render_pass) const noexcept {
         if (positions.empty()) return;
 

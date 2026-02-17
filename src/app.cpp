@@ -65,7 +65,11 @@ namespace chroma {
         SDL_DestroyWindow(window);
         SDL_Quit();
     }
-
+/**
+ * @brief App initialization
+ * 
+ * @return int 
+ */
     int App::init() noexcept {
         int err = 0;
 
@@ -133,7 +137,11 @@ namespace chroma {
 
         return 0;
     }
-
+/**
+ * @brief App execution
+ * 
+ * @return int 
+ */
     int App::run() noexcept {
         uint64_t tick = 0;
         uint64_t delta = 0;
@@ -302,24 +310,40 @@ namespace chroma {
         }
         return 0;
     }
-
+/**
+ * @brief Provides a global access to instance
+ * 
+ * @return App* 
+ */
     App* App::get_instance() noexcept
     {
         return instance;
     }
-
+/**
+ * @brief Provides a global access to device
+ * 
+ * @return SDL_GPUDevice* 
+ */
     SDL_GPUDevice *App::get_device() noexcept
     {
         if (!instance) return nullptr;
         return instance->device;
     }
-
+/**
+ * @brief Provides a global access to command buffer
+ * 
+ * @return SDL_GPUCommandBuffer* 
+ */
     SDL_GPUCommandBuffer *App::get_command_buffer() noexcept
     {
         if (!instance) return nullptr;
         return instance->cmd_buffer;
     }
-
+/**
+ * @brief Initialize a window
+ * 
+ * @return int 
+ */
     int App::create_window() noexcept
     {
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
@@ -349,7 +373,11 @@ namespace chroma {
 
         return 0;
     }
-
+/**
+ * @brief Initialize a device
+ * 
+ * @return int 
+ */
     int App::create_device() noexcept {
         // Create GPU Device
 
@@ -369,7 +397,11 @@ namespace chroma {
 
         return 0;
     }
-
+/**
+ * @brief Setup a window an a device
+ * 
+ * @return int 
+ */
     int App::setup() noexcept {
         int err = 0;
         if ((err = create_window()) != 0) {
@@ -380,7 +412,11 @@ namespace chroma {
         }
         return 0;
     }
-
+/**
+ * @brief Setup ImGUI necessary parameters
+ * 
+ * @return int 
+ */
     int App::setup_imgui() noexcept {
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
@@ -446,7 +482,14 @@ namespace chroma {
 
         return 0;
     }
-
+/**
+ * @brief Configures the main ImGui DockSpace and programmatically defines the window layout.
+ *  This function initializes a transparent, full-screen host window and partitions the 
+ * internal DockSpace into a grid containing a central Viewport, a left-hand Palette 
+ * (with an attached Color Picker), and a bottom-aligned Layer panel.
+ * 
+ * @return int 
+ */
     int App::setup_imgui_dockspace() noexcept {
         // static bool layout_initialized = false;
 
@@ -498,7 +541,11 @@ namespace chroma {
 
         return 0;
     }
-
+/**
+ * @brief Orchestrates the primary UI workspace, including the DockSpace, global Menu Bar, and component rendering.
+ * 
+ * @return int 
+ */
     int App::imgui_dockspace() noexcept {
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -548,7 +595,12 @@ namespace chroma {
 
         return 0;
     }
-
+/**
+ * @brief Processing all event detected by SDL_PollEvent each frame
+ * 
+ * @param delta 
+ * @return int 
+ */
     int App::process_events(float delta) noexcept {
         static float time = 0;
 

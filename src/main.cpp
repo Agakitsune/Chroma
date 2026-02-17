@@ -14,7 +14,7 @@
 /**
  * @brief Main function of Chroma
  * 
- * @return int 
+ * @return int
  */
 int main(int, char**) {
     chroma::App app;
