@@ -1,0 +1,23 @@
+name: C++ Linting (cpplint)
+
+on: [push, pull_request]
+
+jobs:
+  cpplint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install cpplint
+        run: pip install cpplint
+
+      - name: Run cpplint
+        # On lance cpplint sur le dossier src. 
+        # Il lira automatiquement ton fichier CPPLINT.cfg à la racine.
+        run: cpplint --recursive src/
