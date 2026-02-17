@@ -1,49 +1,49 @@
 \doxysection{cursor.\+hpp}
 \hypertarget{cursor_8hpp_source}{}\label{cursor_8hpp_source}\index{C:/Users/lucas/Desktop/EPITECH/Chroma/include/cursor.hpp@{C:/Users/lucas/Desktop/EPITECH/Chroma/include/cursor.hpp}}
-
+\doxymbox{\hyperlink{cursor_8hpp}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ }
-\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#pragma\ once}}
-\DoxyCodeLine{00003\ }
-\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}SDL3/SDL.h"{}}}
-\DoxyCodeLine{00005\ }
-\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <memory>}}
-\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <vector>}}
-\DoxyCodeLine{00008\ }
-\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\doxymbox{\hyperlink{namespacechroma}{chroma}}\ \{}
-\DoxyCodeLine{00010\ \ \ \ \ }
-\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Cursor\ \{}
-\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ Default,}
-\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ Arrow\ =\ Default,}
-\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ Cross,}
-\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ Grab,}
-\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ Picker,}
-\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ Point,}
-\DoxyCodeLine{00019\ }
-\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ Count}
-\DoxyCodeLine{00021\ \ \ \ \ \};}
-\DoxyCodeLine{00022\ }
-\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{class\ }CursorManager\ \{}
-\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ std::unique\_ptr<CursorManager>\ instance;}
-\DoxyCodeLine{00025\ }
-\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ std::vector<SDL\_Cursor*>\ cursors;}
-\DoxyCodeLine{00027\ }
-\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ SDL\_Cursor*\ last\_cursor\ =\ \textcolor{keyword}{nullptr};}
-\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ Cursor\ cursor\ =\ Cursor::Default;}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}SDL3/SDL.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{namespace\ }\doxymbox{\hyperlink{namespacechroma}{chroma}}\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Cursor\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ Default,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ Arrow\ =\ Default,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ Cross,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ Grab,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ Picker,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ Point,}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ Count}
+\DoxyCodeLine{00030\ \ \ \ \ \};}
 \DoxyCodeLine{00031\ }
-\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ CursorManager()\ \textcolor{keyword}{noexcept};}
-\DoxyCodeLine{00033\ }
-\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ CursorManager\&\ get\_instance()\ \textcolor{keyword}{noexcept};}
-\DoxyCodeLine{00035\ }
-\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \string~CursorManager()\ \textcolor{keyword}{noexcept};}
-\DoxyCodeLine{00038\ }
-\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ set\_cursor(Cursor\ cursor)\ \textcolor{keyword}{noexcept};}
-\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ update()\ \textcolor{keyword}{noexcept};}
-\DoxyCodeLine{00041\ \ \ \ \ \};}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{class\ }CursorManager\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ std::unique\_ptr<CursorManager>\ instance;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ std::vector<SDL\_Cursor*>\ cursors;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ SDL\_Cursor*\ last\_cursor\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ Cursor\ cursor\ =\ Cursor::Default;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ CursorManager()\ \textcolor{keyword}{noexcept};}
 \DoxyCodeLine{00042\ }
-\DoxyCodeLine{00043\ \}\ \textcolor{comment}{//\ namespace\ chroma}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ CursorManager\&\ get\_instance()\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{classchroma_1_1_cursor_manager_a8adb67fc4eddb0ba9cf310bf3c0a483b}{\string~CursorManager}}()\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{classchroma_1_1_cursor_manager_a0aea4713e238b6e98df4145a8ae101ca}{set\_cursor}}(Cursor\ cursor)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{classchroma_1_1_cursor_manager_aa144fc42b678ffcc2146d3505be7e069}{update}}()\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \}\ \textcolor{comment}{//\ namespace\ chroma}}
 
 \end{DoxyCode}

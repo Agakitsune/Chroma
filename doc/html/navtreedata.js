@@ -25,19 +25,33 @@
 var NAVTREE =
 [
   [ "Chroma", "index.html", [
-    [ "Requirement", "index.html#autotoc_md1", null ],
-    [ "Installation", "index.html#autotoc_md2", null ],
-    [ "Basic Controls", "index.html#autotoc_md3", null ],
-    [ "Features", "index.html#autotoc_md4", null ],
-    [ "Contributing", "index.html#autotoc_md5", null ],
-    [ "License", "index.html#autotoc_md6", null ],
+    [ "Overview", "index.html#autotoc_md1", null ],
+    [ "Quick start", "index.html#autotoc_md2", [
+      [ "Prerequisities", "index.html#autotoc_md3", null ],
+      [ "Installation", "index.html#autotoc_md4", null ]
+    ] ],
+    [ "Basic Controls", "index.html#autotoc_md5", null ],
+    [ "Features", "index.html#autotoc_md6", [
+      [ "Common Commands", "index.html#autotoc_md7", null ],
+      [ "Visual examples", "index.html#autotoc_md8", null ]
+    ] ],
+    [ "Project Structure", "index.html#autotoc_md9", null ],
+    [ "Technical Stack", "index.html#autotoc_md10", null ],
     [ "Namespaces", "namespaces.html", [
-      [ "Namespace List", "namespaces.html", "namespaces_dup" ]
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ]
+      ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
-      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ]
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
+      [ "Class Members", "functions.html", [
+        [ "All", "functions.html", null ],
+        [ "Functions", "functions_func.html", null ]
+      ] ]
     ] ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ],
@@ -51,7 +65,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"annotated.html"
+"annotated.html",
+"structchroma_1_1_canvas.html#a2b9f1144609585f1b1b01d98c0cbffd7"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

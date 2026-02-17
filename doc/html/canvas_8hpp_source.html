@@ -91,115 +91,127 @@ $(function(){initNavTree('canvas_8hpp_source.html','',''); });
   <div class="headertitle"><div class="title">canvas.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;imgui.h&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;SDL3/SDL.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;SDL3/SDL_gpu.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;command/command.hpp&quot;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;queue&gt;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacechroma.html">chroma</a> {</div>
+<a href="canvas_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;imgui.h&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;SDL3/SDL.h&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;SDL3/SDL_gpu.h&quot;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="foldopen" id="foldopen00018" data-start="{" data-end="};">
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="structchroma_1_1_layer.html">   18</a></span>    <span class="keyword">struct </span>Layer {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        uint8_t *data = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        <span class="keywordtype">bool</span> *dirty_flags = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        SDL_GPUTransferBuffer *buffer = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        SDL_GPUTexture *texture = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="command_8hpp.html">command/command.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;queue&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        Layer() <span class="keyword">noexcept</span> = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        ~Layer() <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        Layer(<span class="keyword">const</span> Layer&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        Layer&amp; operator=(<span class="keyword">const</span> Layer&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacechroma.html">chroma</a> {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="foldopen" id="foldopen00027" data-start="{" data-end="};">
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structchroma_1_1_layer.html">   27</a></span>    <span class="keyword">struct </span>Layer {</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        uint8_t *data = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="keywordtype">bool</span> *dirty_flags = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        Layer(Layer&amp;&amp;) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        Layer&amp; operator=(Layer&amp;&amp;) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    };</div>
-</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="foldopen" id="foldopen00035" data-start="{" data-end="};">
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="structchroma_1_1_canvas.html">   35</a></span>    <span class="keyword">struct </span>Canvas {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        std::string name = <span class="stringliteral">&quot;Untitled&quot;</span>;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        std::vector&lt;Layer&gt; layers;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        SDL_GPUTransferBuffer *buffer = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        SDL_GPUTexture *texture = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        Layer() <span class="keyword">noexcept</span> = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <a class="code hl_function" href="structchroma_1_1_layer.html#a5a624efaca0b6a22b885988f140dc5ca">~Layer</a>() <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        Layer(<span class="keyword">const</span> Layer&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        Layer&amp; operator=(<span class="keyword">const</span> Layer&amp;) = <span class="keyword">delete</span>;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        SDL_GPUTexture *preview = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        std::vector&lt;std::unique_ptr&lt;ICommand&gt;&gt; stack;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        std::queue&lt;std::unique_ptr&lt;ICommand&gt;&gt; pending;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        uint32_t stack_index = 0;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        uint32_t layer = 0;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        uint32_t width = 0;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        uint32_t height = 0;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="comment">// -- ImGui related --</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        ImVec2 offset = ImVec2(0, 0);</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="keywordtype">float</span> zoom = 1.0f;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <span class="keywordtype">bool</span> dirty = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        Canvas(uint32_t width, uint32_t height) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        Canvas(SDL_Surface *surface) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        ~Canvas() <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        Canvas(<span class="keyword">const</span> Canvas&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        Canvas&amp; operator=(<span class="keyword">const</span> Canvas&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        Canvas(Canvas&amp;&amp;) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        Canvas&amp; operator=(Canvas&amp;&amp;) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <a class="code hl_struct" href="structchroma_1_1_color.html">Color</a> get_color(uint32_t x, uint32_t y) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keywordtype">void</span> set_color(uint32_t x, uint32_t y, <span class="keyword">const</span> <a class="code hl_struct" href="structchroma_1_1_color.html">Color</a> &amp;color) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="keywordtype">void</span> add_command(std::unique_ptr&lt;ICommand&gt; &amp;&amp;cmd) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keywordtype">void</span> execute_pending() <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordtype">void</span> undo() <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordtype">void</span> redo() <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordtype">void</span> upload(SDL_GPUCopyPass *pass) <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="keywordtype">void</span> refresh() <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <span class="keyword">struct </span>TileTransfer {</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                uint32_t offset;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                uint32_t w;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                uint32_t h;</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                uint32_t x;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                uint32_t y;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            };</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            std::vector&lt;TileTransfer&gt; pending_uploads;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    };</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        Layer(Layer&amp;&amp;) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        Layer&amp; operator=(Layer&amp;&amp;) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    };</div>
 </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>}</div>
-<div class="ttc" id="anamespacechroma_html"><div class="ttname"><a href="namespacechroma.html">chroma</a></div><div class="ttdoc">Chroma global namespace.</div><div class="ttdef"><b>Definition</b> app.hpp:20</div></div>
-<div class="ttc" id="astructchroma_1_1_color_html"><div class="ttname"><a href="structchroma_1_1_color.html">chroma::Color</a></div><div class="ttdef"><b>Definition</b> color.hpp:10</div></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="};">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structchroma_1_1_canvas.html">   44</a></span>    <span class="keyword">struct </span><a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a> {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        std::string name = <span class="stringliteral">&quot;Untitled&quot;</span>;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        std::vector&lt;Layer&gt; layers;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        SDL_GPUTexture *preview = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        std::vector&lt;std::unique_ptr&lt;ICommand&gt;&gt; stack;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        std::queue&lt;std::unique_ptr&lt;ICommand&gt;&gt; pending;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        uint32_t stack_index = 0;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        uint32_t layer = 0;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        uint32_t width = 0;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        uint32_t height = 0;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="comment">// -- ImGui related --</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        ImVec2 offset = ImVec2(0, 0);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keywordtype">float</span> zoom = 1.0f;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordtype">bool</span> dirty = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>(uint32_t width, uint32_t height) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>(SDL_Surface *surface) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <a class="code hl_function" href="structchroma_1_1_canvas.html#a89ca5f72abbc8c6b5f9ff56e55ace018">~Canvas</a>() <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>(<span class="keyword">const</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>(<a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>&amp;&amp;) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>&amp; operator=(<a class="code hl_function" href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">Canvas</a>&amp;&amp;) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <a class="code hl_struct" href="structchroma_1_1_color.html">Color</a> <a class="code hl_function" href="structchroma_1_1_canvas.html#ad5b602e17d8317bbc961326eedd45310">get_color</a>(uint32_t x, uint32_t y) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#a1c1b8e6bb249c435ae806aa82f292a7c">set_color</a>(uint32_t x, uint32_t y, <span class="keyword">const</span> <a class="code hl_struct" href="structchroma_1_1_color.html">Color</a> &amp;color) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#a67bf5612ea95b4c96d2c1d4dec54b851">add_command</a>(std::unique_ptr&lt;ICommand&gt; &amp;&amp;cmd) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#a1e7c360b45b27f6969978f74f7fee41a">execute_pending</a>() <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#ad269122cccf81768f9dad8f2d9bfcc90">undo</a>() <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#a3952c59aaffd012011948e76d88474d6">redo</a>() <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#a1a22b7dfb191a7bae912a13ecf099cdc">upload</a>(SDL_GPUCopyPass *pass) <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structchroma_1_1_canvas.html#aff1f562934902e58b4c4c17782c04d66">refresh</a>() <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="keyword">struct </span>TileTransfer {</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                uint32_t offset;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                uint32_t w;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                uint32_t h;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>                uint32_t x;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                uint32_t y;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>            };</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>            std::vector&lt;TileTransfer&gt; pending_uploads;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    };</div>
+</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>}</div>
+<div class="ttc" id="acommand_8hpp_html"><div class="ttname"><a href="command_8hpp.html">command.hpp</a></div></div>
+<div class="ttc" id="anamespacechroma_html"><div class="ttname"><a href="namespacechroma.html">chroma</a></div><div class="ttdoc">Chroma global namespace.</div><div class="ttdef"><b>Definition</b> app.hpp:29</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_a1a22b7dfb191a7bae912a13ecf099cdc"><div class="ttname"><a href="structchroma_1_1_canvas.html#a1a22b7dfb191a7bae912a13ecf099cdc">chroma::Canvas::upload</a></div><div class="ttdeci">void upload(SDL_GPUCopyPass *pass) noexcept</div><div class="ttdoc">submit canva to GPU for rendering</div><div class="ttdef"><b>Definition</b> canvas.cpp:412</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_a1c1b8e6bb249c435ae806aa82f292a7c"><div class="ttname"><a href="structchroma_1_1_canvas.html#a1c1b8e6bb249c435ae806aa82f292a7c">chroma::Canvas::set_color</a></div><div class="ttdeci">void set_color(uint32_t x, uint32_t y, const Color &amp;color) noexcept</div><div class="ttdoc">Set layer colors.</div><div class="ttdef"><b>Definition</b> canvas.cpp:304</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_a1e7c360b45b27f6969978f74f7fee41a"><div class="ttname"><a href="structchroma_1_1_canvas.html#a1e7c360b45b27f6969978f74f7fee41a">chroma::Canvas::execute_pending</a></div><div class="ttdeci">void execute_pending() noexcept</div><div class="ttdoc">Pop command from list of user actions.</div><div class="ttdef"><b>Definition</b> canvas.cpp:366</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_a3952c59aaffd012011948e76d88474d6"><div class="ttname"><a href="structchroma_1_1_canvas.html#a3952c59aaffd012011948e76d88474d6">chroma::Canvas::redo</a></div><div class="ttdeci">void redo() noexcept</div><div class="ttdoc">Check if possible to replay an action, if so, proceide, if not, nothing happens.</div><div class="ttdef"><b>Definition</b> canvas.cpp:397</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_a6620c5f0e5107c00f388bbf3004c468d"><div class="ttname"><a href="structchroma_1_1_canvas.html#a6620c5f0e5107c00f388bbf3004c468d">chroma::Canvas::Canvas</a></div><div class="ttdeci">Canvas(uint32_t width, uint32_t height) noexcept</div><div class="ttdoc">Construct a new Canvas:: Canvas object.</div><div class="ttdef"><b>Definition</b> canvas.cpp:87</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_a67bf5612ea95b4c96d2c1d4dec54b851"><div class="ttname"><a href="structchroma_1_1_canvas.html#a67bf5612ea95b4c96d2c1d4dec54b851">chroma::Canvas::add_command</a></div><div class="ttdeci">void add_command(std::unique_ptr&lt; ICommand &gt; &amp;&amp;cmd) noexcept</div><div class="ttdoc">Push command in list of user actions.</div><div class="ttdef"><b>Definition</b> canvas.cpp:352</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_a89ca5f72abbc8c6b5f9ff56e55ace018"><div class="ttname"><a href="structchroma_1_1_canvas.html#a89ca5f72abbc8c6b5f9ff56e55ace018">chroma::Canvas::~Canvas</a></div><div class="ttdeci">~Canvas() noexcept</div><div class="ttdoc">Destroy the Canvas:: Canvas object.</div><div class="ttdef"><b>Definition</b> canvas.cpp:218</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_ad269122cccf81768f9dad8f2d9bfcc90"><div class="ttname"><a href="structchroma_1_1_canvas.html#ad269122cccf81768f9dad8f2d9bfcc90">chroma::Canvas::undo</a></div><div class="ttdeci">void undo() noexcept</div><div class="ttdoc">Check if possible to undo an action, if so, proceide, if not, nothing happens.</div><div class="ttdef"><b>Definition</b> canvas.cpp:383</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_ad5b602e17d8317bbc961326eedd45310"><div class="ttname"><a href="structchroma_1_1_canvas.html#ad5b602e17d8317bbc961326eedd45310">chroma::Canvas::get_color</a></div><div class="ttdeci">Color get_color(uint32_t x, uint32_t y) const noexcept</div><div class="ttdoc">Provides a global access to canva colors.</div><div class="ttdef"><b>Definition</b> canvas.cpp:280</div></div>
+<div class="ttc" id="astructchroma_1_1_canvas_html_aff1f562934902e58b4c4c17782c04d66"><div class="ttname"><a href="structchroma_1_1_canvas.html#aff1f562934902e58b4c4c17782c04d66">chroma::Canvas::refresh</a></div><div class="ttdeci">void refresh() noexcept</div><div class="ttdoc">Call this function to update visually the canva content.</div><div class="ttdef"><b>Definition</b> canvas.cpp:623</div></div>
+<div class="ttc" id="astructchroma_1_1_color_html"><div class="ttname"><a href="structchroma_1_1_color.html">chroma::Color</a></div><div class="ttdef"><b>Definition</b> color.hpp:19</div></div>
+<div class="ttc" id="astructchroma_1_1_layer_html_a5a624efaca0b6a22b885988f140dc5ca"><div class="ttname"><a href="structchroma_1_1_layer.html#a5a624efaca0b6a22b885988f140dc5ca">chroma::Layer::~Layer</a></div><div class="ttdeci">~Layer() noexcept</div><div class="ttdoc">Destroy the Layer:: Layer object.</div><div class="ttdef"><b>Definition</b> canvas.cpp:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>include</b></li><li class="navelem"><b>canvas</b></li><li class="navelem"><b>canvas.hpp</b></li>
+    <li class="navelem"><b>include</b></li><li class="navelem"><b>canvas</b></li><li class="navelem"><a href="canvas_8hpp.html">canvas.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
   </ul>
 </div>

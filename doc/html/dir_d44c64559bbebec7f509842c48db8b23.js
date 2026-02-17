@@ -5,7 +5,7 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "menu", "dir_904d760e9ed1c7161a0da85d5b6cb77a.html", "dir_904d760e9ed1c7161a0da85d5b6cb77a" ],
     [ "system", "dir_062dd3d6849305887aa6c2f56ce95494.html", "dir_062dd3d6849305887aa6c2f56ce95494" ],
     [ "window", "dir_ba370b27de90820d1ea164f96e61d5b5.html", "dir_ba370b27de90820d1ea164f96e61d5b5" ],
-    [ "app.hpp", "app_8hpp_source.html", null ],
-    [ "color.hpp", "color_8hpp_source.html", null ],
-    [ "cursor.hpp", "cursor_8hpp_source.html", null ]
+    [ "app.hpp", "app_8hpp.html", "app_8hpp" ],
+    [ "color.hpp", "color_8hpp.html", "color_8hpp" ],
+    [ "cursor.hpp", "cursor_8hpp.html", "cursor_8hpp" ]
 ];

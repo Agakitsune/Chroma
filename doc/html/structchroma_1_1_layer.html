@@ -94,14 +94,17 @@ $(function(){initNavTree('structchroma_1_1_layer.html','','structchroma_1_1_laye
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a5a624efaca0b6a22b885988f140dc5ca" id="r_a5a624efaca0b6a22b885988f140dc5ca"><td class="memItemLeft"><a id="a5a624efaca0b6a22b885988f140dc5ca" name="a5a624efaca0b6a22b885988f140dc5ca"></a>
+&#160;</td><td class="memItemRight"><b>~Layer</b> () noexcept</td></tr>
+<tr class="memdesc:a5a624efaca0b6a22b885988f140dc5ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="structchroma_1_1_layer.html">Layer</a>:: <a class="el" href="structchroma_1_1_layer.html">Layer</a> object. <br /></td></tr>
 <tr class="memitem:a72d42c15e24bb774e4d53622ead99d7e" id="r_a72d42c15e24bb774e4d53622ead99d7e"><td class="memItemLeft"><a id="a72d42c15e24bb774e4d53622ead99d7e" name="a72d42c15e24bb774e4d53622ead99d7e"></a>
 &#160;</td><td class="memItemRight"><b>Layer</b> (const Layer &amp;)=delete</td></tr>
 <tr class="memitem:ad9222eca970cf7a54ed6de4631aa5f37" id="r_ad9222eca970cf7a54ed6de4631aa5f37"><td class="memItemLeft"><a id="ad9222eca970cf7a54ed6de4631aa5f37" name="ad9222eca970cf7a54ed6de4631aa5f37"></a>
 Layer &amp;&#160;</td><td class="memItemRight"><b>operator=</b> (const Layer &amp;)=delete</td></tr>
-<tr class="memitem:a09c62d9fd5a5012f18410501d0a72d69" id="r_a09c62d9fd5a5012f18410501d0a72d69"><td class="memItemLeft"><a id="a09c62d9fd5a5012f18410501d0a72d69" name="a09c62d9fd5a5012f18410501d0a72d69"></a>
-&#160;</td><td class="memItemRight"><b>Layer</b> (Layer &amp;&amp;) noexcept</td></tr>
-<tr class="memitem:a9244e1bde8adf10ea602851126832d14" id="r_a9244e1bde8adf10ea602851126832d14"><td class="memItemLeft"><a id="a9244e1bde8adf10ea602851126832d14" name="a9244e1bde8adf10ea602851126832d14"></a>
-Layer &amp;&#160;</td><td class="memItemRight"><b>operator=</b> (Layer &amp;&amp;) noexcept</td></tr>
+<tr class="memitem:a09c62d9fd5a5012f18410501d0a72d69" id="r_a09c62d9fd5a5012f18410501d0a72d69"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a09c62d9fd5a5012f18410501d0a72d69">Layer</a> (Layer &amp;&amp;) noexcept</td></tr>
+<tr class="memdesc:a09c62d9fd5a5012f18410501d0a72d69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="structchroma_1_1_layer.html">Layer</a>:: <a class="el" href="structchroma_1_1_layer.html">Layer</a> object.  <br /></td></tr>
+<tr class="memitem:a9244e1bde8adf10ea602851126832d14" id="r_a9244e1bde8adf10ea602851126832d14"><td class="memItemLeft">Layer &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a9244e1bde8adf10ea602851126832d14">operator=</a> (Layer &amp;&amp;) noexcept</td></tr>
+<tr class="memdesc:a9244e1bde8adf10ea602851126832d14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload = operator to communicate data between layers.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -114,9 +117,78 @@ SDL_GPUTransferBuffer *&#160;</td><td class="memItemRight"><b>buffer</b> = nullp
 <tr class="memitem:ab93170203867a60950c92f5a1da11fc8" id="r_ab93170203867a60950c92f5a1da11fc8"><td class="memItemLeft"><a id="ab93170203867a60950c92f5a1da11fc8" name="ab93170203867a60950c92f5a1da11fc8"></a>
 SDL_GPUTexture *&#160;</td><td class="memItemRight"><b>texture</b> = nullptr</td></tr>
 </table>
+<a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a09c62d9fd5a5012f18410501d0a72d69" name="a09c62d9fd5a5012f18410501d0a72d69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09c62d9fd5a5012f18410501d0a72d69">&#9670;&#160;</a></span>Layer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">chroma::Layer::Layer </td>
+          <td>(</td>
+          <td class="paramtype">Layer &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a new <a class="el" href="structchroma_1_1_layer.html">Layer</a>:: <a class="el" href="structchroma_1_1_layer.html">Layer</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a9244e1bde8adf10ea602851126832d14" name="a9244e1bde8adf10ea602851126832d14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9244e1bde8adf10ea602851126832d14">&#9670;&#160;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Layer &amp; chroma::Layer::operator= </td>
+          <td>(</td>
+          <td class="paramtype">Layer &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Overload = operator to communicate data between layers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structchroma_1_1_layer.html">Layer</a>&amp; </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>C:/Users/lucas/Desktop/EPITECH/Chroma/include/canvas/<a class="el" href="canvas_8hpp_source.html">canvas.hpp</a></li>
-<li>C:/Users/lucas/Desktop/EPITECH/Chroma/src/canvas/<b>canvas.cpp</b></li>
+<li>C:/Users/lucas/Desktop/EPITECH/Chroma/src/canvas/<a class="el" href="canvas_8cpp.html">canvas.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

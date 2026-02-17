@@ -104,17 +104,30 @@ Inheritance diagram for chroma::BrushCommand:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a960aa28afe257775bc7a2ac97419ee47" id="r_a960aa28afe257775bc7a2ac97419ee47"><td class="memItemLeft"><a id="a960aa28afe257775bc7a2ac97419ee47" name="a960aa28afe257775bc7a2ac97419ee47"></a>
-void&#160;</td><td class="memItemRight"><b>add</b> (uint32_t x, uint32_t y, const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;old) noexcept</td></tr>
-<tr class="memitem:abd869a72396529b24b6e2d48ed3fd2f3" id="r_abd869a72396529b24b6e2d48ed3fd2f3"><td class="memItemLeft"><a id="abd869a72396529b24b6e2d48ed3fd2f3" name="abd869a72396529b24b6e2d48ed3fd2f3"></a>
-bool&#160;</td><td class="memItemRight"><b>contains</b> (uint32_t x, uint32_t y) const noexcept</td></tr>
+<tr class="memitem:a27e334bad73c8a526308a47a022dc153" id="r_a27e334bad73c8a526308a47a022dc153"><td class="memItemLeft"><a id="a27e334bad73c8a526308a47a022dc153" name="a27e334bad73c8a526308a47a022dc153"></a>
+&#160;</td><td class="memItemRight"><b>BrushCommand</b> () noexcept</td></tr>
+<tr class="memdesc:a27e334bad73c8a526308a47a022dc153"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Brush Command:: Brush Command object. <br /></td></tr>
+<tr class="memitem:a195cfb4187855bb0d5d0fda3c9b12644" id="r_a195cfb4187855bb0d5d0fda3c9b12644"><td class="memItemLeft"><a id="a195cfb4187855bb0d5d0fda3c9b12644" name="a195cfb4187855bb0d5d0fda3c9b12644"></a>
+virtual&#160;</td><td class="memItemRight"><b>~BrushCommand</b> () noexcept override</td></tr>
+<tr class="memdesc:a195cfb4187855bb0d5d0fda3c9b12644"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the Brush Command:: Brush Command object. <br /></td></tr>
+<tr class="memitem:a960aa28afe257775bc7a2ac97419ee47" id="r_a960aa28afe257775bc7a2ac97419ee47"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a960aa28afe257775bc7a2ac97419ee47">add</a> (uint32_t x, uint32_t y, const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;old) noexcept</td></tr>
+<tr class="memdesc:a960aa28afe257775bc7a2ac97419ee47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add selected brush color to canva.  <br /></td></tr>
+<tr class="memitem:abd869a72396529b24b6e2d48ed3fd2f3" id="r_abd869a72396529b24b6e2d48ed3fd2f3"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#abd869a72396529b24b6e2d48ed3fd2f3">contains</a> (uint32_t x, uint32_t y) const noexcept</td></tr>
+<tr class="memdesc:abd869a72396529b24b6e2d48ed3fd2f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a specific (x, y) coordinate is part of the recorded brush stroke.  <br /></td></tr>
 <tr class="memitem:abbf647e49a81f236f79e7ef04c03a638" id="r_abbf647e49a81f236f79e7ef04c03a638"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#abbf647e49a81f236f79e7ef04c03a638">redo</a> (<a class="el" href="structchroma_1_1_canvas.html">Canvas</a> &amp;canvas) noexcept override final</td></tr>
+<tr class="memdesc:abbf647e49a81f236f79e7ef04c03a638"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace a previously removed color.  <br /></td></tr>
 <tr class="memitem:aa1dcb50844f5e3c69230f51797784b6c" id="r_aa1dcb50844f5e3c69230f51797784b6c"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#aa1dcb50844f5e3c69230f51797784b6c">undo</a> (<a class="el" href="structchroma_1_1_canvas.html">Canvas</a> &amp;canvas) noexcept override final</td></tr>
+<tr class="memdesc:aa1dcb50844f5e3c69230f51797784b6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Revert last action to date.  <br /></td></tr>
 <tr class="memitem:ab5a0c9d8b3c77414f1fffaeb6001053a" id="r_ab5a0c9d8b3c77414f1fffaeb6001053a"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ab5a0c9d8b3c77414f1fffaeb6001053a">start</a> (uint32_t x, uint32_t y, const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;color) noexcept override final</td></tr>
+<tr class="memdesc:ab5a0c9d8b3c77414f1fffaeb6001053a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add color upon startup.  <br /></td></tr>
 <tr class="memitem:a074bd0b71b889669154a1362b286b426" id="r_a074bd0b71b889669154a1362b286b426"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a074bd0b71b889669154a1362b286b426">update</a> (uint32_t x, uint32_t y, const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;color) noexcept override final</td></tr>
+<tr class="memdesc:a074bd0b71b889669154a1362b286b426"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update brushing painting.  <br /></td></tr>
 <tr class="memitem:af2f9c51ebe48f02b4794a1c801f8d963" id="r_af2f9c51ebe48f02b4794a1c801f8d963"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#af2f9c51ebe48f02b4794a1c801f8d963">end</a> (uint32_t x, uint32_t y, const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;color) noexcept override final</td></tr>
+<tr class="memdesc:af2f9c51ebe48f02b4794a1c801f8d963"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify an end to the brushing painting.  <br /></td></tr>
 <tr class="memitem:ab73035fe6f6b105387fc74c9f5d3f805" id="r_ab73035fe6f6b105387fc74c9f5d3f805"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ab73035fe6f6b105387fc74c9f5d3f805">discard</a> () noexcept override final</td></tr>
+<tr class="memdesc:ab73035fe6f6b105387fc74c9f5d3f805"><td class="mdescLeft">&#160;</td><td class="mdescRight">discard color  <br /></td></tr>
 <tr class="memitem:a02f5d3266fa5c1830074ba94fa84b3f9" id="r_a02f5d3266fa5c1830074ba94fa84b3f9"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a02f5d3266fa5c1830074ba94fa84b3f9">preview</a> (SDL_GPURenderPass *render_pass) const noexcept override final</td></tr>
+<tr class="memdesc:a02f5d3266fa5c1830074ba94fa84b3f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">handles the immediate-mode rendering of the brush stroke by binding the instanced vertex data and executing a draw call on SDL3 GPU render pass.  <br /></td></tr>
 <tr class="inherit_header pub_methods_classchroma_1_1_color_command"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classchroma_1_1_color_command')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Public Member Functions inherited from <a class="el" href="classchroma_1_1_color_command.html">chroma::ColorCommand</a></td></tr>
 <tr class="memitem:a2ea4ec2da27a0fabf6c74cdf5e9156e4 inherit pub_methods_classchroma_1_1_color_command" id="r_a2ea4ec2da27a0fabf6c74cdf5e9156e4"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="classchroma_1_1_color_command.html#a2ea4ec2da27a0fabf6c74cdf5e9156e4">set_main_color</a> (const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;color) noexcept override final</td></tr>
 <tr class="memitem:a7c19e1fd9425df98fef1c2563c52a8dd inherit pub_methods_classchroma_1_1_color_command" id="r_a7c19e1fd9425df98fef1c2563c52a8dd"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="classchroma_1_1_color_command.html#a7c19e1fd9425df98fef1c2563c52a8dd">set_second_color</a> (const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;color) noexcept override final</td></tr>
@@ -130,6 +143,91 @@ Additional Inherited Members</h2></td></tr>
 <a class="el" href="structchroma_1_1_color.html">Color</a>&#160;</td><td class="memItemRight"><b>second</b></td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a960aa28afe257775bc7a2ac97419ee47" name="a960aa28afe257775bc7a2ac97419ee47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a960aa28afe257775bc7a2ac97419ee47">&#9670;&#160;</a></span>add()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void chroma::BrushCommand::add </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structchroma_1_1_color.html">Color</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>color</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add selected brush color to canva. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">y</td><td></td></tr>
+    <tr><td class="paramname">color</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="abd869a72396529b24b6e2d48ed3fd2f3" name="abd869a72396529b24b6e2d48ed3fd2f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd869a72396529b24b6e2d48ed3fd2f3">&#9670;&#160;</a></span>contains()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool chroma::BrushCommand::contains </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>y</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if a specific (x, y) coordinate is part of the recorded brush stroke. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">y</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true </dd>
+<dd>
+false </dd></dl>
+
+</div>
+</div>
 <a id="ab73035fe6f6b105387fc74c9f5d3f805" name="ab73035fe6f6b105387fc74c9f5d3f805"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab73035fe6f6b105387fc74c9f5d3f805">&#9670;&#160;</a></span>discard()</h2>
 
@@ -152,6 +250,8 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>discard color </p>
 
 <p>Implements <a class="el" href="classchroma_1_1_i_command.html">chroma::ICommand</a>.</p>
 
@@ -189,6 +289,16 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Notify an end to the brushing painting. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">y</td><td></td></tr>
+    <tr><td class="paramname">color</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p>Implements <a class="el" href="classchroma_1_1_i_command.html">chroma::ICommand</a>.</p>
 
 </div>
@@ -216,6 +326,14 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>handles the immediate-mode rendering of the brush stroke by binding the instanced vertex data and executing a draw call on SDL3 GPU render pass. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">render_pass</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p>Implements <a class="el" href="classchroma_1_1_i_command.html">chroma::ICommand</a>.</p>
 
 </div>
@@ -242,6 +360,14 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Replace a previously removed color. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">canvas</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p>Implements <a class="el" href="classchroma_1_1_i_command.html">chroma::ICommand</a>.</p>
 
@@ -279,6 +405,16 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Add color upon startup. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">y</td><td></td></tr>
+    <tr><td class="paramname">color</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p>Implements <a class="el" href="classchroma_1_1_i_command.html">chroma::ICommand</a>.</p>
 
 </div>
@@ -305,6 +441,14 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Revert last action to date. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">canvas</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p>Implements <a class="el" href="classchroma_1_1_i_command.html">chroma::ICommand</a>.</p>
 
@@ -342,13 +486,23 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Update brushing painting. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">y</td><td></td></tr>
+    <tr><td class="paramname">color</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p>Implements <a class="el" href="classchroma_1_1_i_command.html">chroma::ICommand</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>C:/Users/lucas/Desktop/EPITECH/Chroma/include/canvas/command/<a class="el" href="brush__command_8hpp_source.html">brush_command.hpp</a></li>
-<li>C:/Users/lucas/Desktop/EPITECH/Chroma/src/canvas/command/<b>brush_command.cpp</b></li>
+<li>C:/Users/lucas/Desktop/EPITECH/Chroma/src/canvas/command/<a class="el" href="brush__command_8cpp.html">brush_command.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

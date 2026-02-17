@@ -103,12 +103,23 @@ Inheritance diagram for chroma::OpenMenuItem:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a0a57ae7afe84693ccfcf10443d1c05d5" id="r_a0a57ae7afe84693ccfcf10443d1c05d5"><td class="memItemLeft"><a id="a0a57ae7afe84693ccfcf10443d1c05d5" name="a0a57ae7afe84693ccfcf10443d1c05d5"></a>
+&#160;</td><td class="memItemRight"><b>OpenMenuItem</b> () noexcept</td></tr>
+<tr class="memdesc:a0a57ae7afe84693ccfcf10443d1c05d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Open Menu Item:: Open Menu Item object. <br /></td></tr>
+<tr class="memitem:a4fab74445267890f3ef3f8cf44652f32" id="r_a4fab74445267890f3ef3f8cf44652f32"><td class="memItemLeft"><a id="a4fab74445267890f3ef3f8cf44652f32" name="a4fab74445267890f3ef3f8cf44652f32"></a>
+&#160;</td><td class="memItemRight"><b>~OpenMenuItem</b> () noexcept</td></tr>
+<tr class="memdesc:a4fab74445267890f3ef3f8cf44652f32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the Open Menu Item:: Open Menu Item object. <br /></td></tr>
 <tr class="memitem:a25345c189b282cc7924c1e16f861c127" id="r_a25345c189b282cc7924c1e16f861c127"><td class="memItemLeft"><a id="a25345c189b282cc7924c1e16f861c127" name="a25345c189b282cc7924c1e16f861c127"></a>
 void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexcept</td></tr>
+<tr class="memdesc:a25345c189b282cc7924c1e16f861c127"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current directory. <br /></td></tr>
 <tr class="memitem:ad655b85b4cb4c042da552eafb3278a8f" id="r_ad655b85b4cb4c042da552eafb3278a8f"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ad655b85b4cb4c042da552eafb3278a8f">menubar</a> () noexcept override final</td></tr>
+<tr class="memdesc:ad655b85b4cb4c042da552eafb3278a8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a file from filesystem.  <br /></td></tr>
 <tr class="memitem:acd54ecd216adad4e84329aa9e0b2d890" id="r_acd54ecd216adad4e84329aa9e0b2d890"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#acd54ecd216adad4e84329aa9e0b2d890">action</a> () noexcept override final</td></tr>
+<tr class="memdesc:acd54ecd216adad4e84329aa9e0b2d890"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a popup to open a file from filesystem.  <br /></td></tr>
 <tr class="memitem:a0073486abfa52482ec646f72404d48bc" id="r_a0073486abfa52482ec646f72404d48bc"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a0073486abfa52482ec646f72404d48bc">display</a> () noexcept override final</td></tr>
+<tr class="memdesc:a0073486abfa52482ec646f72404d48bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle the opening file from filesystem behavior.  <br /></td></tr>
 <tr class="memitem:a9edd88fad44675bb211fe7ff49c0ea34" id="r_a9edd88fad44675bb211fe7ff49c0ea34"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a9edd88fad44675bb211fe7ff49c0ea34">shortcuts</a> () noexcept override final</td></tr>
+<tr class="memdesc:a9edd88fad44675bb211fe7ff49c0ea34"><td class="mdescLeft">&#160;</td><td class="mdescRight">if Ctrl+O pressed, call open file function  <br /></td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="acd54ecd216adad4e84329aa9e0b2d890" name="acd54ecd216adad4e84329aa9e0b2d890"></a>
@@ -133,6 +144,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Create a popup to open a file from filesystem. </p>
 
 <p>Reimplemented from <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 
@@ -161,6 +174,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
 </table>
 </div><div class="memdoc">
 
+<p>Handle the opening file from filesystem behavior. </p>
+
 <p>Reimplemented from <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 
 </div>
@@ -188,6 +203,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
 </table>
 </div><div class="memdoc">
 
+<p>Open a file from filesystem. </p>
+
 <p>Implements <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 
 </div>
@@ -214,6 +231,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>if Ctrl+O pressed, call open file function </p>
 
 <p>Reimplemented from <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 

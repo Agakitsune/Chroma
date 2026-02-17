@@ -103,12 +103,23 @@ Inheritance diagram for chroma::SaveMenuItem:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a310d78378e16b83bacb28622c96d5a91" id="r_a310d78378e16b83bacb28622c96d5a91"><td class="memItemLeft"><a id="a310d78378e16b83bacb28622c96d5a91" name="a310d78378e16b83bacb28622c96d5a91"></a>
+&#160;</td><td class="memItemRight"><b>SaveMenuItem</b> () noexcept</td></tr>
+<tr class="memdesc:a310d78378e16b83bacb28622c96d5a91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Save Menu Item:: Save Menu Item object. <br /></td></tr>
+<tr class="memitem:adc549699265175ca1ca9fadf4709969d" id="r_adc549699265175ca1ca9fadf4709969d"><td class="memItemLeft"><a id="adc549699265175ca1ca9fadf4709969d" name="adc549699265175ca1ca9fadf4709969d"></a>
+&#160;</td><td class="memItemRight"><b>~SaveMenuItem</b> () noexcept</td></tr>
+<tr class="memdesc:adc549699265175ca1ca9fadf4709969d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the Save Menu Item:: Save Menu Item object. <br /></td></tr>
 <tr class="memitem:a099c098f477241d8a8df7938379ebc90" id="r_a099c098f477241d8a8df7938379ebc90"><td class="memItemLeft"><a id="a099c098f477241d8a8df7938379ebc90" name="a099c098f477241d8a8df7938379ebc90"></a>
 void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexcept</td></tr>
+<tr class="memdesc:a099c098f477241d8a8df7938379ebc90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current directory. <br /></td></tr>
 <tr class="memitem:a615711a0016c29fabb555a924e459b8e" id="r_a615711a0016c29fabb555a924e459b8e"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a615711a0016c29fabb555a924e459b8e">menubar</a> () noexcept override final</td></tr>
+<tr class="memdesc:a615711a0016c29fabb555a924e459b8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Upon pressing the Save function, run the save action.  <br /></td></tr>
 <tr class="memitem:acd2718b1f73a7c8152e2cabf3a60ab96" id="r_acd2718b1f73a7c8152e2cabf3a60ab96"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#acd2718b1f73a7c8152e2cabf3a60ab96">action</a> () noexcept override final</td></tr>
+<tr class="memdesc:acd2718b1f73a7c8152e2cabf3a60ab96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a popup to save a file on the filesystem.  <br /></td></tr>
 <tr class="memitem:a93eb3a8395efc309e2e9fe3e79963711" id="r_a93eb3a8395efc309e2e9fe3e79963711"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a93eb3a8395efc309e2e9fe3e79963711">display</a> () noexcept override final</td></tr>
+<tr class="memdesc:a93eb3a8395efc309e2e9fe3e79963711"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle the saving file on filesystem behavior.  <br /></td></tr>
 <tr class="memitem:ac27cf22cd8dfcbd250892b48d5047477" id="r_ac27cf22cd8dfcbd250892b48d5047477"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ac27cf22cd8dfcbd250892b48d5047477">shortcuts</a> () noexcept override final</td></tr>
+<tr class="memdesc:ac27cf22cd8dfcbd250892b48d5047477"><td class="mdescLeft">&#160;</td><td class="mdescRight">if Ctrl+S pressed, call save file function  <br /></td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="acd2718b1f73a7c8152e2cabf3a60ab96" name="acd2718b1f73a7c8152e2cabf3a60ab96"></a>
@@ -133,6 +144,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Create a popup to save a file on the filesystem. </p>
 
 <p>Reimplemented from <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 
@@ -161,6 +174,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
 </table>
 </div><div class="memdoc">
 
+<p>Handle the saving file on filesystem behavior. </p>
+
 <p>Reimplemented from <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 
 </div>
@@ -188,6 +203,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
 </table>
 </div><div class="memdoc">
 
+<p>Upon pressing the Save function, run the save action. </p>
+
 <p>Implements <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 
 </div>
@@ -214,6 +231,8 @@ void&#160;</td><td class="memItemRight"><b>query_current_directory</b> () noexce
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>if Ctrl+S pressed, call save file function </p>
 
 <p>Reimplemented from <a class="el" href="classchroma_1_1_menu_item.html">chroma::MenuItem</a>.</p>
 

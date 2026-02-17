@@ -94,34 +94,87 @@ $(function(){initNavTree('index.html','',''); });
 <div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2lucas_2_desktop_2_e_p_i_t_e_c_h_2_chroma_2_r_e_a_d_m_e"></a></p>
 <p>Chroma is a raster graphics editor developed in C++ inspired by Gimp and influenced by Aseprite software.</p>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
-Requirement</h1>
-<p><a href="https://cmake.org/">Download Cmake here</a></p>
+Overview</h1>
+<p>Chroma aim to provide an easy-to-use and ready-to-go with most useful features for casual graphical editing.</p>
+<ul>
+<li>Light image editing</li>
+<li>Easy to use</li>
+<li>Ready to go</li>
+</ul>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
-Installation</h1>
+Quick start</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+Prerequisities</h2>
+<p><a href="https://cmake.org/">Download Cmake here</a></p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+Installation</h2>
 <p>At the root of the project:</p>
 <div class="fragment"><div class="line">cmake -B build</div>
 </div><!-- fragment --><p>Once done, go to /build folder and enter:</p>
 <div class="fragment"><div class="line">cd build</div>
 <div class="line">cmake --build . &amp;&amp; ./chroma</div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
 Basic Controls</h1>
 <p><span class="tt">Left Click</span>: Draw with current color.</p>
 <p><span class="tt">Right Click</span>: Over the colorpicker, register new color in palette</p>
 <p><span class="tt">Scroll</span>: Zoom in/out.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
 Features</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+Common Commands</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Functionnalities  </th><th class="markdownTableHeadNone">Description  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">new canva</span>  </td><td class="markdownTableBodyNone">Create blank canva  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">open file</span>  </td><td class="markdownTableBodyNone">Open any file from your system  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">save file</span>  </td><td class="markdownTableBodyNone">Save edits  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">exit</span>  </td><td class="markdownTableBodyNone">Close software  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">undo</span>  </td><td class="markdownTableBodyNone">Reverse last action  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">redo</span>  </td><td class="markdownTableBodyNone">Put back deleted content  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">flip horizontal</span>  </td><td class="markdownTableBodyNone">Flip horizontally current picture  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">flip verical</span>  </td><td class="markdownTableBodyNone">Flip vertically current picture  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">colorpicker</span>  </td><td class="markdownTableBodyNone">Colorpicker tool  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">colorpicker gradient</span>  </td><td class="markdownTableBodyNone">Colorpicker tool to pinpoint colors  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">save in palette</span>  </td><td class="markdownTableBodyNone">Register color for later usage  </td></tr>
+</table>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+Visual examples</h2>
 <p><span class="tt">New canva</span>:</p>
 <p><img src="screenshots/new_file.gif" alt="Chroma Demo" class="inline"/></p>
 <p><span class="tt">Flip image</span>:</p>
 <p><img src="screenshots/flips.gif" alt="Chroma Demo" class="inline"/></p>
 <p><span class="tt">Colorpicker</span>:</p>
 <p><img src="screenshots/colorpicker.gif" alt="Chroma Demo" class="inline"/></p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
-Contributing</h1>
-<p>Pull requests are welcome.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
-License</h1>
-<p><a href="https://choosealicense.com/licenses/mit/">MIT</a> </p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+Project Structure</h1>
+<div class="fragment"><div class="line">Chroma/</div>
+<div class="line">├── build/       </div>
+<div class="line">├── include/          </div>
+<div class="line">├── screenshots/             </div>
+<div class="line">└── src/         </div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
+Technical Stack</h1>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Component  </th><th class="markdownTableHeadNone">Technologies  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Language  </td><td class="markdownTableBodyNone">C++ (Standard 20)  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Graphics API  </td><td class="markdownTableBodyNone">SDL3 GPU (Hardware-accelerated rendering)  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">User Interface  </td><td class="markdownTableBodyNone">Dear ImGui  </td></tr>
+</table>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->

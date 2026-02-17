@@ -9,11 +9,9 @@ Inheritance diagram for chroma::\+ICommand:\+\begin{figure}[H]
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{classchroma_1_1_i_command_ae0f76fa677b80647323e826f82fb1d66}\label{classchroma_1_1_i_command_ae0f76fa677b80647323e826f82fb1d66} 
-virtual void {\bfseries redo} (\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&canvas) noexcept=0
+virtual void \doxymbox{\hyperlink{classchroma_1_1_i_command_ae0f76fa677b80647323e826f82fb1d66}{redo}} (\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&canvas) noexcept=0
 \item 
-\Hypertarget{classchroma_1_1_i_command_a9f535b5cc9486b30ba01fb68ced633d8}\label{classchroma_1_1_i_command_a9f535b5cc9486b30ba01fb68ced633d8} 
-virtual void {\bfseries undo} (\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&canvas) noexcept=0
+virtual void \doxymbox{\hyperlink{classchroma_1_1_i_command_a9f535b5cc9486b30ba01fb68ced633d8}{undo}} (\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&canvas) noexcept=0
 \item 
 \Hypertarget{classchroma_1_1_i_command_a213f9342116d9ffc1350cd49875f87e3}\label{classchroma_1_1_i_command_a213f9342116d9ffc1350cd49875f87e3} 
 virtual void {\bfseries set\+\_\+main\+\_\+color} (const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
@@ -27,23 +25,93 @@ virtual \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries get\+\_\
 \Hypertarget{classchroma_1_1_i_command_a4e823a47c630ad82e2ffdd13df5be4ba}\label{classchroma_1_1_i_command_a4e823a47c630ad82e2ffdd13df5be4ba} 
 virtual \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries get\+\_\+second\+\_\+color} () noexcept
 \item 
-\Hypertarget{classchroma_1_1_i_command_a2c8ce9f62529a8b75105dfa36b56a42d}\label{classchroma_1_1_i_command_a2c8ce9f62529a8b75105dfa36b56a42d} 
-virtual void {\bfseries start} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
+virtual void \doxymbox{\hyperlink{classchroma_1_1_i_command_a2c8ce9f62529a8b75105dfa36b56a42d}{start}} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
 \item 
-\Hypertarget{classchroma_1_1_i_command_a0bc80973a018879a1d92c97941482773}\label{classchroma_1_1_i_command_a0bc80973a018879a1d92c97941482773} 
-virtual void {\bfseries update} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
+virtual void \doxymbox{\hyperlink{classchroma_1_1_i_command_a0bc80973a018879a1d92c97941482773}{update}} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
 \item 
-\Hypertarget{classchroma_1_1_i_command_aa80075580fb19e753a8ed899e73db4b4}\label{classchroma_1_1_i_command_aa80075580fb19e753a8ed899e73db4b4} 
-virtual void {\bfseries end} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
+virtual void \doxymbox{\hyperlink{classchroma_1_1_i_command_aa80075580fb19e753a8ed899e73db4b4}{end}} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
 \item 
-\Hypertarget{classchroma_1_1_i_command_ace53423d938f5c705b47a02b7c6852c5}\label{classchroma_1_1_i_command_ace53423d938f5c705b47a02b7c6852c5} 
-virtual void {\bfseries discard} () noexcept=0
+virtual void \doxymbox{\hyperlink{classchroma_1_1_i_command_ace53423d938f5c705b47a02b7c6852c5}{discard}} () noexcept=0
 \item 
-\Hypertarget{classchroma_1_1_i_command_ac2d18577d9f90037bf4d417c04bb9774}\label{classchroma_1_1_i_command_ac2d18577d9f90037bf4d417c04bb9774} 
-virtual void {\bfseries preview} (SDL\+\_\+\+GPURender\+Pass \texorpdfstring{$\ast$}{*}render\+\_\+pass) const noexcept=0
+virtual void \doxymbox{\hyperlink{classchroma_1_1_i_command_ac2d18577d9f90037bf4d417c04bb9774}{preview}} (SDL\+\_\+\+GPURender\+Pass \texorpdfstring{$\ast$}{*}render\+\_\+pass) const noexcept=0
 \end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classchroma_1_1_i_command_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classchroma_1_1_i_command_ace53423d938f5c705b47a02b7c6852c5}\index{chroma::ICommand@{chroma::ICommand}!discard@{discard}}
+\index{discard@{discard}!chroma::ICommand@{chroma::ICommand}}
+\doxysubsubsection{\texorpdfstring{discard()}{discard()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_i_command_ace53423d938f5c705b47a02b7c6852c5} 
+virtual void chroma::\+\+ICommand::\+discard (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \doxymbox{\hyperlink{classchroma_1_1_brush_command_ab73035fe6f6b105387fc74c9f5d3f805}{chroma::\+\+Brush\+Command}}.
+
+\Hypertarget{classchroma_1_1_i_command_aa80075580fb19e753a8ed899e73db4b4}\index{chroma::ICommand@{chroma::ICommand}!end@{end}}
+\index{end@{end}!chroma::ICommand@{chroma::ICommand}}
+\doxysubsubsection{\texorpdfstring{end()}{end()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_i_command_aa80075580fb19e753a8ed899e73db4b4} 
+virtual void chroma::\+\+ICommand::\+end (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{x}{, }\item[{uint32\+\_\+t}]{y}{, }\item[{const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \doxymbox{\hyperlink{classchroma_1_1_brush_command_af2f9c51ebe48f02b4794a1c801f8d963}{chroma::\+\+Brush\+Command}}.
+
+\Hypertarget{classchroma_1_1_i_command_ac2d18577d9f90037bf4d417c04bb9774}\index{chroma::ICommand@{chroma::ICommand}!preview@{preview}}
+\index{preview@{preview}!chroma::ICommand@{chroma::ICommand}}
+\doxysubsubsection{\texorpdfstring{preview()}{preview()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_i_command_ac2d18577d9f90037bf4d417c04bb9774} 
+virtual void chroma::\+\+ICommand::\+preview (\begin{DoxyParamCaption}\item[{SDL\+\_\+\+GPURender\+Pass \texorpdfstring{$\ast$}{*}}]{render\+\_\+pass}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \doxymbox{\hyperlink{classchroma_1_1_brush_command_a02f5d3266fa5c1830074ba94fa84b3f9}{chroma::\+\+Brush\+Command}}.
+
+\Hypertarget{classchroma_1_1_i_command_ae0f76fa677b80647323e826f82fb1d66}\index{chroma::ICommand@{chroma::ICommand}!redo@{redo}}
+\index{redo@{redo}!chroma::ICommand@{chroma::ICommand}}
+\doxysubsubsection{\texorpdfstring{redo()}{redo()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_i_command_ae0f76fa677b80647323e826f82fb1d66} 
+virtual void chroma::\+\+ICommand::\+redo (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&}]{canvas}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \doxymbox{\hyperlink{classchroma_1_1_brush_command_abbf647e49a81f236f79e7ef04c03a638}{chroma::\+\+Brush\+Command}}.
+
+\Hypertarget{classchroma_1_1_i_command_a2c8ce9f62529a8b75105dfa36b56a42d}\index{chroma::ICommand@{chroma::ICommand}!start@{start}}
+\index{start@{start}!chroma::ICommand@{chroma::ICommand}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_i_command_a2c8ce9f62529a8b75105dfa36b56a42d} 
+virtual void chroma::\+\+ICommand::\+start (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{x}{, }\item[{uint32\+\_\+t}]{y}{, }\item[{const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \doxymbox{\hyperlink{classchroma_1_1_brush_command_ab5a0c9d8b3c77414f1fffaeb6001053a}{chroma::\+\+Brush\+Command}}.
+
+\Hypertarget{classchroma_1_1_i_command_a9f535b5cc9486b30ba01fb68ced633d8}\index{chroma::ICommand@{chroma::ICommand}!undo@{undo}}
+\index{undo@{undo}!chroma::ICommand@{chroma::ICommand}}
+\doxysubsubsection{\texorpdfstring{undo()}{undo()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_i_command_a9f535b5cc9486b30ba01fb68ced633d8} 
+virtual void chroma::\+\+ICommand::\+undo (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&}]{canvas}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \doxymbox{\hyperlink{classchroma_1_1_brush_command_aa1dcb50844f5e3c69230f51797784b6c}{chroma::\+\+Brush\+Command}}.
+
+\Hypertarget{classchroma_1_1_i_command_a0bc80973a018879a1d92c97941482773}\index{chroma::ICommand@{chroma::ICommand}!update@{update}}
+\index{update@{update}!chroma::ICommand@{chroma::ICommand}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_i_command_a0bc80973a018879a1d92c97941482773} 
+virtual void chroma::\+\+ICommand::\+update (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{x}{, }\item[{uint32\+\_\+t}]{y}{, }\item[{const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implemented in \doxymbox{\hyperlink{classchroma_1_1_brush_command_a074bd0b71b889669154a1362b286b426}{chroma::\+\+Brush\+Command}}.
+
 
 
 The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
 \item 
-C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+include/\+canvas/\+command/\+command.\+hpp\end{DoxyCompactItemize}
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+include/\+canvas/\+command/\+\doxymbox{\hyperlink{command_8hpp}{command.\+hpp}}\end{DoxyCompactItemize}

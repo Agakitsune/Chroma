@@ -102,10 +102,10 @@ App &amp;&#160;</td><td class="memItemRight"><b>operator=</b> (const App &amp;)=
 &#160;</td><td class="memItemRight"><b>App</b> (App &amp;&amp;)=delete</td></tr>
 <tr class="memitem:a892e1b5e553b03edcac303a7dbb8a038" id="r_a892e1b5e553b03edcac303a7dbb8a038"><td class="memItemLeft"><a id="a892e1b5e553b03edcac303a7dbb8a038" name="a892e1b5e553b03edcac303a7dbb8a038"></a>
 App &amp;&#160;</td><td class="memItemRight"><b>operator=</b> (App &amp;&amp;)=delete</td></tr>
-<tr class="memitem:a5ebfcba6a3aab78a6a925a97490eebbf" id="r_a5ebfcba6a3aab78a6a925a97490eebbf"><td class="memItemLeft"><a id="a5ebfcba6a3aab78a6a925a97490eebbf" name="a5ebfcba6a3aab78a6a925a97490eebbf"></a>
-int&#160;</td><td class="memItemRight"><b>init</b> () noexcept</td></tr>
-<tr class="memitem:abf99feaf1083c7edba67b1981343d8da" id="r_abf99feaf1083c7edba67b1981343d8da"><td class="memItemLeft"><a id="abf99feaf1083c7edba67b1981343d8da" name="abf99feaf1083c7edba67b1981343d8da"></a>
-int&#160;</td><td class="memItemRight"><b>run</b> () noexcept</td></tr>
+<tr class="memitem:a5ebfcba6a3aab78a6a925a97490eebbf" id="r_a5ebfcba6a3aab78a6a925a97490eebbf"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a5ebfcba6a3aab78a6a925a97490eebbf">init</a> () noexcept</td></tr>
+<tr class="memdesc:a5ebfcba6a3aab78a6a925a97490eebbf"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchroma_1_1_app.html">App</a> initialization.  <br /></td></tr>
+<tr class="memitem:abf99feaf1083c7edba67b1981343d8da" id="r_abf99feaf1083c7edba67b1981343d8da"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#abf99feaf1083c7edba67b1981343d8da">run</a> () noexcept</td></tr>
+<tr class="memdesc:abf99feaf1083c7edba67b1981343d8da"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classchroma_1_1_app.html">App</a> execution.  <br /></td></tr>
 <tr class="memitem:a0a20c679a34df92b29b31df47286b872" id="r_a0a20c679a34df92b29b31df47286b872"><td class="memTemplParams" colspan="2"><a id="a0a20c679a34df92b29b31df47286b872" name="a0a20c679a34df92b29b31df47286b872"></a>
 template&lt;typename... A&gt; </td></tr>
 <tr class="memitem:a0a20c679a34df92b29b31df47286b872 template"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><b>add_signal</b> (const std::string &amp;name)</td></tr>
@@ -125,13 +125,154 @@ void&#160;</td><td class="memItemRight"><b>separator</b> (const std::string &amp
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:abc99af1f6309e9af4dd6d2d693a06593" id="r_abc99af1f6309e9af4dd6d2d693a06593"><td class="memItemLeft"><a id="abc99af1f6309e9af4dd6d2d693a06593" name="abc99af1f6309e9af4dd6d2d693a06593"></a>
-static App *&#160;</td><td class="memItemRight"><b>get_instance</b> () noexcept</td></tr>
-<tr class="memitem:a05f45d86117599a77ee45de40d5298df" id="r_a05f45d86117599a77ee45de40d5298df"><td class="memItemLeft"><a id="a05f45d86117599a77ee45de40d5298df" name="a05f45d86117599a77ee45de40d5298df"></a>
-static SDL_GPUDevice *&#160;</td><td class="memItemRight"><b>get_device</b> () noexcept</td></tr>
-<tr class="memitem:a9ddec6e5b0715ba2eeaf638a8684c2e9" id="r_a9ddec6e5b0715ba2eeaf638a8684c2e9"><td class="memItemLeft"><a id="a9ddec6e5b0715ba2eeaf638a8684c2e9" name="a9ddec6e5b0715ba2eeaf638a8684c2e9"></a>
-static SDL_GPUCommandBuffer *&#160;</td><td class="memItemRight"><b>get_command_buffer</b> () noexcept</td></tr>
+<tr class="memitem:abc99af1f6309e9af4dd6d2d693a06593" id="r_abc99af1f6309e9af4dd6d2d693a06593"><td class="memItemLeft">static App *&#160;</td><td class="memItemRight"><a class="el" href="#abc99af1f6309e9af4dd6d2d693a06593">get_instance</a> () noexcept</td></tr>
+<tr class="memdesc:abc99af1f6309e9af4dd6d2d693a06593"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides a global access to instance.  <br /></td></tr>
+<tr class="memitem:a05f45d86117599a77ee45de40d5298df" id="r_a05f45d86117599a77ee45de40d5298df"><td class="memItemLeft">static SDL_GPUDevice *&#160;</td><td class="memItemRight"><a class="el" href="#a05f45d86117599a77ee45de40d5298df">get_device</a> () noexcept</td></tr>
+<tr class="memdesc:a05f45d86117599a77ee45de40d5298df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides a global access to device.  <br /></td></tr>
+<tr class="memitem:a9ddec6e5b0715ba2eeaf638a8684c2e9" id="r_a9ddec6e5b0715ba2eeaf638a8684c2e9"><td class="memItemLeft">static SDL_GPUCommandBuffer *&#160;</td><td class="memItemRight"><a class="el" href="#a9ddec6e5b0715ba2eeaf638a8684c2e9">get_command_buffer</a> () noexcept</td></tr>
+<tr class="memdesc:a9ddec6e5b0715ba2eeaf638a8684c2e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides a global access to command buffer.  <br /></td></tr>
 </table>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a9ddec6e5b0715ba2eeaf638a8684c2e9" name="a9ddec6e5b0715ba2eeaf638a8684c2e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ddec6e5b0715ba2eeaf638a8684c2e9">&#9670;&#160;</a></span>get_command_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SDL_GPUCommandBuffer * chroma::App::get_command_buffer </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Provides a global access to command buffer. </p>
+<dl class="section return"><dt>Returns</dt><dd>SDL_GPUCommandBuffer* </dd></dl>
+
+</div>
+</div>
+<a id="a05f45d86117599a77ee45de40d5298df" name="a05f45d86117599a77ee45de40d5298df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05f45d86117599a77ee45de40d5298df">&#9670;&#160;</a></span>get_device()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SDL_GPUDevice * chroma::App::get_device </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Provides a global access to device. </p>
+<dl class="section return"><dt>Returns</dt><dd>SDL_GPUDevice* </dd></dl>
+
+</div>
+</div>
+<a id="abc99af1f6309e9af4dd6d2d693a06593" name="abc99af1f6309e9af4dd6d2d693a06593"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc99af1f6309e9af4dd6d2d693a06593">&#9670;&#160;</a></span>get_instance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">App * chroma::App::get_instance </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Provides a global access to instance. </p>
+<dl class="section return"><dt>Returns</dt><dd>App* </dd></dl>
+
+</div>
+</div>
+<a id="a5ebfcba6a3aab78a6a925a97490eebbf" name="a5ebfcba6a3aab78a6a925a97490eebbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ebfcba6a3aab78a6a925a97490eebbf">&#9670;&#160;</a></span>init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int chroma::App::init </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classchroma_1_1_app.html">App</a> initialization. </p>
+<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+
+</div>
+</div>
+<a id="abf99feaf1083c7edba67b1981343d8da" name="abf99feaf1083c7edba67b1981343d8da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf99feaf1083c7edba67b1981343d8da">&#9670;&#160;</a></span>run()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int chroma::App::run </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classchroma_1_1_app.html">App</a> execution. </p>
+<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>C:/Users/lucas/Desktop/EPITECH/Chroma/include/<a class="el" href="app_8hpp_source.html">app.hpp</a></li>
 <li>C:/Users/lucas/Desktop/EPITECH/Chroma/src/<a class="el" href="app_8cpp.html">app.cpp</a></li>
