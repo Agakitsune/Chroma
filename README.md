@@ -90,7 +90,3 @@ Chroma/
 | Graphics API   | SDL3 GPU (Hardware-accelerated rendering)                                    |
 | User Interface | Dear ImGui                                                                   |
 
-
-## License
-
-This project is private and proprietary.
