@@ -1,4 +1,13 @@
-
+/**
+ * @file undoredoitem.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Undoing (Ctrl+Z) and restore deleted content (Ctrl+Y)
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "menu/undoredoitem.hpp"
 
 #include "imgui.h"

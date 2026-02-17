@@ -1,4 +1,13 @@
-
+/**
+ * @file newitem.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Create empty canva to draw on
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "menu/newitem.hpp"
 
 #include "imgui.h"

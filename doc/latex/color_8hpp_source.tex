@@ -1,0 +1,85 @@
+\doxysection{color.\+hpp}
+\hypertarget{color_8hpp_source}{}\label{color_8hpp_source}\index{C:/Users/lucas/Desktop/EPITECH/Chroma/include/color.hpp@{C:/Users/lucas/Desktop/EPITECH/Chroma/include/color.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}imgui.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }\doxymbox{\hyperlink{namespacechroma}{chroma}}\ \{}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{struct\ }Color\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ r\ =\ 0.0f;}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ g\ =\ 0.0f;}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ b\ =\ 0.0f;}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ a\ =\ 0.0f;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ Color()\ \textcolor{keyword}{noexcept}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ Color(\textcolor{keywordtype}{float}\ r,\ \textcolor{keywordtype}{float}\ g,\ \textcolor{keywordtype}{float}\ b,\ \textcolor{keywordtype}{float}\ a\ =\ 1.0f)\ noexcept\ :\ r(r),\ g(g),\ b(b),\ a(a)\ \{\}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{operator}\ ImVec4()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ImVec4(r,\ g,\ b,\ a);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{float}\ \&operator[](\textcolor{keywordtype}{size\_t}\ i)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\&r)[i];}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{float}\ operator[](\textcolor{keywordtype}{size\_t}\ i)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\&r)[i];}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ uint32\_t\ to\_u32()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((uint32\_t)(a\ *\ 255.0f)\ <<\ 24)\ |}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((uint32\_t)(b\ *\ 255.0f)\ <<\ 16)\ |}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((uint32\_t)(g\ *\ 255.0f)\ <<\ 8)\ \ |}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((uint32\_t)(r\ *\ 255.0f)\ <<\ 0);}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ upload(\textcolor{keywordtype}{float}\ *dst)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ dst[0]\ =\ r;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ dst[1]\ =\ g;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ dst[2]\ =\ b;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ dst[3]\ =\ a;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ download(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ *src)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ src[0];}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ g\ =\ src[1];}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ b\ =\ src[2];}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ a\ =\ src[3];}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ upload(uint8\_t\ *dst)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ dst[0]\ =\ (uint8\_t)(r\ *\ 255.0f);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ dst[1]\ =\ (uint8\_t)(g\ *\ 255.0f);}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ dst[2]\ =\ (uint8\_t)(b\ *\ 255.0f);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ dst[3]\ =\ (uint8\_t)(a\ *\ 255.0f);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ download(\textcolor{keyword}{const}\ uint8\_t\ *src)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ src[0]\ /\ 255.0f;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ g\ =\ src[1]\ /\ 255.0f;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ b\ =\ src[2]\ /\ 255.0f;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ a\ =\ src[3]\ /\ 255.0f;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \ \ \ \ \};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ WHITE(1.0f,\ 1.0f,\ 1.0f);}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ BLACK(0.0f,\ 0.0f,\ 0.0f);}
+\DoxyCodeLine{00070\ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ RED(1.0f,\ 0.0f,\ 0.0f);}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ GREEN(0.0f,\ 1.0f,\ 0.0f);}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ BLUE(0.0f,\ 0.0f,\ 1.0f);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ YELLOW(1.0f,\ 1.0f,\ 0.0f);}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ CYAN(0.0f,\ 1.0f,\ 1.0f);}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{constexpr}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ MAGENTA(1.0f,\ 0.0f,\ 1.0f);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \}}
+
+\end{DoxyCode}

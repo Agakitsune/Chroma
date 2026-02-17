@@ -1,0 +1,52 @@
+\doxysection{brush\+\_\+command.\+hpp}
+\hypertarget{brush__command_8hpp_source}{}\label{brush__command_8hpp_source}\index{C:/Users/lucas/Desktop/EPITECH/Chroma/include/canvas/command/brush\_command.hpp@{C:/Users/lucas/Desktop/EPITECH/Chroma/include/canvas/command/brush\_command.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}color\_command.hpp"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}SDL3/SDL.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}SDL3/SDL\_gpu.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }\doxymbox{\hyperlink{namespacechroma}{chroma}}\ \{}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }BrushCommand\ :\ \textcolor{keyword}{public}\ ColorCommand\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }Pos\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ x;}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ y;}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ std::vector<Pos>\ positions;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ std::vector<Color>\ previous\_colors;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ SDL\_GPUGraphicsPipeline\ *pipeline\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ SDL\_GPUShader\ *vertex\_shader\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ SDL\_GPUShader\ *fragment\_shader\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ SDL\_GPUBuffer\ *instance\_buffer\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ BrushCommand()\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \string~BrushCommand()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ add(uint32\_t\ x,\ uint32\_t\ y,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ \&old)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ contains(uint32\_t\ x,\ uint32\_t\ y)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ redo(\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}}\ \&canvas)\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \textcolor{keyword}{final};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ undo(\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}}\ \&canvas)\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \textcolor{keyword}{final};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ start(uint32\_t\ x,\ uint32\_t\ y,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ \&color)\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \textcolor{keyword}{final};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ update(uint32\_t\ x,\ uint32\_t\ y,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ \&color)\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \textcolor{keyword}{final};}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ end(uint32\_t\ x,\ uint32\_t\ y,\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}\ \&color)\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \textcolor{keyword}{final};}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ discard()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \textcolor{keyword}{final};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preview(SDL\_GPURenderPass\ *render\_pass)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \textcolor{keyword}{final};}
+\DoxyCodeLine{00044\ \ \ \ \ \};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \}}
+
+\end{DoxyCode}

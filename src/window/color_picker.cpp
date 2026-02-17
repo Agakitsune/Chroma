@@ -1,4 +1,13 @@
-
+/**
+ * @file color_picker.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Colorpicker functionnality
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #define IMGUI_DEFINE_MATH_OPERATORS
 
 #include "window/color_picker.hpp"

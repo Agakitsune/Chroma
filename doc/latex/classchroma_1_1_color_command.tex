@@ -1,0 +1,95 @@
+\doxysection{chroma::\+Color\+Command Class Reference}
+\hypertarget{classchroma_1_1_color_command}{}\label{classchroma_1_1_color_command}\index{chroma::ColorCommand@{chroma::ColorCommand}}
+Inheritance diagram for chroma::\+Color\+Command:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classchroma_1_1_color_command}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \doxymbox{\hyperlink{classchroma_1_1_color_command_a2ea4ec2da27a0fabf6c74cdf5e9156e4}{set\+\_\+main\+\_\+color}} (const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept override final
+\item 
+virtual void \doxymbox{\hyperlink{classchroma_1_1_color_command_a7c19e1fd9425df98fef1c2563c52a8dd}{set\+\_\+second\+\_\+color}} (const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept override final
+\item 
+virtual \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \doxymbox{\hyperlink{classchroma_1_1_color_command_a4cfcd7fb171d83ea92ef4fce66c973fb}{get\+\_\+main\+\_\+color}} () noexcept override final
+\item 
+virtual \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \doxymbox{\hyperlink{classchroma_1_1_color_command_a466c47aaf01f2e243926e33e23d98784}{get\+\_\+second\+\_\+color}} () noexcept override final
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \doxymbox{\hyperlink{classchroma_1_1_i_command}{chroma::\+\+ICommand}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries redo} (\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&canvas) noexcept=0
+\item 
+virtual void {\bfseries undo} (\doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}} \&canvas) noexcept=0
+\item 
+virtual void {\bfseries start} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
+\item 
+virtual void {\bfseries update} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
+\item 
+virtual void {\bfseries end} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept=0
+\item 
+virtual void {\bfseries discard} () noexcept=0
+\item 
+virtual void {\bfseries preview} (SDL\+\_\+\+GPURender\+Pass \texorpdfstring{$\ast$}{*}render\+\_\+pass) const noexcept=0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classchroma_1_1_color_command_ad7132c4f6f5754c3eaffea34d9419871}\label{classchroma_1_1_color_command_ad7132c4f6f5754c3eaffea34d9419871} 
+\doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries main}
+\item 
+\Hypertarget{classchroma_1_1_color_command_a283ce5c86805340afc5cb78cf7c4baf8}\label{classchroma_1_1_color_command_a283ce5c86805340afc5cb78cf7c4baf8} 
+\doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries second}
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classchroma_1_1_color_command_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classchroma_1_1_color_command_a4cfcd7fb171d83ea92ef4fce66c973fb}\index{chroma::ColorCommand@{chroma::ColorCommand}!get\_main\_color@{get\_main\_color}}
+\index{get\_main\_color@{get\_main\_color}!chroma::ColorCommand@{chroma::ColorCommand}}
+\doxysubsubsection{\texorpdfstring{get\_main\_color()}{get\_main\_color()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_color_command_a4cfcd7fb171d83ea92ef4fce66c973fb} 
+virtual \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} chroma::\+\+Color\+Command::\+get\+\_\+main\+\_\+color (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [final]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Reimplemented from \doxymbox{\hyperlink{classchroma_1_1_i_command}{chroma::\+\+ICommand}}.
+
+\Hypertarget{classchroma_1_1_color_command_a466c47aaf01f2e243926e33e23d98784}\index{chroma::ColorCommand@{chroma::ColorCommand}!get\_second\_color@{get\_second\_color}}
+\index{get\_second\_color@{get\_second\_color}!chroma::ColorCommand@{chroma::ColorCommand}}
+\doxysubsubsection{\texorpdfstring{get\_second\_color()}{get\_second\_color()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_color_command_a466c47aaf01f2e243926e33e23d98784} 
+virtual \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} chroma::\+\+Color\+Command::\+get\+\_\+second\+\_\+color (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [final]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Reimplemented from \doxymbox{\hyperlink{classchroma_1_1_i_command}{chroma::\+\+ICommand}}.
+
+\Hypertarget{classchroma_1_1_color_command_a2ea4ec2da27a0fabf6c74cdf5e9156e4}\index{chroma::ColorCommand@{chroma::ColorCommand}!set\_main\_color@{set\_main\_color}}
+\index{set\_main\_color@{set\_main\_color}!chroma::ColorCommand@{chroma::ColorCommand}}
+\doxysubsubsection{\texorpdfstring{set\_main\_color()}{set\_main\_color()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_color_command_a2ea4ec2da27a0fabf6c74cdf5e9156e4} 
+virtual void chroma::\+\+Color\+Command::\+set\+\_\+main\+\_\+color (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [final]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implements \doxymbox{\hyperlink{classchroma_1_1_i_command}{chroma::\+\+ICommand}}.
+
+\Hypertarget{classchroma_1_1_color_command_a7c19e1fd9425df98fef1c2563c52a8dd}\index{chroma::ColorCommand@{chroma::ColorCommand}!set\_second\_color@{set\_second\_color}}
+\index{set\_second\_color@{set\_second\_color}!chroma::ColorCommand@{chroma::ColorCommand}}
+\doxysubsubsection{\texorpdfstring{set\_second\_color()}{set\_second\_color()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_color_command_a7c19e1fd9425df98fef1c2563c52a8dd} 
+virtual void chroma::\+\+Color\+Command::\+set\+\_\+second\+\_\+color (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [final]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Implements \doxymbox{\hyperlink{classchroma_1_1_i_command}{chroma::\+\+ICommand}}.
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+include/\+canvas/\+command/\+color\+\_\+command.\+hpp\end{DoxyCompactItemize}

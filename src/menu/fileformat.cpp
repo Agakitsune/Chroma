@@ -1,4 +1,13 @@
-
+/**
+ * @file fileformat.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Fetching file format
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "menu/fileformat.hpp"
 
 #include <cstring>

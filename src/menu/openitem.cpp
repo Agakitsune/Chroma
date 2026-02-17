@@ -1,4 +1,13 @@
-
+/**
+ * @file openitem.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Opening supported image file
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "menu/openitem.hpp"
 
 #include "imgui.h"

@@ -1,0 +1,45 @@
+\doxysection{fileformat.\+hpp}
+\hypertarget{fileformat_8hpp_source}{}\label{fileformat_8hpp_source}\index{C:/Users/lucas/Desktop/EPITECH/Chroma/include/menu/fileformat.hpp@{C:/Users/lucas/Desktop/EPITECH/Chroma/include/menu/fileformat.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{namespace\ }\doxymbox{\hyperlink{namespacechroma}{chroma}}\ \{}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keyword}{enum}\ FileFormat\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ All,}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ BMP,}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ JPG,}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ PNG,}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ TGA,}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ Count}
+\DoxyCodeLine{00016\ \ \ \ \ \};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ extensions[]\ =\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}All\ formats"{}},}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}.bmp"{}},}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}.jpeg"{}},}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}.jpg"{}},}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}.png"{}},}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}.tga"{}}}
+\DoxyCodeLine{00025\ \ \ \ \ \};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{static}\ FileFormat\ formats[]\ =\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ All,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ BMP,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ JPG,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ JPG,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ PNG,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ TGA}
+\DoxyCodeLine{00034\ \ \ \ \ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_image(\textcolor{keyword}{const}\ std::string\ \&ext)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00037\ \ \ \ \ FileFormat\ fetch\_format(\textcolor{keyword}{const}\ std::string\ \&ext)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \}}
+
+\end{DoxyCode}

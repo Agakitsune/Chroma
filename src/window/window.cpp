@@ -1,4 +1,7 @@
-#include "window/window.hpp"
+/**
+ * @brief Handling whole window logic of Chroma
+ * 
+ */
 
 namespace chroma {
 

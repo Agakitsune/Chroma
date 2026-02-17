@@ -1,4 +1,13 @@
-
+/**
+ * @file cursor.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief 
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "cursor.hpp"
 
 // -- Arrow
@@ -121,6 +130,10 @@ uint8_t point_mask[] = {
     0x0F, 0xFC, 0x07, 0xF8,
 };
 
+/**
+ * @brief Chroma global namespace
+ * 
+ */
 namespace chroma {
 
     std::unique_ptr<CursorManager> CursorManager::instance = nullptr;

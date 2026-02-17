@@ -1,4 +1,13 @@
-
+/**
+ * @file palette.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Handle top left color palette (saving, delete, change)
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #define IMGUI_DEFINE_MATH_OPERATORS
 
 #include "window/palette.hpp"
