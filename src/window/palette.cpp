@@ -19,7 +19,10 @@
 #include "cursor.hpp"
 
 namespace chroma {
-
+/**
+ * @brief Construct a new Palette Window:: Palette Window object
+ * 
+ */
     PaletteWindow::PaletteWindow() noexcept
     : Window(
         "Palette",
@@ -60,12 +63,18 @@ namespace chroma {
         App::get_instance()->add_signal<const Color &>("main_color_selected");
         App::get_instance()->add_signal<const Color &>("second_color_selected");
     }
-
+/**
+ * @brief signal color has been picked from the palette
+ * 
+ */
     void PaletteWindow::ready() noexcept
     {
         App::get_instance()->connect_signal("color_picked", this, &PaletteWindow::add_color);
     }
-
+/**
+ * @brief Display the palette colors square and handle their spacing
+ * 
+ */
     void PaletteWindow::display() noexcept
     {
         ImGui::Begin(label.c_str(), nullptr, flags);
@@ -145,7 +154,11 @@ namespace chroma {
 
         ImGui::End();
     }
-
+/**
+ * @brief add a clickable color square at the palette
+ * 
+ * @param color 
+ */
     void PaletteWindow::add_color(const Color &color) noexcept
     {
         palette.push_back(color);

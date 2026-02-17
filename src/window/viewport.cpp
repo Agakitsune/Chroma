@@ -31,7 +31,10 @@
 // #include <SDL3/SDL.h>
 
 namespace chroma {
-
+/**
+ * @brief Construct a new Viewport Window:: Viewport Window object
+ * 
+ */
     ViewportWindow::ViewportWindow() noexcept
     : Window(
         "Viewport",
@@ -54,7 +57,10 @@ namespace chroma {
         // uniform_info.usage = SDL_GPU_BUFFERUSAGE_UNIFORM;
         // uniform_info.size = sizeof(float) * 24; // mat4 and 2 vec
     }
-
+/**
+ * @brief Handle all instanciate of the signal used along the user journey
+ * 
+ */
     void ViewportWindow::ready() noexcept
     {
         App::get_instance()->connect_signal("create_canvas_requested", this, &ViewportWindow::new_canvas);
@@ -70,7 +76,10 @@ namespace chroma {
         App::get_instance()->connect_signal("edit_undo", this, &ViewportWindow::undo);
         App::get_instance()->connect_signal("edit_redo", this, &ViewportWindow::redo);
     }
-
+/**
+ * @brief Setup the viewport window layout and additional tabs
+ * 
+ */
     void ViewportWindow::display() noexcept
     {
         ImGui::Begin(label.c_str(), nullptr, flags);
@@ -403,7 +412,12 @@ namespace chroma {
 
         SDL_EndGPUCopyPass(copy_pass);
     }
-
+/**
+ * @brief create a new canva to draw on
+ * 
+ * @param width 
+ * @param height 
+ */
     void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
     {
         canvases.emplace_back(width, height);
@@ -423,7 +437,13 @@ namespace chroma {
 
         // return true;
     }
-
+/**
+ * @brief save canva as a file in the filesystem, custom directory path and file format available
+ * 
+ * @param directory 
+ * @param file 
+ * @param format 
+ */
     void ViewportWindow::save_canvas(
         const std::filesystem::path &directory,
         const std::filesystem::path &file,
@@ -463,7 +483,13 @@ namespace chroma {
         SDL_DestroySurface(surface);
         SDL_UnmapGPUTransferBuffer(device, canvas.layers[0].buffer);
     }
-
+/**
+ * @brief Open an image from user filesystem if this is a supported image
+ * 
+ * @param directory 
+ * @param file 
+ * @param format 
+ */
     void ViewportWindow::open_canvas(const std::filesystem::path &directory, const std::filesystem::path &file, FileFormat format) noexcept
     {
         std::filesystem::path file_path = directory / file;
@@ -498,7 +524,10 @@ namespace chroma {
         SDL_DestroySurface(surface);
         SDL_CloseIO(stream);
     }
-
+/**
+ * @brief Horizontally flip the current canva
+ * 
+ */
     void ViewportWindow::fliph() noexcept
     {
         Canvas &canvas = canvases[selected];
@@ -516,7 +545,10 @@ namespace chroma {
 
         canvas.refresh();
     }    
-
+/**
+ * @brief Vertically flip the current canva
+ * 
+ */
     void ViewportWindow::flipv() noexcept
     {
         Canvas &canvas = canvases[selected];
@@ -534,7 +566,10 @@ namespace chroma {
 
         canvas.refresh();
     }
-
+/**
+ * @brief Call undo action from Canva
+ * 
+ */
     void ViewportWindow::undo() noexcept
     {
         Canvas &canvas = canvases[selected];
@@ -553,28 +588,48 @@ namespace chroma {
 
         // canvas.refresh();
     }
-
+/**
+ * @brief call redo action from Canva
+ * 
+ */
     void ViewportWindow::redo() noexcept
     {
         Canvas &canvas = canvases[selected];
         canvas.redo();
     }
-
+/**
+ * @brief Return if canva layer currently empty or not
+ * 
+ * @return true 
+ * @return false 
+ */
     bool ViewportWindow::is_empty() const noexcept
     {
         return canvases.empty();
     }
-
+/**
+ * @brief Provides a global access to canva content
+ * 
+ * @return Canvas& 
+ */
     Canvas &ViewportWindow::get_canvas() noexcept
     {
         return canvases[selected];
     }
-
+/**
+ * @brief set brush main color
+ * 
+ * @param clr 
+ */
     void ViewportWindow::_on_main_color_changed(const Color &clr) noexcept
     {
         cmd->set_main_color(clr);
     }
-
+/**
+ * @brief set second color
+ * 
+ * @param clr 
+ */
     void ViewportWindow::_on_second_color_changed(const Color &clr) noexcept
     {
         cmd->set_second_color(clr);
