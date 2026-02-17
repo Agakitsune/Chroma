@@ -58,7 +58,7 @@ namespace chroma {
         ImGui::PopID();
     }
 
-    void NewMenuItem::shortcuts() {
+    void NewMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_N)) {
             action();
         }

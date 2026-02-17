@@ -50,33 +50,33 @@ FetchContent_Declare(
     GIT_TAG v1.92.4-docking
 )
 
-FetchContent_Declare(
-    lua
-    GIT_REPOSITORY https://github.com/lubgr/lua-cmake.git
-    GIT_BRANCH master
-)
+# FetchContent_Declare(
+#     lua
+#     GIT_REPOSITORY https://github.com/lubgr/lua-cmake.git
+#     GIT_BRANCH master
+# )
 
-find_package(Freetype QUIET)
-if(NOT Freetype_FOUND)
-    message(STATUS "Fetching FreeType from source...")
-    include(FetchContent)
-    FetchContent_Declare(
-        freetype
-        GIT_REPOSITORY https://github.com/freetype/freetype.git
-        GIT_TAG VER-2-14-1
-    )
-    FetchContent_MakeAvailable(freetype)
-    set(FREETYPE_INCLUDE_DIRS ${Freetype_INCLUDE_DIRS} CACHE PATH "")
-    set(FREETYPE_LIBRARY ${Freetype_LIBRARIES} CACHE FILEPATH "")
-    # set(SDLTTF_FREETYPE_VENDORED ON CACHE BOOL "")
-endif()
+# find_package(Freetype QUIET)
+# if(NOT Freetype_FOUND)
+#     message(STATUS "Fetching FreeType from source...")
+#     include(FetchContent)
+#     FetchContent_Declare(
+#         freetype
+#         GIT_REPOSITORY https://github.com/freetype/freetype.git
+#         GIT_TAG VER-2-14-1
+#     )
+#     FetchContent_MakeAvailable(freetype)
+#     set(FREETYPE_INCLUDE_DIRS ${Freetype_INCLUDE_DIRS} CACHE PATH "")
+#     set(FREETYPE_LIBRARY ${Freetype_LIBRARIES} CACHE FILEPATH "")
+#     # set(SDLTTF_FREETYPE_VENDORED ON CACHE BOOL "")
+# endif()
 
 FetchContent_MakeAvailable(
     sdl3
     sdl_image
     sdl_ttf
     imgui
-    lua
+    # lua
 )
 
 file(GLOB CPP_SOURCES
@@ -150,7 +150,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${sdl3_SOURCE_DIR}/include
     ${sdl_image_SOURCE_DIR}/include
     ${sdl_ttf_SOURCE_DIR}/include
-    ${lua_SOURCE_DIR}/src
+    # ${lua_SOURCE_DIR}/src
     ./include
 )
 
@@ -159,5 +159,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3::SDL3
     SDL3_image::SDL3_image
     SDL3_ttf::SDL3_ttf
-    lua::lib
+    # lua::lib
 )

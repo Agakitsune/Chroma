@@ -228,7 +228,7 @@ namespace chroma {
         ImGui::PopID();
     }
 
-    void SaveMenuItem::shortcuts() {
+    void SaveMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S)) {
             action();
         }
