@@ -16,14 +16,20 @@
 #include "app.hpp"
 
 namespace chroma {
-
+/**
+ * @brief Handle and signal if a new file has been called
+ * 
+ */
     void NewMenuItem::menubar() noexcept
     {
         if (ImGui::MenuItem("New", "Ctrl+N")) {
             action();
         }
     }
-
+/**
+ * @brief Create a popup to create a new canva
+ * 
+ */
     void NewMenuItem::action() noexcept
     {
         ImGui::PushOverrideID(32);
@@ -32,7 +38,10 @@ namespace chroma {
         h = 16;
         ImGui::PopID();
     }
-
+/**
+ * @brief Handle the popup new to ask if user confirm wanting to create new canva and specify dimension, 16x16 by default
+ * 
+ */
     void NewMenuItem::display() noexcept
     {
         ImGui::PushOverrideID(32);
@@ -66,7 +75,10 @@ namespace chroma {
         }
         ImGui::PopID();
     }
-
+/**
+ * @brief if Ctrl+N pressed, call new item creation function
+ * 
+ */
     void NewMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_N)) {
             action();

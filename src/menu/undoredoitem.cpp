@@ -16,7 +16,10 @@
 #include "app.hpp"
 
 namespace chroma {
-
+/**
+ * @brief Upon pressing the Save function, run the save action
+ * 
+ */
     void UndoRedoMenuItem::menubar() noexcept
     {
         if (ImGui::MenuItem("Undo", "Ctrl+Z")) {
@@ -26,7 +29,10 @@ namespace chroma {
             App::get_instance()->emit_signal("edit_redo");
         }
     }
-
+/**
+ * @brief if Ctrl+Z pressed, run undo signal, if Ctrl+Y pressed, run redo signal
+ * 
+ */
     void UndoRedoMenuItem::shortcuts() noexcept
     {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Z)) {

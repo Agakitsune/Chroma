@@ -16,7 +16,10 @@
 #include "app.hpp"
 
 namespace chroma {
-
+/**
+ * @brief Handle and signal if the Flip horizontally or vertically was called
+ * 
+ */
     void FlipMenuItem::menubar() noexcept
     {
         if (ImGui::MenuItem("Flip Horizontal", "Shift+H")) {
@@ -26,7 +29,10 @@ namespace chroma {
             App::get_instance()->emit_signal("edit_flipv");
         }
     }
-
+/**
+ * @brief Handle and signal if the Flip horizontally shortcut Ctrl+H or vertically Ctrl+V was called
+ * 
+ */
     void FlipMenuItem::shortcuts() noexcept
     {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Shift | ImGuiKey_H)) {

@@ -19,7 +19,11 @@
 #include <cstring>
 #include <algorithm>
 
-
+/**
+ * @brief Get the home object
+ * 
+ * @return std::filesystem::path 
+ */
 static std::filesystem::path get_home() noexcept
 {
     #ifdef _WIN32
@@ -37,13 +41,26 @@ static std::filesystem::path get_home() noexcept
 namespace chroma {
 
     struct path_less_compare {
+        /**
+         * @brief turn upper letters into lowercase same letter
+         * 
+         * @param c 
+         * @return char 
+         */
         char upper(char c) const noexcept {
             if (c >= 96 && c <= 122) {
                 return c - 32;
             }
             return c;
         }
-
+/**
+ * @brief compare two string letters
+ * 
+ * @param a 
+ * @param b 
+ * @return true 
+ * @return false 
+ */
         bool case_cmp(const char *a, const char *b) const noexcept
         {
             uint64_t i = 0;
@@ -58,13 +75,23 @@ namespace chroma {
             }
             return true;
         }
-
+/**
+ * @brief compare two filesystem paths case
+ * 
+ * @param a 
+ * @param b 
+ * @return true 
+ * @return false 
+ */
         bool operator()(const std::filesystem::path &a, const std::filesystem::path &b) const noexcept
         {
             return case_cmp(a.filename().c_str(), b.filename().c_str());
         }
     };
-
+/**
+ * @brief Construct a new Save Menu Item:: Save Menu Item object
+ * 
+ */
     SaveMenuItem::SaveMenuItem() noexcept
     {   
         name = new char[1024];
@@ -76,13 +103,19 @@ namespace chroma {
         name[0] = '\0';
         std::strcpy(directory, current.c_str());
     }
-
+/**
+ * @brief Destroy the Save Menu Item:: Save Menu Item object
+ * 
+ */
     SaveMenuItem::~SaveMenuItem() noexcept
     {
         delete[] name;
         delete[] directory;
     }
-
+/**
+ * @brief Get the current directory
+ * 
+ */
     void SaveMenuItem::query_current_directory() noexcept
     {
         directories.clear();
@@ -102,14 +135,20 @@ namespace chroma {
         std::stable_sort(directories.begin(), directories.end(), path_less_compare{});
         std::stable_sort(files.begin(), files.end(), path_less_compare{});
     }
-
+/**
+ * @brief Upon pressing the Save function, run the save action
+ * 
+ */
     void SaveMenuItem::menubar() noexcept
     {
         if (ImGui::MenuItem("Save", "Ctrl+S")) {
             action();
         }
     }
-
+/**
+ * @brief Create a popup to save a file on the filesystem
+ * 
+ */
     void SaveMenuItem::action() noexcept
     {
         ImGui::PushOverrideID(33);
@@ -117,7 +156,10 @@ namespace chroma {
         ImGui::PopID();
         query_current_directory();
     }
-
+/**
+ * @brief Handle the saving file on filesystem behavior
+ * 
+ */
     void SaveMenuItem::display() noexcept
     {
         constexpr uint32_t ext_size = sizeof(extensions) / sizeof(extensions[0]);
@@ -236,7 +278,10 @@ namespace chroma {
         }
         ImGui::PopID();
     }
-
+/**
+ * @brief if Ctrl+S pressed, call save file function
+ * 
+ */
     void SaveMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S)) {
             action();

@@ -14,12 +14,23 @@
 #include <cstdint>
 
 namespace chroma {
-
+/**
+ * @brief return if given file is an image
+ * 
+ * @param ext 
+ * @return true 
+ * @return false 
+ */
     bool is_image(const std::string &ext) noexcept
     {
         return fetch_format(ext) != FileFormat::Count;
     }
-
+/**
+ * @brief get a given file format
+ * 
+ * @param ext 
+ * @return FileFormat 
+ */
     FileFormat fetch_format(const std::string &ext) noexcept
     {
         uint32_t i = 0;
