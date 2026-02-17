@@ -1,4 +1,13 @@
-
+/**
+ * @file app.hpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief 
+ * @version 0.1
+ * @date 2026-02-17
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #pragma once
 
 #include "SDL3/SDL.h"
