@@ -8,8 +8,7 @@
 
 namespace chroma {
 
-    void FlipMenuItem::menubar() noexcept
-    {
+    void FlipMenuItem::menubar() noexcept {
         if (ImGui::MenuItem("Flip Horizontal", "Shift+H")) {
             App::get_instance()->emit_signal("edit_fliph");
         }
@@ -18,8 +17,7 @@ namespace chroma {
         }
     }
 
-    void FlipMenuItem::shortcuts() noexcept
-    {
+    void FlipMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Shift | ImGuiKey_H)) {
             App::get_instance()->emit_signal("edit_fliph");
         }
@@ -27,4 +25,4 @@ namespace chroma {
             App::get_instance()->emit_signal("edit_flipv");
         }
     }
-}
+} // namespace chroma

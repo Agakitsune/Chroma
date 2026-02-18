@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "menu/menuitem.hpp"
 #include "menu/fileformat.hpp"
+#include "menu/menuitem.hpp"
 
 #include <filesystem>
 #include <vector>
@@ -23,15 +23,15 @@ namespace chroma {
 
         bool hidden = false;
 
-        public:
-            SaveMenuItem() noexcept;
-            ~SaveMenuItem() noexcept;
+      public:
+        SaveMenuItem() noexcept;
+        virtual ~SaveMenuItem() noexcept override;
 
-            void query_current_directory() noexcept;
+        void query_current_directory() noexcept;
 
-            virtual void menubar() noexcept override final;
-            virtual void action() noexcept override final;
-            virtual void display() noexcept override final;
-            virtual void shortcuts() noexcept override final;
+        virtual void menubar() noexcept override final;
+        virtual void action() noexcept override final;
+        virtual void display() noexcept override final;
+        virtual void shortcuts() noexcept override final;
     };
-}
+} // namespace chroma

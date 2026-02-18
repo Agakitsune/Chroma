@@ -14,26 +14,22 @@ namespace chroma {
         float a = 0.0f;
 
         constexpr Color() noexcept = default;
-        constexpr Color(float r, float g, float b, float a = 1.0f) noexcept : r(r), g(g), b(b), a(a) {}
+        constexpr Color(float r, float g, float b, float a = 1.0f) noexcept
+            : r(r), g(g), b(b), a(a) {}
 
         constexpr operator ImVec4() const noexcept {
             return ImVec4(r, g, b, a);
         }
 
-        constexpr float &operator[](size_t i) noexcept {
-            return (&r)[i];
-        }
+        constexpr float &operator[](size_t i) noexcept { return (&r)[i]; }
 
-        constexpr float operator[](size_t i) const noexcept {
-            return (&r)[i];
-        }
+        constexpr float operator[](size_t i) const noexcept { return (&r)[i]; }
 
         constexpr uint32_t to_u32() const noexcept {
-            return
-                ((uint32_t)(a * 255.0f) << 24) |
-                ((uint32_t)(b * 255.0f) << 16) |
-                ((uint32_t)(g * 255.0f) << 8)  |
-                ((uint32_t)(r * 255.0f) << 0);
+            return ((uint32_t)(a * 255.0f) << 24) |
+                   ((uint32_t)(b * 255.0f) << 16) |
+                   ((uint32_t)(g * 255.0f) << 8) |
+                   ((uint32_t)(r * 255.0f) << 0);
         }
 
         void upload(float *dst) const noexcept {
@@ -67,7 +63,7 @@ namespace chroma {
 
     constexpr Color WHITE(1.0f, 1.0f, 1.0f);
     constexpr Color BLACK(0.0f, 0.0f, 0.0f);
-    
+
     constexpr Color RED(1.0f, 0.0f, 0.0f);
     constexpr Color GREEN(0.0f, 1.0f, 0.0f);
     constexpr Color BLUE(0.0f, 0.0f, 1.0f);
@@ -76,4 +72,4 @@ namespace chroma {
     constexpr Color CYAN(0.0f, 1.0f, 1.0f);
     constexpr Color MAGENTA(1.0f, 0.0f, 1.0f);
 
-}
+} // namespace chroma

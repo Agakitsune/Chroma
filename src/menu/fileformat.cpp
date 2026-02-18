@@ -1,18 +1,16 @@
 
 #include "menu/fileformat.hpp"
 
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 
 namespace chroma {
 
-    bool is_image(const std::string &ext) noexcept
-    {
+    bool is_image(const std::string &ext) noexcept {
         return fetch_format(ext) != FileFormat::Count;
     }
 
-    FileFormat fetch_format(const std::string &ext) noexcept
-    {
+    FileFormat fetch_format(const std::string &ext) noexcept {
         uint32_t i = 0;
         for (const char *e : extensions) {
             int res = std::strcmp(ext.c_str(), e);
@@ -24,4 +22,4 @@ namespace chroma {
         return FileFormat::Count;
     }
 
-}
+} // namespace chroma
