@@ -382,7 +382,7 @@ namespace chroma {
         //     return 1;
         // }
 
-        this->renderer = SDL_CreateRenderer(this->window, "vulkan");
+        this->renderer = SDL_CreateRenderer(this->window, "opengl");
         if (this->renderer == nullptr) {
             SDL_Log("Error: SDL_CreateGPURenderer(): %s\n", SDL_GetError());
         }
