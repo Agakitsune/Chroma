@@ -3,52 +3,53 @@
 
 #include "app.hpp"
 
+#include "menu/exititem.hpp"
+#include "menu/flipitem.hpp"
 #include "menu/newitem.hpp"
 #include "menu/openitem.hpp"
 #include "menu/saveitem.hpp"
-#include "menu/exititem.hpp"
-#include "menu/flipitem.hpp"
 #include "menu/undoredoitem.hpp"
 
+#include "backends/imgui_impl_sdl3.h"
+// #include "backends/imgui_impl_sdlgpu3.h"
+#include "backends/imgui_impl_sdlrenderer3.h"
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "backends/imgui_impl_sdl3.h"
-#include "backends/imgui_impl_sdlgpu3.h"
-//#include "lua/api.hpp"
+// #include "lua/api.hpp"
 
 #include "cursor.hpp"
 
 #include <iostream>
 #include <vector>
 
-struct ImGui_ImplSDLGPU3_Data
-{
-    ImGui_ImplSDLGPU3_InitInfo   InitInfo;
+// struct ImGui_ImplSDLGPU3_Data {
+//     ImGui_ImplSDLGPU3_InitInfo InitInfo;
 
-    // Graphics pipeline & shaders
-    SDL_GPUShader*               VertexShader           = nullptr;
-    SDL_GPUShader*               FragmentShader         = nullptr;
-    SDL_GPUGraphicsPipeline*     Pipeline               = nullptr;
-    SDL_GPUSampler*              TexSamplerLinear       = nullptr;
-    SDL_GPUTransferBuffer*       TexTransferBuffer      = nullptr;
-    uint32_t                     TexTransferBufferSize  = 0;
-};
+//     // Graphics pipeline & shaders
+//     SDL_GPUShader *VertexShader = nullptr;
+//     SDL_GPUShader *FragmentShader = nullptr;
+//     SDL_GPUGraphicsPipeline *Pipeline = nullptr;
+//     SDL_GPUSampler *TexSamplerLinear = nullptr;
+//     SDL_GPUTransferBuffer *TexTransferBuffer = nullptr;
+//     uint32_t TexTransferBufferSize = 0;
+// };
 
 // static char name[1024] = {0};
 // static char *save_format = ".bmp";
 
 namespace chroma {
-    App* App::instance = nullptr;
+    App *App::instance = nullptr;
 
     App::~App() noexcept {
-        //lua_close(state);
+        // lua_close(state);
 
         windows.clear(); // Release all windows and their resources
 
         SDL_WaitForGPUIdle(device);
 
+        ImGui_ImplSDLRenderer3_Shutdown();
         ImGui_ImplSDL3_Shutdown();
-        ImGui_ImplSDLGPU3_Shutdown();
+        // ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
         SDL_ReleaseWindowFromGPUDevice(device, window);
@@ -70,14 +71,14 @@ namespace chroma {
             return err;
         }
 
-        //state = luaL_newstate();
-        //if (!state) {
-        //    return -1;
-        //}
+        // state = luaL_newstate();
+        // if (!state) {
+        //     return -1;
+        // }
 
-        //luaL_openlibs(state);
+        // luaL_openlibs(state);
 
-        //lua::register_chroma_api(state);
+        // lua::register_chroma_api(state);
 
         // color_picker.ready();
         // palette.ready();
@@ -88,8 +89,10 @@ namespace chroma {
         // });
 
         add_signal<uint32_t, uint32_t>("create_canvas_requested");
-        add_signal<const std::filesystem::path &, const std::filesystem::path &, FileFormat>("save_canvas_requested");
-        add_signal<const std::filesystem::path &, const std::filesystem::path &, FileFormat>("open_canvas_requested");
+        add_signal<const std::filesystem::path &, const std::filesystem::path &,
+                   FileFormat>("save_canvas_requested");
+        add_signal<const std::filesystem::path &, const std::filesystem::path &,
+                   FileFormat>("open_canvas_requested");
 
         add_signal("edit_fliph");
         add_signal("edit_flipv");
@@ -129,7 +132,7 @@ namespace chroma {
         uint64_t tick = 0;
         uint64_t delta = 0;
 
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO &io = ImGui::GetIO();
 
         // bool a = luaL_dofile(state, "../test.lua");
         // if (a != LUA_OK) {
@@ -140,9 +143,8 @@ namespace chroma {
 
         // lua_getglobal(state, "update");
         // if (!lua_isfunction(state, -1)) {
-        //     std::cerr << "Lua Error: 'update' is not a function" << std::endl;
-        //     lua_pop(state, 1);
-        //     return -1;
+        //     std::cerr << "Lua Error: 'update' is not a function" <<
+        //     std::endl; lua_pop(state, 1); return -1;
         // }
 
         // int update_ref = luaL_ref(state, LUA_REGISTRYINDEX);
@@ -162,7 +164,7 @@ namespace chroma {
             }
 
             // Start the Dear ImGui frame
-            ImGui_ImplSDLGPU3_NewFrame();
+            ImGui_ImplSDLRenderer3_NewFrame();
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
@@ -174,23 +176,24 @@ namespace chroma {
                 }
             }
 
-            ImGui_ImplSDLGPU3_Data *bd = (ImGui_ImplSDLGPU3_Data*)io.BackendRendererUserData;
+            // ImGui_ImplSDLGPU3_Data *bd =
+            //     (ImGui_ImplSDLGPU3_Data *)io.BackendRendererUserData;
 
-            if (bd->TexSamplerLinear != sampler) {
-                if (bd->TexSamplerLinear) {
-                    SDL_ReleaseGPUSampler(device, bd->TexSamplerLinear);
-                }
-                bd->TexSamplerLinear = sampler;
-            }
+            // if (bd->TexSamplerLinear != sampler) {
+            //     if (bd->TexSamplerLinear) {
+            //         SDL_ReleaseGPUSampler(device, bd->TexSamplerLinear);
+            //     }
+            //     bd->TexSamplerLinear = sampler;
+            // }
 
             CursorManager::update();
 
             CursorManager::set_cursor(Cursor::Default);
 
-            this->cmd_buffer = SDL_AcquireGPUCommandBuffer(device);
+            // this->cmd_buffer = SDL_AcquireGPUCommandBuffer(device);
 
-            // ViewportWindow *viewport = get_window<ViewportWindow>("Viewport");
-            // Canvas *canvas = nullptr;
+            // ViewportWindow *viewport =
+            // get_window<ViewportWindow>("Viewport"); Canvas *canvas = nullptr;
 
             // SDL_GPURenderPass* preview_pass = nullptr;
 
@@ -199,13 +202,14 @@ namespace chroma {
 
             //     SDL_GPUColorTargetInfo target_info = {};
             //     target_info.texture = canvas->preview;
-            //     target_info.clear_color = SDL_FColor { 1.0f, 1.0f, 1.0f, 0.0f };
-            //     target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+            //     target_info.clear_color = SDL_FColor { 1.0f, 1.0f, 1.0f, 0.0f
+            //     }; target_info.load_op = SDL_GPU_LOADOP_CLEAR;
             //     target_info.store_op = SDL_GPU_STOREOP_STORE;
             //     target_info.mip_level = 0;
             //     target_info.layer_or_depth_plane = 0;
             //     target_info.cycle = false;
-            //     preview_pass = SDL_BeginGPURenderPass(cmd_buffer, &target_info, 1, nullptr);
+            //     preview_pass = SDL_BeginGPURenderPass(cmd_buffer,
+            //     &target_info, 1, nullptr);
             // }
 
             // lua_rawgeti(state, LUA_REGISTRYINDEX, update_ref);
@@ -224,13 +228,15 @@ namespace chroma {
                 imgui_dockspace();
             }
 
-            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar |
+                                            ImGuiWindowFlags_NoCollapse |
+                                            ImGuiWindowFlags_NoMove;
 
             // color_picker.display();
             // palette.display();
             // viewport.display();
 
-            for (const auto& [label, window] : windows) {
+            for (const auto &[label, window] : windows) {
                 window->display();
             }
 
@@ -243,7 +249,8 @@ namespace chroma {
             //         canvas->execute_pending();
             //     }
 
-            //     SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
+            //     SDL_GPUCopyPass *copy_pass =
+            //     SDL_BeginGPUCopyPass(cmd_buffer);
 
             //     canvas->upload(copy_pass);
 
@@ -256,37 +263,51 @@ namespace chroma {
 
             // Rendering
             ImGui::Render();
-            ImDrawData* draw_data = ImGui::GetDrawData();
-            const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
+            ImDrawData *draw_data = ImGui::GetDrawData();
+            const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f ||
+                                       draw_data->DisplaySize.y <= 0.0f);
 
-            SDL_GPUTexture *swapchain_texture;
-            SDL_WaitAndAcquireGPUSwapchainTexture(cmd_buffer, window, &swapchain_texture, nullptr, nullptr);
+            SDL_SetRenderScale(renderer, io.DisplayFramebufferScale.x,
+                               io.DisplayFramebufferScale.y);
+            SDL_SetRenderDrawColorFloat(renderer, 0.07f, 0.07f, 0.07f, 1.0f);
+            SDL_RenderClear(renderer);
+            ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(),
+                                                  renderer);
+            SDL_RenderPresent(renderer);
 
-            if (swapchain_texture != nullptr && !is_minimized)
-            {
-                // This is mandatory: call ImGui_ImplSDLGPU3_PrepareDrawData() to upload the vertex/index buffer!
-                ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, cmd_buffer);
-    
-                // Setup and start a render pass
-                SDL_GPUColorTargetInfo target_info = {};
-                target_info.texture = swapchain_texture;
-                target_info.clear_color = SDL_FColor { 0.07f, 0.07f, 0.07f, 1.0f };
-                target_info.load_op = SDL_GPU_LOADOP_CLEAR;
-                target_info.store_op = SDL_GPU_STOREOP_STORE;
-                target_info.mip_level = 0;
-                target_info.layer_or_depth_plane = 0;
-                target_info.cycle = false;
-                SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(cmd_buffer, &target_info, 1, nullptr);
-    
-                // Render ImGui
-                ImGui_ImplSDLGPU3_RenderDrawData(draw_data, cmd_buffer, render_pass);
-    
-                SDL_EndGPURenderPass(render_pass);
-            }
-    
-            SDL_SubmitGPUCommandBuffer(cmd_buffer);
+            // SDL_GPUTexture *swapchain_texture;
+            // SDL_WaitAndAcquireGPUSwapchainTexture(
+            //     cmd_buffer, window, &swapchain_texture, nullptr, nullptr);
 
-            SDL_WaitForGPUIdle(device); // Not ideal, but not a high render application
+            // if (swapchain_texture != nullptr && !is_minimized) {
+            //     // This is mandatory: call
+            //     ImGui_ImplSDLGPU3_PrepareDrawData()
+            //     // to upload the vertex/index buffer!
+            //     ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, cmd_buffer);
+
+            //     // Setup and start a render pass
+            //     SDL_GPUColorTargetInfo target_info = {};
+            //     target_info.texture = swapchain_texture;
+            //     target_info.clear_color = SDL_FColor{0.07f, 0.07f,
+            //     0.07f, 1.0f}; target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+            //     target_info.store_op = SDL_GPU_STOREOP_STORE;
+            //     target_info.mip_level = 0;
+            //     target_info.layer_or_depth_plane = 0;
+            //     target_info.cycle = false;
+            //     SDL_GPURenderPass *render_pass = SDL_BeginGPURenderPass(
+            //         cmd_buffer, &target_info, 1, nullptr);
+
+            //     // Render ImGui
+            //     ImGui_ImplSDLGPU3_RenderDrawData(draw_data, cmd_buffer,
+            //                                      render_pass);
+
+            //     SDL_EndGPURenderPass(render_pass);
+            // }
+
+            // SDL_SubmitGPUCommandBuffer(cmd_buffer);
+
+            // SDL_WaitForGPUIdle(
+            //     device); // Not ideal, but not a high render application
 
             const uint64_t end_tick = SDL_GetTicks();
             delta = end_tick - tick;
@@ -294,48 +315,56 @@ namespace chroma {
         return 0;
     }
 
-    App* App::get_instance() noexcept
-    {
-        return instance;
-    }
+    App *App::get_instance() noexcept { return instance; }
 
-    SDL_GPUDevice *App::get_device() noexcept
-    {
-        if (!instance) return nullptr;
+    SDL_GPUDevice *App::get_device() noexcept {
+        if (!instance)
+            return nullptr;
         return instance->device;
     }
 
-    SDL_GPUCommandBuffer *App::get_command_buffer() noexcept
-    {
-        if (!instance) return nullptr;
-        return instance->cmd_buffer;
+    SDL_Renderer *App::get_renderer() noexcept {
+        if (!instance)
+            return nullptr;
+        return instance->renderer;
     }
 
-    int App::create_window() noexcept
-    {
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
-        {
+    SDL_GPUCommandBuffer *App::get_command_buffer() noexcept {
+        if (!instance)
+            return nullptr;
+        return nullptr;
+    }
+
+    int App::create_window() noexcept {
+        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
             SDL_Log("Error: SDL_Init(): %s\n", SDL_GetError());
             return 1;
         }
 
         // Create SDL window graphics context
-        const float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+        const float main_scale =
+            SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
         SDL_Rect display_bounds;
         SDL_GetDisplayBounds(SDL_GetPrimaryDisplay(), &display_bounds);
 
-        const SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_VULKAN;
+        const SDL_WindowFlags window_flags =
+            SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN |
+            SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_OPENGL;
 
-        SDL_Log("Creating window of size %dx%d at scale %.2f\n", (int)(display_bounds.w * main_scale), (int)(display_bounds.h * main_scale), main_scale);
+        SDL_Log("Creating window of size %dx%d at scale %.2f\n",
+                (int)(display_bounds.w * main_scale),
+                (int)(display_bounds.h * main_scale), main_scale);
 
-        this->window = SDL_CreateWindow("Chroma", (int)(display_bounds.w * main_scale), (int)(display_bounds.h * main_scale), window_flags);
-        if (window == nullptr)
-        {
+        this->window = SDL_CreateWindow(
+            "Chroma", (int)(display_bounds.w * main_scale),
+            (int)(display_bounds.h * main_scale), window_flags);
+        if (window == nullptr) {
             SDL_Log("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
             return 1;
         }
-        SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED);
         SDL_ShowWindow(window);
 
         return 0;
@@ -344,19 +373,21 @@ namespace chroma {
     int App::create_device() noexcept {
         // Create GPU Device
 
-        SDL_Log("Creating the GPU Device\n");
+        // SDL_Log("Creating the GPU Device\n");
 
-        this->device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, nullptr);
-        if (device == nullptr) {
-            SDL_Log("Error: SDL_CreateGPUDevice(): %s\n", SDL_GetError());
-            return 1;
+        // this->device =
+        //     SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, nullptr);
+        // if (device == nullptr) {
+        //     SDL_Log("Error: SDL_CreateGPUDevice(): %s\n", SDL_GetError());
+        //     return 1;
+        // }
+
+        this->renderer = SDL_CreateRenderer(this->window, "vulkan");
+        if (this->renderer == nullptr) {
+            SDL_Log("Error: SDL_CreateGPURenderer(): %s\n", SDL_GetError());
         }
 
-        if (!SDL_ClaimWindowForGPUDevice(device, window)) {
-            SDL_Log("Error: SDL_ClaimWindowForGPUDevice(): %s\n", SDL_GetError());
-            return 1;
-        }
-        SDL_SetGPUSwapchainParameters(device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_IMMEDIATE);
+        SDL_SetRenderVSync(this->renderer, 1);
 
         return 0;
     }
@@ -376,64 +407,90 @@ namespace chroma {
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGuiContext *ctx = ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGuiIO &io = ImGui::GetIO();
+        (void)io;
 
         ctx->DebugLogFlags |=
-        // ImGuiDebugLogFlags_EventDocking |
-        // ImGuiDebugLogFlags_EventPopup |
-        0;
+            // ImGuiDebugLogFlags_EventDocking |
+            // ImGuiDebugLogFlags_EventPopup |
+            0;
 
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+        io.ConfigFlags |=
+            ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
-        //ImGui::StyleColorsLight();
+        // ImGui::StyleColorsLight();
 
-        const float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+        const float main_scale =
+            SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
         // Setup scaling
-        ImGuiStyle& style = ImGui::GetStyle();
-        style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-        style.FontScaleDpi = main_scale;        // Set initial font scale. (using io.ConfigDpiScaleFonts=true makes this unnecessary. We leave both here for documentation purpose)
+        ImGuiStyle &style = ImGui::GetStyle();
+        style.ScaleAllSizes(
+            main_scale); // Bake a fixed style scale. (until we have a solution
+                         // for dynamic style scaling, changing this requires
+                         // resetting Style + calling this again)
+        style.FontScaleDpi =
+            main_scale; // Set initial font scale. (using
+                        // io.ConfigDpiScaleFonts=true makes this unnecessary.
+                        // We leave both here for documentation purpose)
 
-        // Setup Platform/Renderer backends
-        if (!ImGui_ImplSDL3_InitForSDLGPU(window)) {
-            SDL_Log("Error: ImGui_ImplSDL3_InitForSDLGPU(): %s\n", SDL_GetError());
+        if (!ImGui_ImplSDL3_InitForSDLRenderer(window, renderer)) {
+            SDL_Log("Error: ImGui_ImplSDL3_InitForSDLRenderer(): %s\n",
+                    SDL_GetError());
             return 1;
         }
 
-        ImGui_ImplSDLGPU3_InitInfo init_info = {};
-        init_info.Device = device;
-        init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(device, window);
-        init_info.MSAASamples = SDL_GPU_SAMPLECOUNT_1;                      // Only used in multi-viewports mode.
-        init_info.SwapchainComposition = SDL_GPU_SWAPCHAINCOMPOSITION_SDR;  // Only used in multi-viewports mode.
-        init_info.PresentMode = SDL_GPU_PRESENTMODE_IMMEDIATE;
-
-        if (!ImGui_ImplSDLGPU3_Init(&init_info)) {
-            SDL_Log("Error: ImGui_ImplSDLGPU3_Init(): %s\n", SDL_GetError());
+        if (!ImGui_ImplSDLRenderer3_Init(renderer)) {
+            SDL_Log("Error: ImGui_ImplSDLRenderer3_Init(): %s\n",
+                    SDL_GetError());
             return 1;
         }
 
-        SDL_GPUSamplerCreateInfo sampler_info = {};
-        sampler_info.min_filter = SDL_GPU_FILTER_NEAREST;
-        sampler_info.mag_filter = SDL_GPU_FILTER_NEAREST;
-        sampler_info.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST;
-        sampler_info.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
-        sampler_info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
-        sampler_info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
-        sampler_info.mip_lod_bias = 0.0f;
-        sampler_info.min_lod = -1000.0f;
-        sampler_info.max_lod = 1000.0f;
-        sampler_info.enable_anisotropy = false;
-        sampler_info.max_anisotropy = 1.0f;
-        sampler_info.enable_compare = false;
+        // // Setup Platform/Renderer backends
+        // if (!ImGui_ImplSDL3_InitForSDLGPU(window)) {
+        //     SDL_Log("Error: ImGui_ImplSDL3_InitForSDLGPU(): %s\n",
+        //             SDL_GetError());
+        //     return 1;
+        // }
 
-        this->sampler = SDL_CreateGPUSampler(device, &sampler_info);
-        if (sampler == nullptr) {
-            SDL_Log("Error: SDL_CreateGPUSampler(): %s\n", SDL_GetError());
-            return 1;
-        }
+        // ImGui_ImplSDLGPU3_InitInfo init_info = {};
+        // init_info.Device = device;
+        // init_info.ColorTargetFormat =
+        //     SDL_GetGPUSwapchainTextureFormat(device, window);
+        // init_info.MSAASamples =
+        //     SDL_GPU_SAMPLECOUNT_1; // Only used in multi-viewports mode.
+        // init_info.SwapchainComposition =
+        //     SDL_GPU_SWAPCHAINCOMPOSITION_SDR; // Only used in multi-viewports
+        //                                       // mode.
+        // init_info.PresentMode = SDL_GPU_PRESENTMODE_IMMEDIATE;
+
+        // if (!ImGui_ImplSDLGPU3_Init(&init_info)) {
+        //     SDL_Log("Error: ImGui_ImplSDLGPU3_Init(): %s\n", SDL_GetError());
+        //     return 1;
+        // }
+
+        // SDL_GPUSamplerCreateInfo sampler_info = {};
+        // sampler_info.min_filter = SDL_GPU_FILTER_NEAREST;
+        // sampler_info.mag_filter = SDL_GPU_FILTER_NEAREST;
+        // sampler_info.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST;
+        // sampler_info.address_mode_u =
+        // SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE; sampler_info.address_mode_v
+        // = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        // sampler_info.address_mode_w =
+        // SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE; sampler_info.mip_lod_bias =
+        // 0.0f; sampler_info.min_lod = -1000.0f; sampler_info.max_lod =
+        // 1000.0f; sampler_info.enable_anisotropy = false;
+        // sampler_info.max_anisotropy = 1.0f;
+        // sampler_info.enable_compare = false;
+
+        // this->sampler = SDL_CreateGPUSampler(device, &sampler_info);
+        // if (sampler == nullptr) {
+        //     SDL_Log("Error: SDL_CreateGPUSampler(): %s\n", SDL_GetError());
+        //     return 1;
+        // }
 
         return 0;
     }
@@ -441,16 +498,19 @@ namespace chroma {
     int App::setup_imgui_dockspace() noexcept {
         // static bool layout_initialized = false;
 
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGuiWindowFlags window_flags =
+            ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        const ImGuiViewport *viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->WorkPos);
         ImGui::SetNextWindowSize(viewport->WorkSize);
         ImGui::SetNextWindowViewport(viewport->ID);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+        window_flags |= ImGuiWindowFlags_NoTitleBar |
+                        ImGuiWindowFlags_NoCollapse |
                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus |
+                        ImGuiWindowFlags_NoNavFocus;
 
         ImGui::Begin("DockSpace Window", NULL, window_flags);
         ImGui::PopStyleVar(2);
@@ -462,8 +522,11 @@ namespace chroma {
         ImGui::End();
 
         // Clear out existing layout
-        ImGui::DockBuilderRemoveNode(dockspace_id);             // Clear any previous layout
-        ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoTabBar); // Add root node
+        ImGui::DockBuilderRemoveNode(dockspace_id); // Clear any previous layout
+        ImGui::DockBuilderAddNode(
+            dockspace_id,
+            ImGuiDockNodeFlags_DockSpace |
+                ImGuiDockNodeFlags_NoTabBar); // Add root node
         ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->WorkSize);
 
         // Split into major regions
@@ -473,11 +536,15 @@ namespace chroma {
         ImGuiID dock_layer;
 
         // Split right 20% (Inspector)
-        dock_palette = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.10f, nullptr, &dock_main);
-        dock_colorpick = ImGui::DockBuilderSplitNode(dock_palette, ImGuiDir_Down, 0.30f, nullptr, &dock_palette);
-        dock_layer = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down, 0.20f, nullptr, &dock_main);
+        dock_palette = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left,
+                                                   0.10f, nullptr, &dock_main);
+        dock_colorpick = ImGui::DockBuilderSplitNode(
+            dock_palette, ImGuiDir_Down, 0.30f, nullptr, &dock_palette);
+        dock_layer = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down,
+                                                 0.20f, nullptr, &dock_main);
         // // Split bottom 25% (Console)
-        // dock_id_down = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.25f, nullptr, &dock_main_id);
+        // dock_id_down = ImGui::DockBuilderSplitNode(dock_main_id,
+        // ImGuiDir_Down, 0.25f, nullptr, &dock_main_id);
 
         // Dock windows
         ImGui::DockBuilderDockWindow("Viewport", dock_main);
@@ -491,17 +558,20 @@ namespace chroma {
     }
 
     int App::imgui_dockspace() noexcept {
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGuiWindowFlags window_flags =
+            ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        const ImGuiViewport *viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->WorkPos);
         ImGui::SetNextWindowSize(viewport->WorkSize);
         ImGui::SetNextWindowViewport(viewport->ID);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+        window_flags |= ImGuiWindowFlags_NoTitleBar |
+                        ImGuiWindowFlags_NoCollapse |
                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus |
+                        ImGuiWindowFlags_NoNavFocus;
 
         ImGui::Begin("DockSpace Window", NULL, window_flags);
         ImGui::PopStyleVar(3);
@@ -553,9 +623,11 @@ namespace chroma {
             ImGui_ImplSDL3_ProcessEvent(&event);
             if (event.type == SDL_EVENT_QUIT)
                 done = true;
-            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(window))
+            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED &&
+                event.window.windowID == SDL_GetWindowID(window))
                 done = true;
-            if (event.type == SDL_EVENT_WINDOW_MINIMIZED && event.window.windowID == SDL_GetWindowID(window))
+            if (event.type == SDL_EVENT_WINDOW_MINIMIZED &&
+                event.window.windowID == SDL_GetWindowID(window))
                 idle = true; // Idle when minimized
         }
 
@@ -566,4 +638,4 @@ namespace chroma {
         return 0;
     }
 
-}
+} // namespace chroma

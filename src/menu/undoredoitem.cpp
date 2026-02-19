@@ -8,8 +8,7 @@
 
 namespace chroma {
 
-    void UndoRedoMenuItem::menubar() noexcept
-    {
+    void UndoRedoMenuItem::menubar() noexcept {
         if (ImGui::MenuItem("Undo", "Ctrl+Z")) {
             App::get_instance()->emit_signal("edit_undo");
         }
@@ -18,8 +17,7 @@ namespace chroma {
         }
     }
 
-    void UndoRedoMenuItem::shortcuts() noexcept
-    {
+    void UndoRedoMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Z)) {
             App::get_instance()->emit_signal("edit_undo");
         }
@@ -27,4 +25,4 @@ namespace chroma {
             App::get_instance()->emit_signal("edit_redo");
         }
     }
-}
+} // namespace chroma

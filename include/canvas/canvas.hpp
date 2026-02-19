@@ -4,32 +4,35 @@
 #include "imgui.h"
 
 #include "SDL3/SDL.h"
-#include "SDL3/SDL_gpu.h"
+// #include "SDL3/SDL_gpu.h"
 
 #include "command/command.hpp"
 
+#include <memory>
+#include <queue>
 #include <string>
 #include <vector>
-#include <queue>
-#include <memory>
 
 namespace chroma {
 
     struct Layer {
-        uint8_t *data = nullptr;
-        bool *dirty_flags = nullptr;
+        // uint8_t *data = nullptr;
+        // bool *dirty_flags = nullptr;
 
-        SDL_GPUTransferBuffer *buffer = nullptr;
-        SDL_GPUTexture *texture = nullptr;
+        // SDL_GPUTransferBuffer *buffer = nullptr;
+        // SDL_GPUTexture *texture = nullptr;
+
+        SDL_Surface *surface = nullptr; // for data manipulation purposes
+        SDL_Texture *texture = nullptr; // woosh, i'm paperthin
 
         Layer() noexcept = default;
         ~Layer() noexcept;
 
-        Layer(const Layer&) = delete;
-        Layer& operator=(const Layer&) = delete;
+        Layer(const Layer &) = delete;
+        Layer &operator=(const Layer &) = delete;
 
-        Layer(Layer&&) noexcept;
-        Layer& operator=(Layer&&) noexcept;
+        Layer(Layer &&) noexcept;
+        Layer &operator=(Layer &&) noexcept;
     };
 
     struct Canvas {
@@ -37,11 +40,17 @@ namespace chroma {
 
         std::vector<Layer> layers;
 
-        SDL_GPUTexture *preview = nullptr;
+        SDL_Texture * preview;
+        SDL_Texture *overlay;
+
+        // SDL_GPUTransferBuffer *canvas_preview_buffer = nullptr;
+        // SDL_GPUTexture *canvas_preview = nullptr;
+
+        // SDL_GPUTexture *preview = nullptr;
 
         std::vector<std::unique_ptr<ICommand>> stack;
         std::queue<std::unique_ptr<ICommand>> pending;
-        
+
         uint32_t stack_index = 0;
 
         uint32_t layer = 0;
@@ -60,14 +69,13 @@ namespace chroma {
         Canvas(SDL_Surface *surface) noexcept;
         ~Canvas() noexcept;
 
-        Canvas(const Canvas&) = delete;
-        Canvas& operator=(const Canvas&) = delete;
+        Canvas(const Canvas &) = delete;
+        Canvas &operator=(const Canvas &) = delete;
 
-        Canvas(Canvas&&) noexcept;
-        Canvas& operator=(Canvas&&) noexcept;
+        Canvas(Canvas &&) noexcept;
+        Canvas &operator=(Canvas &&) noexcept;
 
         Color get_color(uint32_t x, uint32_t y) const noexcept;
-        void set_color(uint32_t x, uint32_t y, const Color &color) noexcept;
 
         void add_command(std::unique_ptr<ICommand> &&cmd) noexcept;
         void execute_pending() noexcept;
@@ -75,22 +83,24 @@ namespace chroma {
         void undo() noexcept;
         void redo() noexcept;
 
-        void upload(SDL_GPUCopyPass *pass) noexcept;
+        // void upload(SDL_GPUCopyPass *pass) noexcept;
 
-        void refresh() noexcept;
+        // void refresh() noexcept;
+        // void refresh(uint32_t x, uint32_t y, uint32_t w, uint32_t height)
+        // noexcept;
 
-        private:
-            struct TileTransfer {
-                uint32_t offset;
+      private:
+        // struct TileTransfer {
+        //     uint32_t offset;
 
-                uint32_t w;
-                uint32_t h;
-                
-                uint32_t x;
-                uint32_t y;
-            };
+        //     uint32_t w;
+        //     uint32_t h;
 
-            std::vector<TileTransfer> pending_uploads;
+        //     uint32_t x;
+        //     uint32_t y;
+        // };
+
+        // std::vector<TileTransfer> pending_uploads;
     };
 
-}
+} // namespace chroma

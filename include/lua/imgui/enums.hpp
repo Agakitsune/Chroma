@@ -2,9 +2,9 @@
 #pragma once
 
 extern "C" {
-    #include "lua.h"
-    #include "lualib.h"
-    #include "lauxlib.h"
+#include "lauxlib.h"
+#include "lua.h"
+#include "lualib.h"
 }
 
 // #include "imgui.h"
@@ -15,4 +15,4 @@ namespace chroma::lua {
 
     // void push_vec2(lua_State *L, ImVec2 v) noexcept;
 
-}
+} // namespace chroma::lua

@@ -11,13 +11,13 @@ namespace chroma {
         uint32_t w;
         uint32_t h;
 
-        public:
-            NewMenuItem() noexcept = default;
-            ~NewMenuItem() noexcept = default;
+      public:
+        NewMenuItem() noexcept = default;
+        virtual ~NewMenuItem() noexcept override = default;
 
-            virtual void menubar() noexcept override final;
-            virtual void action() noexcept override final;
-            virtual void display() noexcept override final;
-            virtual void shortcuts() noexcept override final;
+        virtual void menubar() noexcept override final;
+        virtual void action() noexcept override final;
+        virtual void display() noexcept override final;
+        virtual void shortcuts() noexcept override final;
     };
-}
+} // namespace chroma

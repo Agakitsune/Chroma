@@ -1,14 +1,13 @@
 
 #pragma once
 
-extern "C" {
-}
+extern "C" {}
 
 namespace chroma {
     struct Color;
 }
 
-//namespace chroma::lua {
+// namespace chroma::lua {
 
 //    void register_color_api(lua_State *L) noexcept;
 

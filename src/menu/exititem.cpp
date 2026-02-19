@@ -8,8 +8,7 @@
 
 namespace chroma {
 
-    void ExitMenuItem::menubar() noexcept
-    {
+    void ExitMenuItem::menubar() noexcept {
         if (ImGui::MenuItem("Exit", "Ctrl+Q")) {
             SDL_Event event;
             event.type = SDL_EVENT_QUIT;
@@ -17,8 +16,7 @@ namespace chroma {
         }
     }
 
-    void ExitMenuItem::shortcuts() noexcept
-    {
+    void ExitMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Q)) {
             SDL_Event event;
             event.type = SDL_EVENT_QUIT;
@@ -26,4 +24,4 @@ namespace chroma {
             // App::get_instance()->emit_signal("edit_flipv");
         }
     }
-}
+} // namespace chroma

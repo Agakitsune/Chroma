@@ -3,7 +3,5 @@
 namespace chroma {
 
     Window::Window(const std::string &label, ImGuiWindowFlags flags) noexcept
-    : label(label), flags(flags)
-    {
-    }
-}
+        : label(label), flags(flags) {}
+} // namespace chroma
