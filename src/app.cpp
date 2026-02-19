@@ -9,6 +9,7 @@
 #include "menu/openitem.hpp"
 #include "menu/saveitem.hpp"
 #include "menu/undoredoitem.hpp"
+#include "menu/newlayeritem.hpp"
 
 #include "window/color_picker.hpp"
 #include "window/palette.hpp"
@@ -98,11 +99,15 @@ namespace chroma {
                    FileFormat>("save_canvas_requested");
         add_signal<const std::filesystem::path &, const std::filesystem::path &,
                    FileFormat>("open_canvas_requested");
+        
+        add_signal<Canvas *>("canvas_selected");
 
         add_signal("edit_fliph");
         add_signal("edit_flipv");
         add_signal("edit_undo");
         add_signal("edit_redo");
+
+        add_signal("layer_new");
 
         add_signal("popup_save");
 
@@ -125,6 +130,8 @@ namespace chroma {
         add_menu<UndoRedoMenuItem>("Edit");
         separator("Edit");
         add_menu<FlipMenuItem>("Edit");
+
+        add_menu<NewLayerMenuItem>("Layer");
 
         connect_signal("popup_save", save_menu, &SaveMenuItem::action);
 
@@ -388,7 +395,7 @@ namespace chroma {
         //     return 1;
         // }
 
-        this->renderer = SDL_CreateRenderer(this->window, "vulkan");
+        this->renderer = SDL_CreateRenderer(this->window, "opengl");
         if (this->renderer == nullptr) {
             SDL_Log("Error: SDL_CreateGPURenderer(): %s\n", SDL_GetError());
         }

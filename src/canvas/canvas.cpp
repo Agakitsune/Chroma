@@ -110,6 +110,9 @@ namespace chroma {
             height
         );
 
+        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
+
         SDL_UpdateTexture(
             layer.texture,
             NULL,
@@ -216,6 +219,40 @@ namespace chroma {
         ICommand &cmd = *stack[stack_index];
         cmd.redo(*this);
         ++stack_index;
+    }
+
+    void Canvas::add_layer() noexcept {
+        SDL_Renderer *renderer = App::get_renderer();
+
+        Layer &layer = layers.emplace_back();
+
+        layer.surface = SDL_CreateSurface(
+            width,
+            height,
+            SDL_PIXELFORMAT_RGBA32
+        );
+
+        layer.texture = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_STREAMING,
+            width,
+            height
+        );
+
+        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+
+        SDL_FillSurfaceRect(
+            layer.surface,
+            NULL,
+            0
+        );
+        SDL_UpdateTexture(
+            layer.texture,
+            NULL,
+            layer.surface->pixels,
+            layer.surface->pitch
+        );
     }
 
 } // namespace chroma

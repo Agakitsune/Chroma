@@ -17,19 +17,8 @@
 namespace chroma {
 
     class LayerWindow : public Window {
-        Canvas *selected = nullptr;
-        // std::vector<Canvas> canvases;
-        // uint32_t marked = 0;
-        // uint32_t selected = 0;
-
-        // bool dragging = false;
-        // bool brushing = false;
-        // bool discarded = false;
-
-        // std::unique_ptr<ICommand> cmd;
-
-        // SDL_GPUTransferBuffer *transfer_buffer = nullptr;
-        // SDL_GPUBuffer *uniform_buffer = nullptr;
+        Canvas *canvas = nullptr;
+        uint32_t selected = 0;
 
       public:
         LayerWindow() noexcept;

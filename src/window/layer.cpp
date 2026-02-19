@@ -30,16 +30,18 @@ namespace chroma {
     }
 
     void LayerWindow::display() noexcept {
-        char l[64];
+        char l[64] = {0};
 
         ImGui::Begin(label.c_str(), nullptr, flags);
 
-        if (selected) {
-            for (uint32_t i = 0; i < selected->layers.size(); i++) {
+        if (canvas) {
+            for (uint32_t i = 0; i < canvas->layers.size(); i++) {
+                bool s = i == this->selected;
                 sprintf(l, "Layer %i", i + 1);
 
-                if (ImGui::Selectable(l, nullptr)) {
-                    selected->layer = i;
+                if (ImGui::Selectable(l, &s)) {
+                    canvas->layer = i;
+                    this->selected = i;
                 }
             }
         } else {
@@ -50,6 +52,6 @@ namespace chroma {
     }
 
     void LayerWindow::_on_canvas_selected(Canvas *canvas) noexcept {
-        this->selected = canvas;
+        this->canvas = canvas;
     }
 }

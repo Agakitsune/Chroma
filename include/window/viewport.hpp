@@ -19,7 +19,7 @@ namespace chroma {
     class ViewportWindow : public Window {
         std::vector<Canvas> canvases;
         uint32_t marked = 0;
-        uint32_t selected = 0;
+        uint32_t selected = -1;
 
         bool dragging = false;
         bool brushing = false;
@@ -48,6 +48,7 @@ namespace chroma {
 
         void fliph() noexcept;
         void flipv() noexcept;
+        void add_layer() noexcept;
         void undo() noexcept;
         void redo() noexcept;
 

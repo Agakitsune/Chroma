@@ -55,6 +55,9 @@ namespace chroma {
                                             &ViewportWindow::undo);
         App::get_instance()->connect_signal("edit_redo", this,
                                             &ViewportWindow::redo);
+
+        App::get_instance()->connect_signal("layer_new", this,
+                                            &ViewportWindow::add_layer);
     }
 
     void ViewportWindow::display() noexcept {
@@ -110,6 +113,9 @@ namespace chroma {
 
                 bool open = true;
                 if (ImGui::BeginTabItem(canvas.name.c_str(), &open, flags)) {
+                    if (selected != i) {
+                        App::get_instance()->emit_signal<Canvas*>("canvas_selected", &canvases[i]);
+                    }
                     selected = i;
                     draw_list->PushClipRectFullScreen();
                     draw_list->AddRectFilled(origin, origin + window_size,
@@ -289,7 +295,9 @@ namespace chroma {
     }
 
     void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept {
+        selected = canvases.size();
         canvases.emplace_back(width, height);
+        App::get_instance()->emit_signal<Canvas*>("canvas_selected", &canvases[selected]);
         marked = canvases.size();
     }
 
@@ -374,6 +382,12 @@ namespace chroma {
 
         SDL_FlipSurface(layer.surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
         SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels, layer.surface->pitch);
+    }
+
+    void ViewportWindow::add_layer() noexcept {
+        Canvas &canvas = canvases[selected];
+
+        canvas.add_layer();
     }
 
     void ViewportWindow::undo() noexcept {
