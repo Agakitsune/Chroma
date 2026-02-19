@@ -5,9 +5,6 @@
 // #include "SDL3/SDL_gpu.h"
 #include "color.hpp"
 
-#include "window/color_picker.hpp"
-#include "window/palette.hpp"
-#include "window/viewport.hpp"
 #include "window/window.hpp"
 
 #include "system/signal.hpp"

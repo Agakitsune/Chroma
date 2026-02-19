@@ -10,6 +10,11 @@
 #include "menu/saveitem.hpp"
 #include "menu/undoredoitem.hpp"
 
+#include "window/color_picker.hpp"
+#include "window/palette.hpp"
+#include "window/viewport.hpp"
+#include "window/layer.hpp"
+
 #include "backends/imgui_impl_sdl3.h"
 // #include "backends/imgui_impl_sdlgpu3.h"
 #include "backends/imgui_impl_sdlrenderer3.h"
@@ -104,6 +109,7 @@ namespace chroma {
         windows["Viewport"] = std::make_unique<ViewportWindow>();
         windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
         windows["Palette"] = std::make_unique<PaletteWindow>();
+        windows["Layer"] = std::make_unique<LayerWindow>();
 
         for (const auto &[_n, win] : windows) {
             win->ready();
@@ -257,9 +263,9 @@ namespace chroma {
             //     SDL_EndGPUCopyPass(copy_pass);
             // }
 
-            ImGui::Begin("Layer", nullptr, window_flags);
-            ImGui::Text("Layer and shit");
-            ImGui::End();
+            // ImGui::Begin("Layer", nullptr, window_flags);
+            // ImGui::Text("Layer and shit");
+            // ImGui::End();
 
             // Rendering
             ImGui::Render();
