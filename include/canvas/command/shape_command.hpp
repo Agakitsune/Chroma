@@ -31,7 +31,7 @@ namespace chroma {
                             const Color &color) noexcept override final;
         virtual void end(uint32_t x, uint32_t y,
                          const Color &color) noexcept override final;
-        virtual void discard() noexcept override final;
+        virtual void discard(const Canvas &preview) noexcept override final;
 
         virtual void
         preview(const Canvas &canvas) noexcept override final;

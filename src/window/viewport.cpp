@@ -237,7 +237,7 @@ namespace chroma {
                     cmd->update(x, y, old);
                     if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
                         discarded = true;
-                        cmd->discard();
+                        cmd->discard(canvas);
                         brushing = false;
                     }
                 }

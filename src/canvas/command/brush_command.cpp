@@ -84,8 +84,9 @@ namespace chroma {
         update(x, y, color);
     }
 
-    void BrushCommand::discard() noexcept {
+    void BrushCommand::discard(const Canvas &preview) noexcept {
         positions.clear();
+        previous_colors.clear();
     }
 
     void BrushCommand::preview(const Canvas &canvas) noexcept {

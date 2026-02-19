@@ -93,7 +93,7 @@ namespace chroma {
         update(x, y, color);
     }
 
-    void ShapeCommand::discard() noexcept {
+    void ShapeCommand::discard(const Canvas &preview) noexcept {
         rect.w = 0;
     }
 

@@ -82,8 +82,10 @@ namespace chroma {
         update(x, y, color);
     }
 
-    void EraseCommand::discard() noexcept {
+    void EraseCommand::discard(const Canvas &preview) noexcept {
+        undo(preview);
         positions.clear();
+        previous_colors.clear();
     }
 
     void EraseCommand::preview(const Canvas &canvas) noexcept {
