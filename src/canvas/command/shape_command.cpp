@@ -19,7 +19,7 @@ namespace chroma {
         delete[] previous_data;
     }
 
-    void ShapeCommand::redo(Canvas &canvas) noexcept {
+    void ShapeCommand::redo(const Canvas &canvas) noexcept {
         const Layer &layer = canvas.layers[canvas.layer];
         const uint64_t stride = rect.w * 4;
         const uint64_t buffer_size = rect.h * stride;
@@ -39,7 +39,7 @@ namespace chroma {
         SDL_UpdateTexture(layer.texture, &this->rect, (uint8_t*)layer.surface->pixels + skip, layer.surface->pitch);
     }
 
-    void ShapeCommand::undo(Canvas &canvas) noexcept {
+    void ShapeCommand::undo(const Canvas &canvas) noexcept {
         const Layer &layer = canvas.layers[canvas.layer];
         const uint64_t stride = rect.w * 4;
         const uint64_t buffer_size = rect.h * stride;
@@ -97,10 +97,10 @@ namespace chroma {
         rect.w = 0;
     }
 
-    void ShapeCommand::preview(SDL_Texture *preview) const noexcept {
+    void ShapeCommand::preview(const Canvas &canvas) noexcept {
         SDL_Renderer *renderer = App::get_renderer();
 
-        SDL_SetRenderTarget(renderer, preview);
+        SDL_SetRenderTarget(renderer, canvas.preview);
         SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
         SDL_RenderClear(renderer);
 
@@ -116,7 +116,6 @@ namespace chroma {
             this->rect.h
         };
 
-        SDL_SetRenderTarget(renderer, preview);
         SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
         SDL_RenderRect(renderer, &rect);
         SDL_SetRenderTarget(renderer, NULL);
