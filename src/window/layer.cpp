@@ -53,6 +53,10 @@ namespace chroma {
                     c = canvas->layers[i - 1].name.c_str();
                 }
 
+                ImGui::PushID(i);
+                ImGui::Checkbox("##visible", &canvas->layers[i - 1].visible);
+                ImGui::PopID();
+
                 ImGui::SameLine();
 
                 if (ImGui::Selectable(c, &s, ImGuiSelectableFlags_AllowDoubleClick)) {

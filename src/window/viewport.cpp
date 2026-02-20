@@ -135,9 +135,11 @@ namespace chroma {
                         0, 16.0f * canvas.zoom, ImVec2(0, 0));
 
                     for (uint64_t i = 0; i < canvas.layers.size(); i++) {
-                        draw_list->AddImage(
-                            (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
-                            canvas_offset, canvas_offset + canvas_size);
+                        if (canvas.layers[i].visible) {
+                            draw_list->AddImage(
+                                (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
+                                canvas_offset, canvas_offset + canvas_size);
+                        }
 
                         if (i == canvas.layer) {
                             draw_list->AddImage(
@@ -224,7 +226,7 @@ namespace chroma {
             origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
         if (ImGui::IsMouseHoveringRect(canvas_offset,
-                                       canvas_offset + canvas_size)) {
+                                       canvas_offset + canvas_size) && canvas.layers[canvas.layer].visible) {
             const ImVec2 local = mouse - canvas_offset;
             const ImVec2 local_zoomed = local * (1.0f / canvas.zoom);
             // const ImVec2 local = local_zoomed * (1.0f / canvas.zoom);

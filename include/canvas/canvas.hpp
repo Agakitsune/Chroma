@@ -26,6 +26,7 @@ namespace chroma {
         SDL_Texture *texture = nullptr; // woosh, i'm paperthin
 
         std::string name = "";
+        bool visible = true;
 
         Layer() noexcept = default;
         ~Layer() noexcept;
