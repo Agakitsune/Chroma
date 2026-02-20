@@ -20,9 +20,12 @@ namespace chroma {
         Canvas *canvas = nullptr;
         uint32_t selected = 0;
 
+        char *name;
+        bool open = false;
+
       public:
         LayerWindow() noexcept;
-        virtual ~LayerWindow() noexcept = default;
+        virtual ~LayerWindow() noexcept;
 
         virtual void ready() noexcept override final;
         virtual void display() noexcept override final;
