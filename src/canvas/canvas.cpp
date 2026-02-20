@@ -22,18 +22,21 @@ namespace chroma {
     }
 
     Layer::Layer(Layer &&other) noexcept
-        : texture(other.texture), surface(other.surface) {
+        : texture(other.texture), surface(other.surface), name(other.name) {
         other.texture = nullptr;
         other.surface = nullptr;
+        other.name = "";
     }
 
     Layer &Layer::operator=(Layer &&other) noexcept {
         if (this != &other) {
             texture = other.texture;
             surface = other.surface;
+            name = other.name;
 
             other.texture = nullptr;
             other.surface = nullptr;
+            other.name = "";
         }
         return *this;
     }
@@ -43,6 +46,7 @@ namespace chroma {
         SDL_Renderer *renderer = App::get_renderer();
 
         Layer &layer = layers.emplace_back();
+        layer.name = "Layer 1";
 
         layer.surface = SDL_CreateSurface(
             width,
@@ -92,6 +96,7 @@ namespace chroma {
         SDL_Renderer *renderer = App::get_renderer();
 
         Layer &layer = layers.emplace_back();
+        layer.name = "Layer 1";
 
         layer.surface = surface;
 
@@ -223,9 +228,13 @@ namespace chroma {
     }
 
     void Canvas::add_layer() noexcept {
+        char l[64] = {0};
         SDL_Renderer *renderer = App::get_renderer();
 
         Layer &layer = layers.emplace_back();
+        sprintf(l, "Layer %i", layers.size());
+
+        layer.name = l;
 
         layer.surface = SDL_CreateSurface(
             width,

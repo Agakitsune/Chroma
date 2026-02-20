@@ -8,10 +8,12 @@
 namespace chroma {
 
     struct Canvas;
+    struct Layer;
 
     class ICommand {
       protected:
-        uint32_t layer;
+        SDL_Surface *surface;
+        SDL_Texture *texture;
 
       public:
         virtual ~ICommand() noexcept = default;
@@ -22,10 +24,9 @@ namespace chroma {
         virtual void set_main_color(const Color &color) noexcept = 0;
         virtual void set_second_color(const Color &color) noexcept = 0;
 
-        virtual void set_layer(uint32_t layer) noexcept { this->layer = layer; }
+        virtual void set_layer(const Layer &layer) noexcept;
 
         virtual Color get_main_color() noexcept { return BLACK; }
-
         virtual Color get_second_color() noexcept { return BLACK; }
 
         virtual void start(uint32_t x, uint32_t y,

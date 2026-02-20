@@ -25,6 +25,8 @@ namespace chroma {
         SDL_Surface *surface = nullptr; // for data manipulation purposes
         SDL_Texture *texture = nullptr; // woosh, i'm paperthin
 
+        std::string name = "";
+
         Layer() noexcept = default;
         ~Layer() noexcept;
 

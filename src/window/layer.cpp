@@ -9,6 +9,7 @@
 #include "imgui_internal.h"
 
 #include <functional>
+#include <utility>
 
 namespace chroma {
 
@@ -37,11 +38,20 @@ namespace chroma {
         if (canvas) {
             for (uint32_t i = canvas->layers.size(); i > 0; i--) {
                 bool s = ((i - 1) == this->selected);
-                sprintf(l, "Layer %i", i);
 
-                if (ImGui::Selectable(l, &s)) {
+                if (ImGui::Selectable(canvas->layers[i - 1].name.c_str(), &s)) {
                     canvas->layer = i - 1;
                     this->selected = i - 1;
+                }
+
+                if (ImGui::IsItemActive() && !ImGui::IsItemHovered()) {
+                    int n_next = (i - 1) + (ImGui::GetMouseDragDelta(0).y < 0.f ? 1 : -1);
+                    if (n_next >= 0 && n_next < canvas->layers.size()) {
+                        Layer c = std::move(canvas->layers[i - 1]);
+                        canvas->layers[i - 1] = std::move(canvas->layers[n_next]);
+                        canvas->layers[n_next] = std::move(c);
+                        ImGui::ResetMouseDragDelta();
+                    }
                 }
             }
         } else {

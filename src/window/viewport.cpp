@@ -216,7 +216,7 @@ namespace chroma {
         Canvas &canvas = canvases[selected];
         Color old;
 
-        cmd->set_layer(canvas.layer);
+        cmd->set_layer(canvas.layers[canvas.layer]);
 
         const ImVec2 canvas_size =
             ImVec2(canvas.width, canvas.height) * canvas.zoom;
