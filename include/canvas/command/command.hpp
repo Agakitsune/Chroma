@@ -10,6 +10,9 @@ namespace chroma {
     struct Canvas;
 
     class ICommand {
+      protected:
+        uint32_t layer;
+
       public:
         virtual ~ICommand() noexcept = default;
 
@@ -18,6 +21,8 @@ namespace chroma {
 
         virtual void set_main_color(const Color &color) noexcept = 0;
         virtual void set_second_color(const Color &color) noexcept = 0;
+
+        virtual void set_layer(uint32_t layer) noexcept { this->layer = layer; }
 
         virtual Color get_main_color() noexcept { return BLACK; }
 

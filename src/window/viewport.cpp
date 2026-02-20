@@ -216,6 +216,8 @@ namespace chroma {
         Canvas &canvas = canvases[selected];
         Color old;
 
+        cmd->set_layer(canvas.layer);
+
         const ImVec2 canvas_size =
             ImVec2(canvas.width, canvas.height) * canvas.zoom;
         const ImVec2 canvas_offset =
@@ -369,6 +371,10 @@ namespace chroma {
     }
 
     void ViewportWindow::fliph() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
         Canvas &canvas = canvases[selected];
         const Layer &layer = canvas.layers[canvas.layer];
 
@@ -377,6 +383,10 @@ namespace chroma {
     }
 
     void ViewportWindow::flipv() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
         Canvas &canvas = canvases[selected];
         const Layer &layer = canvas.layers[canvas.layer];
 
@@ -385,6 +395,10 @@ namespace chroma {
     }
 
     void ViewportWindow::add_layer() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
         Canvas &canvas = canvases[selected];
 
         canvas.add_layer();

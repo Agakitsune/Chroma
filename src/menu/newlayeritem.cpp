@@ -16,11 +16,6 @@ namespace chroma {
 
     void NewLayerMenuItem::action() noexcept {
         App::get_instance()->emit_signal("layer_new");
-        // ImGui::PushOverrideID(32);
-        // ImGui::OpenPopup("New");
-        // w = 16;
-        // h = 16;
-        // ImGui::PopID();
     }
 
     void NewLayerMenuItem::shortcuts() noexcept {

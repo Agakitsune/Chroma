@@ -24,6 +24,7 @@ namespace chroma {
     Layer::Layer(Layer &&other) noexcept
         : texture(other.texture), surface(other.surface) {
         other.texture = nullptr;
+        other.surface = nullptr;
     }
 
     Layer &Layer::operator=(Layer &&other) noexcept {

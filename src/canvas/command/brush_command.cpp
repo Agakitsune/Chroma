@@ -31,7 +31,7 @@ namespace chroma {
     }
 
     void BrushCommand::redo(Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        const Layer &layer = canvas.layers[this->layer];
 
         uint8_t *mapping;
         int pitch;
@@ -48,7 +48,7 @@ namespace chroma {
     }
 
     void BrushCommand::undo(Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        const Layer &layer = canvas.layers[this->layer];
 
         uint8_t *mapping;
         int pitch;

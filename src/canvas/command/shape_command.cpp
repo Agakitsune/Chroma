@@ -20,12 +20,14 @@ namespace chroma {
     }
 
     void ShapeCommand::redo(Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        const Layer &layer = canvas.layers[this->layer];
         const uint64_t stride = rect.w * 4;
         const uint64_t buffer_size = rect.h * stride;
         const uint64_t skip = (rect.x + rect.y * canvas.width) * 4;
 
-        previous_data = new uint8_t[buffer_size];
+        if (!previous_data) {
+            previous_data = new uint8_t[buffer_size];
+        }
         uint8_t *mapping = (uint8_t*)layer.surface->pixels;
 
         mapping += skip;
@@ -40,7 +42,7 @@ namespace chroma {
     }
 
     void ShapeCommand::undo(Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        const Layer &layer = canvas.layers[this->layer];
         const uint64_t stride = rect.w * 4;
         const uint64_t buffer_size = rect.h * stride;
         const uint64_t skip = (rect.x + rect.y * canvas.width) * 4;
