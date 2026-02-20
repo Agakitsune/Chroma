@@ -35,13 +35,13 @@ namespace chroma {
         ImGui::Begin(label.c_str(), nullptr, flags);
 
         if (canvas) {
-            for (uint32_t i = 0; i < canvas->layers.size(); i++) {
-                bool s = i == this->selected;
-                sprintf(l, "Layer %i", i + 1);
+            for (uint32_t i = canvas->layers.size(); i > 0; i--) {
+                bool s = ((i - 1) == this->selected);
+                sprintf(l, "Layer %i", i);
 
                 if (ImGui::Selectable(l, &s)) {
-                    canvas->layer = i;
-                    this->selected = i;
+                    canvas->layer = i - 1;
+                    this->selected = i - 1;
                 }
             }
         } else {
