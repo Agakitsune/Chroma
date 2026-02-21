@@ -130,7 +130,8 @@ namespace chroma {
         bool done = false;
         bool idle = false;
 
-        std::unordered_map<std::string, std::unique_ptr<Window>> windows;
+        std::vector<std::unique_ptr<Window>> windows;
+        
         std::unordered_map<std::string, Signal> signals;
         std::unordered_map<std::string, std::size_t> signal_hash;
 

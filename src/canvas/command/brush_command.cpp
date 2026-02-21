@@ -42,7 +42,7 @@ namespace chroma {
             int y = p.y;
 
             main.upload(mapping + (x + y * canvas.width) * 4);
-            main.upload(((uint8_t*)layer.surface->pixels) + (x + y * canvas.width) * 4);
+            main.upload(((uint8_t*)surface->pixels) + (x + y * canvas.width) * 4);
         }
 
         SDL_UnlockTexture(texture);
@@ -61,7 +61,7 @@ namespace chroma {
             int y = p.y;
 
             previous_colors[i].upload(mapping + (x + y * canvas.width) * 4);
-            previous_colors[i].upload(((uint8_t*)layer.surface->pixels) + (x + y * canvas.width) * 4);
+            previous_colors[i].upload(((uint8_t*)surface->pixels) + (x + y * canvas.width) * 4);
         }
 
         SDL_UnlockTexture(texture);

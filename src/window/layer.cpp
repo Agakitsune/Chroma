@@ -49,20 +49,39 @@ namespace chroma {
         if (canvas) {
             for (uint32_t i = canvas->layers.size(); i > 0; i--) {
                 bool s = ((i - 1) == this->selected);
+                Layer &layer = canvas->layers[i - 1];
                 const char *c = nullptr;
 
-                if (canvas->layers[i - 1].name.empty()) {
+                if (layer.name.empty()) {
                     c = "##";
                 } else {
-                    c = canvas->layers[i - 1].name.c_str();
+                    c = layer.name.c_str();
                 }
 
                 ImGui::PushID(i);
-                ImGui::Checkbox("##visible", &canvas->layers[i - 1].visible);
-                ImGui::PopID();
+                
+                ImU32 check_col = ImGui::GetColorU32(ImGuiCol_CheckMark);
+                ImGuiWindow* window = ImGui::GetCurrentWindow();
+                ImGui::SetNextItemAllowOverlap();
+                ImVec2 label_size = ImGui::CalcTextSize("##visible", NULL, true);
+                ImGuiContext& g = *GImGui;
+                const ImGuiStyle& style = g.Style;
+                ImVec2 pos = window->DC.CursorPos;
+                bool e = false;
+                float sz = label_size.y - style.ItemSpacing.x * 0.5;
+                
+                if (ImGui::Selectable("##visible", &e, 0, ImVec2(sz, 0.0f))) {
+                    layer.visible = !layer.visible;
+                }
+                if (layer.visible) {
+                    
+                    ImGui::RenderCheckMark(window->DrawList, pos, check_col, sz);
+                }
 
                 ImGui::SameLine();
+                ImGui::PopID();
 
+                ImGui::PushID(layer.surface);
                 if (ImGui::Selectable(c, &s, ImGuiSelectableFlags_AllowDoubleClick)) {
                     canvas->layer = i - 1;
                     this->selected = i - 1;
@@ -74,13 +93,19 @@ namespace chroma {
                         strcpy(name, canvas->layers[this->selected].name.c_str());
                     }
                 }
+                ImGui::PopID();
+
+                std::cout << "--- " << (i - i) << std::endl;
+                std::cout << ImGui::IsItemActive() << std::endl;
 
                 if (ImGui::IsItemActive() && !ImGui::IsItemHovered()) {
                     int n_next = (i - 1) + (ImGui::GetMouseDragDelta(0).y < 0.f ? 1 : -1);
                     if (n_next >= 0 && n_next < canvas->layers.size()) {
-                        Layer c = std::move(canvas->layers[i - 1]);
-                        canvas->layers[i - 1] = std::move(canvas->layers[n_next]);
-                        canvas->layers[n_next] = std::move(c);
+                        std::cout << "swap" << std::endl;
+                        std::swap(
+                            canvas->layers[n_next],
+                            canvas->layers[i - 1]
+                        );
                         ImGui::ResetMouseDragDelta();
                     }
                 }
