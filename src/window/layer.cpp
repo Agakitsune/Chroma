@@ -95,13 +95,9 @@ namespace chroma {
                 }
                 ImGui::PopID();
 
-                std::cout << "--- " << (i - i) << std::endl;
-                std::cout << ImGui::IsItemActive() << std::endl;
-
                 if (ImGui::IsItemActive() && !ImGui::IsItemHovered()) {
                     int n_next = (i - 1) + (ImGui::GetMouseDragDelta(0).y < 0.f ? 1 : -1);
                     if (n_next >= 0 && n_next < canvas->layers.size()) {
-                        std::cout << "swap" << std::endl;
                         std::swap(
                             canvas->layers[n_next],
                             canvas->layers[i - 1]
