@@ -3,9 +3,6 @@ name: Integration
 
 on:
   push:
-    branches:
-      - main
-      - dev
   pull_request:
     types:
       - closed
@@ -29,7 +26,7 @@ jobs:
         submodules: recursive
         fetch-depth: 1
       
-      - name: Install clang-format, GCC and cmake
+      - name: Install GCC and cmake
         run: sudo apt-get update && sudo apt-get install -y gcc cmake
       
       - name: Configure
@@ -51,7 +48,7 @@ jobs:
       with:
         ref: ${{ github.head_ref }}
       
-      - name: Install clang-format, GCC and cmake
+      - name: Install clang-format
         run: sudo apt-get update && sudo apt-get install -y clang-format
       
       - name: Check Format
