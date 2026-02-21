@@ -5,7 +5,7 @@
 
 namespace chroma {
 
-    void ICommand::set_layer(const Layer &layer) {
+    void ICommand::set_layer(const Layer &layer) noexcept {
         surface = layer.surface;
         texture = layer.texture;
     }
