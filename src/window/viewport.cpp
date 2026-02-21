@@ -1,4 +1,13 @@
-
+/**
+ * @file viewport.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Handling windows displayed (canva, colors, colorpicker, etc)
+ * @version 0.1
+ * @date 2026-02-17
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
 #define IMGUI_DEFINE_MATH_OPERATORS
 
 #include "window/viewport.hpp"
@@ -17,6 +26,7 @@
 #include "menu/fileformat.hpp"
 
 #include <cstring>
+#include <cstring>
 #include <filesystem>
 
 #include <SDL3/SDL_surface.h>
@@ -24,28 +34,43 @@
 // #include <SDL3/SDL.h>
 
 namespace chroma {
+/**
+ * @brief Construct a new Viewport Window:: Viewport Window object
+ *
+ */
+ViewportWindow::ViewportWindow() noexcept
+    : Window("Viewport",
+             ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
+                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove) {
+  cmd = std::make_unique<BrushCommand>(); // default command
+  // SDL_GPUDevice *device = App::get_device();
 
-    ViewportWindow::ViewportWindow() noexcept
-        : Window("Viewport",
-                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
-                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove) {
-        cmd = std::make_unique<BrushCommand>(); // default command
-    }
+  // SDL_GPUTransferBufferCreateInfo transfer_info = {};
+  // transfer_info.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+  // transfer_info.size = sizeof(float) * 24; // mat4 and 2 vec4
 
-    void ViewportWindow::ready() noexcept {
-        App::get_instance()->connect_signal("create_canvas_requested", this,
-                                            &ViewportWindow::new_canvas);
-        App::get_instance()->connect_signal("save_canvas_requested", this,
-                                            &ViewportWindow::save_canvas);
-        App::get_instance()->connect_signal("open_canvas_requested", this,
-                                            &ViewportWindow::open_canvas);
+  // transfer_buffer = SDL_CreateGPUTransferBuffer(device, &transfer_info);
 
-        App::get_instance()->connect_signal(
-            "main_color_changed", this,
-            &ViewportWindow::_on_main_color_changed);
-        App::get_instance()->connect_signal(
-            "second_color_changed", this,
-            &ViewportWindow::_on_second_color_changed);
+  // SDL_GPUBufferCreateInfo uniform_info = {};
+  // uniform_info.usage = SDL_GPU_BUFFERUSAGE_UNIFORM;
+  // uniform_info.size = sizeof(float) * 24; // mat4 and 2 vec
+}
+/**
+ * @brief Handle all instanciate of the signal used along the user journey
+ *
+ */
+void ViewportWindow::ready() noexcept {
+  App::get_instance()->connect_signal("create_canvas_requested", this,
+                                      &ViewportWindow::new_canvas);
+  App::get_instance()->connect_signal("save_canvas_requested", this,
+                                      &ViewportWindow::save_canvas);
+  App::get_instance()->connect_signal("open_canvas_requested", this,
+                                      &ViewportWindow::open_canvas);
+
+  App::get_instance()->connect_signal("main_color_changed", this,
+                                      &ViewportWindow::_on_main_color_changed);
+  App::get_instance()->connect_signal(
+      "second_color_changed", this, &ViewportWindow::_on_second_color_changed);
 
         App::get_instance()->connect_signal("edit_fliph", this,
                                             &ViewportWindow::fliph);
@@ -66,183 +91,152 @@ namespace chroma {
     void ViewportWindow::display() noexcept {
         ImGui::Begin(label.c_str(), nullptr, flags);
 
-        ImGuiIO &io = ImGui::GetIO();
+  ImGuiIO &io = ImGui::GetIO();
 
-        ImGuiWindow *w = ImGui::GetCurrentWindow();
-        ImDrawList *draw_list = w->DrawList;
-        ImDrawList *foreground = ImGui::GetForegroundDrawList();
+  ImGuiWindow *w = ImGui::GetCurrentWindow();
+  ImDrawList *draw_list = w->DrawList;
+  ImDrawList *foreground = ImGui::GetForegroundDrawList();
 
-        const ImVec2 pad = ImGui::GetStyle().WindowPadding;
+  const ImVec2 pad = ImGui::GetStyle().WindowPadding;
 
-        ImVec2 window_size;
-        ImVec2 origin;
+  ImVec2 window_size;
+  ImVec2 origin;
 
-        const ImVec2 mouse = io.MousePos;
+  const ImVec2 mouse = io.MousePos;
 
-        SDL_GPUDevice *device = App::get_device();
-        SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
+  SDL_GPUDevice *device = App::get_device();
+  SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
 
-        if (marked < canvases.size()) {
-            canvases.erase(canvases.begin() + marked);
-            if (selected == canvases.size() && selected > 0) {
-                selected--;
-            }
-            marked = canvases.size();
-        }
+  if (marked < canvases.size()) {
+    canvases.erase(canvases.begin() + marked);
+    if (selected == canvases.size() && selected > 0) {
+      selected--;
+    }
+    marked = canvases.size();
+  }
 
-        if (ImGui::IsKeyChordPressed(ImGuiKey_B)) {
-            auto tmp = std::make_unique<BrushCommand>();
+  uint64_t modal = 0;
+  if (ImGui::BeginTabBar("##ViewportTabs",
+                         ImGuiTabBarFlags_NoCloseWithMiddleMouseButton |
+                             ImGuiTabBarFlags_NoTooltip |
+                             ImGuiTabBarFlags_Reorderable)) {
+    window_size = ImGui::GetContentRegionAvail() + pad * 2.0f;
+    origin = w->DC.CursorPos - pad;
 
-            tmp->set_main_color(cmd->get_main_color());
-            tmp->set_second_color(cmd->get_second_color());
-            // Prepare new command
-            cmd = std::move(tmp);
-        } else if (ImGui::IsKeyChordPressed(ImGuiKey_E)) {
-            auto tmp = std::make_unique<EraseCommand>();
+    for (uint64_t i = 0; i < canvases.size(); ++i) {
+      const Canvas &canvas = canvases[i];
 
-            tmp->set_main_color(cmd->get_main_color());
-            tmp->set_second_color(cmd->get_second_color());
-            // Prepare new command
-            cmd = std::move(tmp);
-        } else if (ImGui::IsKeyChordPressed(ImGuiKey_S)) {
-            auto tmp = std::make_unique<ShapeCommand>();
+      const ImVec2 canvas_size =
+          ImVec2(canvas.width, canvas.height) * canvas.zoom;
+      const ImVec2 canvas_offset =
+          origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
-            tmp->set_main_color(cmd->get_main_color());
-            tmp->set_second_color(cmd->get_second_color());
-            // Prepare new command
-            cmd = std::move(tmp);
-        }
+      ImGui::PushID(i);
 
-        uint64_t modal = 0;
-        if (ImGui::BeginTabBar("##ViewportTabs",
-                               ImGuiTabBarFlags_NoCloseWithMiddleMouseButton |
-                                   ImGuiTabBarFlags_NoTooltip |
-                                   ImGuiTabBarFlags_Reorderable)) {
-            window_size = ImGui::GetContentRegionAvail() + pad * 2.0f;
-            origin = w->DC.CursorPos - pad;
+      ImGuiTabItemFlags flags = 0;
 
-            for (uint64_t i = 0; i < canvases.size(); ++i) {
-                const Canvas &canvas = canvases[i];
+      if (canvas.dirty) {
+        flags |= ImGuiTabItemFlags_UnsavedDocument;
+      }
 
-                const ImVec2 canvas_size =
-                    ImVec2(canvas.width, canvas.height) * canvas.zoom;
-                const ImVec2 canvas_offset =
-                    origin + (window_size - canvas_size) * 0.5f + canvas.offset;
+      bool open = true;
+      if (ImGui::BeginTabItem(canvas.name.c_str(), &open, flags)) {
+        selected = i;
+        draw_list->PushClipRectFullScreen();
+        draw_list->AddRectFilled(origin, origin + window_size,
+                                 IM_COL32(101, 85, 97, 255));
 
-                ImGui::PushID(i);
+        draw_list->PopClipRect();
 
-                ImGuiTabItemFlags flags = 0;
+        draw_list->PushClipRect(origin, origin + window_size);
 
-                if (canvas.dirty) {
-                    flags |= ImGuiTabItemFlags_UnsavedDocument;
-                }
+        draw_list->AddRectFilled(canvas_offset - ImVec2(2, 2),
+                                 canvas_offset + canvas_size + ImVec2(2, 2),
+                                 IM_COL32(0, 0, 0, 255));
 
-                bool open = true;
-                if (ImGui::BeginTabItem(canvas.name.c_str(), &open, flags)) {
-                    if (selected != i) {
-                        App::get_instance()->emit_signal<Canvas*>("canvas_selected", &canvases[i]);
-                    }
-                    selected = i;
-                    draw_list->PushClipRectFullScreen();
-                    draw_list->AddRectFilled(origin, origin + window_size,
-                                             IM_COL32(101, 85, 97, 255));
+        ImGui::RenderColorRectWithAlphaCheckerboard(
+            draw_list, canvas_offset, canvas_offset + canvas_size, 0,
+            16.0f * canvas.zoom, ImVec2(0, 0));
 
-                    draw_list->PopClipRect();
+        for (uint64_t i = 0; i < canvas.layers.size(); i++) {
+          draw_list->AddImage((ImTextureRef)(uintptr_t)canvas.layers[i].texture,
+                              canvas_offset, canvas_offset + canvas_size);
 
-                    draw_list->PushClipRect(origin, origin + window_size);
-
-                    draw_list->AddRectFilled(canvas_offset - ImVec2(2, 2),
-                                             canvas_offset + canvas_size +
-                                                 ImVec2(2, 2),
-                                             IM_COL32(0, 0, 0, 255));
-
-                    ImGui::RenderColorRectWithAlphaCheckerboard(
-                        draw_list, canvas_offset, canvas_offset + canvas_size,
-                        0, 16.0f * canvas.zoom, ImVec2(0, 0));
-
-                    for (uint64_t i = 0; i < canvas.layers.size(); i++) {
-                        if (canvas.layers[i].visible) {
-                            draw_list->AddImage(
-                                (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
+          if (i == canvas.layer) {
+            draw_list->AddImage((ImTextureRef)(uintptr_t)canvas.preview,
                                 canvas_offset, canvas_offset + canvas_size);
-                        }
-
-                        if (i == canvas.layer) {
-                            draw_list->AddImage(
-                                (ImTextureRef)(uintptr_t)canvas.preview,
-                                canvas_offset, canvas_offset + canvas_size);
-                        }
-                    }
-
-                    draw_list->PopClipRect();
-
-                    ImGui::EndTabItem();
-                }
-
-                ImGui::PopID();
-
-                if (!open) {
-                    modal = i;
-                    const Canvas &canvas = canvases[i];
-                    if (canvas.dirty) {
-                        ImGui::PushOverrideID(64);
-                        ImGui::OpenPopup("Warning");
-                        ImGui::PopID();
-                    } else {
-                        marked = i;
-                        --i;
-                    }
-                }
-            }
-
-            ImGui::EndTabBar();
+          }
         }
 
-        dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
+        draw_list->PopClipRect();
 
-        ImGui::PushOverrideID(64);
+        ImGui::EndTabItem();
+      }
 
-        if (ImGui::BeginPopupModal("Warning", nullptr,
-                                   ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text("Save changes to '%s' before closing?\n\n",
-                        canvases[selected].name.c_str());
+      ImGui::PopID();
 
-            if (ImGui::BeginTable("##ModalButtons", 3,
-                                  ImGuiTableFlags_SizingStretchSame |
-                                      ImGuiTableFlags_NoBordersInBody)) {
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Save", ImVec2(-FLT_MIN, 0))) {
-                    ImGui::CloseCurrentPopup();
-                    App::get_instance()->emit_signal("popup_save");
-                }
-                ImGui::SetItemDefaultFocus();
-
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Discard", ImVec2(-FLT_MIN, 0))) {
-                    marked = selected;
-                    ImGui::CloseCurrentPopup();
-                }
-
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Cancel", ImVec2(-FLT_MIN, 0))) {
-                    ImGui::CloseCurrentPopup();
-                }
-
-                ImGui::EndTable();
-            }
-
-            ImGui::EndPopup();
+      if (!open) {
+        modal = i;
+        const Canvas &canvas = canvases[i];
+        if (canvas.dirty) {
+          ImGui::PushOverrideID(64);
+          ImGui::OpenPopup("Warning");
+          ImGui::PopID();
+        } else {
+          marked = i;
+          --i;
         }
+      }
+    }
 
-        ImGui::PopID();
+    ImGui::EndTabBar();
+  }
 
-        if (canvases.empty()) {
-            ImGui::End();
-            return;
-        }
+  dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
 
-        Canvas &canvas = canvases[selected];
-        Color old;
+  ImGui::PushOverrideID(64);
+
+  if (ImGui::BeginPopupModal("Warning", nullptr,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+    ImGui::Text("Save changes to '%s' before closing?\n\n",
+                canvases[selected].name.c_str());
+
+    if (ImGui::BeginTable("##ModalButtons", 3,
+                          ImGuiTableFlags_SizingStretchSame |
+                              ImGuiTableFlags_NoBordersInBody)) {
+      ImGui::TableNextColumn();
+      if (ImGui::Button("Save", ImVec2(-FLT_MIN, 0))) {
+        ImGui::CloseCurrentPopup();
+        App::get_instance()->emit_signal("popup_save");
+      }
+      ImGui::SetItemDefaultFocus();
+
+      ImGui::TableNextColumn();
+      if (ImGui::Button("Discard", ImVec2(-FLT_MIN, 0))) {
+        marked = selected;
+        ImGui::CloseCurrentPopup();
+      }
+
+      ImGui::TableNextColumn();
+      if (ImGui::Button("Cancel", ImVec2(-FLT_MIN, 0))) {
+        ImGui::CloseCurrentPopup();
+      }
+
+      ImGui::EndTable();
+    }
+
+    ImGui::EndPopup();
+  }
+
+  ImGui::PopID();
+
+  if (canvases.empty()) {
+    ImGui::End();
+    return;
+  }
+
+  Canvas &canvas = canvases[selected];
+  Color old;
 
         cmd->set_layer(canvas.layers[canvas.layer]);
 
@@ -251,33 +245,40 @@ namespace chroma {
         const ImVec2 canvas_offset =
             origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
-        if (ImGui::IsMouseHoveringRect(canvas_offset,
-                                       canvas_offset + canvas_size) && canvas.layers[canvas.layer].visible) {
-            const ImVec2 local = mouse - canvas_offset;
-            const ImVec2 local_zoomed = local * (1.0f / canvas.zoom);
-            // const ImVec2 local = local_zoomed * (1.0f / canvas.zoom);
-            const ImVec2 snapped =
-                ImVec2(floorf(local_zoomed.x), floorf(local_zoomed.y));
+  if (ImGui::IsMouseHoveringRect(canvas_offset, canvas_offset + canvas_size)) {
+    const ImVec2 local = mouse - canvas_offset;
+    const ImVec2 local_zoomed = local * (1.0f / canvas.zoom);
+    // const ImVec2 local = local_zoomed * (1.0f / canvas.zoom);
+    const ImVec2 snapped =
+        ImVec2(floorf(local_zoomed.x), floorf(local_zoomed.y));
 
-            uint32_t x = static_cast<uint32_t>(snapped.x);
-            uint32_t y = static_cast<uint32_t>(snapped.y);
+    uint32_t x = static_cast<uint32_t>(snapped.x);
+    uint32_t y = static_cast<uint32_t>(snapped.y);
 
-            old = canvas.get_color(x, y);
+    old = canvas.get_color(x, y);
 
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && !discarded) {
-                if (!brushing) {
-                    cmd->start(x, y, old);
-                    brushing = true;
-                } else {
-                    cmd->update(x, y, old);
-                    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-                        discarded = true;
-                        cmd->discard(canvas);
-                        brushing = false;
-                    }
-                }
-            } else if (brushing) {
-                cmd->end(x, y, old);
+    // printf("Mouse at (%f, %f) -> Local (%f, %f) -> Snapped (%f, %f) -> Pos
+    // (%u, %u)\n",
+    //     mouse.x, mouse.y,
+    //     local.x, local.y,
+    //     snapped.x, snapped.y,
+    //     x, y
+    // );
+
+    if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && !discarded) {
+      if (!brushing) {
+        cmd->start(x, y, old);
+        brushing = true;
+      } else {
+        cmd->update(x, y, old);
+        if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+          discarded = true;
+          cmd->discard();
+          brushing = false;
+        }
+      }
+    } else if (brushing) {
+      cmd->end(x, y, old);
 
                 std::unique_ptr<ICommand> tmp;
 
@@ -289,13 +290,13 @@ namespace chroma {
                     tmp = std::make_unique<ShapeCommand>();
                 }
 
-                tmp->set_main_color(cmd->get_main_color());
-                tmp->set_second_color(cmd->get_second_color());
+      tmp->set_main_color(cmd->get_main_color());
+      tmp->set_second_color(cmd->get_second_color());
 
-                canvas.add_command(std::move(cmd));
-                brushing = false;
+      canvas.add_command(std::move(cmd));
+      brushing = false;
 
-                canvas.dirty = true;
+      canvas.dirty = true;
 
                 // Prepare new command
                 cmd = std::move(tmp);
@@ -323,7 +324,7 @@ namespace chroma {
             canvas.offset += mouse_delta;
         }
 
-        ImGui::End();
+  ImGui::End();
 
         cmd->preview(canvas);
 
@@ -344,63 +345,73 @@ namespace chroma {
                                      FileFormat format) noexcept {
         Canvas &canvas = canvases[selected];
 
-        SDL_GPUDevice *device = App::get_device();
+  // SDL_GPUDevice *device = App::get_device();
 
-        std::filesystem::path file_path = directory / file;
-        const char *path = file_path.c_str();
+  std::filesystem::path file_path = directory / file;
+  const char *path = file_path.c_str();
 
         canvas.name = file;
         canvas.dirty = false;
 
-        bool result = false;
+  bool result = false;
 
-        switch (format) {
-            case BMP: {
-                result = IMG_SaveBMP(canvas.layers[0].surface, path);
-            } break;
-            case JPG: {
-                result = IMG_SaveJPG(canvas.layers[0].surface, path, 100);
-            } break;
-            case PNG: {
-                result = IMG_SavePNG(canvas.layers[0].surface, path);
-            } break;
-            case TGA: {
-                result = IMG_SaveTGA(canvas.layers[0].surface, path);
-            } break;
-        }
-    }
+  SDL_Surface *surface = canvas.layers[0].surface;
 
-    void ViewportWindow::open_canvas(const std::filesystem::path &directory,
-                                     const std::filesystem::path &file,
-                                     FileFormat format) noexcept {
-        std::filesystem::path file_path = directory / file;
-        const char *path = file_path.c_str();
+  switch (format) {
+  case BMP: {
+    result = IMG_SaveBMP(surface, path);
+  } break;
+  case JPG: {
+    result = IMG_SaveJPG(surface, path, 100);
+  } break;
+  case PNG: {
+    result = IMG_SavePNG(surface, path);
+  } break;
+  case TGA: {
+    result = IMG_SaveTGA(surface, path);
+  } break;
+  }
 
-        SDL_IOStream *stream = SDL_IOFromFile(path, "r");
-        SDL_Surface *surface = nullptr;
-        SDL_GPUDevice *device = App::get_device();
+  SDL_DestroySurface(surface);
+  // SDL_UnmapGPUTransferBuffer(device, canvas.layers[0].buffer);
+}
+/**
+ * @brief Open an image from user filesystem if this is a supported image
+ *
+ * @param directory
+ * @param file
+ * @param format
+ */
+void ViewportWindow::open_canvas(const std::filesystem::path &directory,
+                                 const std::filesystem::path &file,
+                                 FileFormat format) noexcept {
+  std::filesystem::path file_path = directory / file;
+  const char *path = file_path.c_str();
 
-        switch (format) {
-            case BMP: {
-                surface = IMG_LoadBMP_IO(stream);
-            } break;
-            case JPG: {
-                surface = IMG_LoadJPG_IO(stream);
-            } break;
-            case PNG: {
-                surface = IMG_LoadPNG_IO(stream);
-            } break;
-            case TGA: {
-                surface = IMG_LoadTGA_IO(stream);
-            } break;
-        }
+  SDL_IOStream *stream = SDL_IOFromFile(path, "r");
+  SDL_Surface *surface = nullptr;
+  SDL_GPUDevice *device = App::get_device();
 
-        SDL_Surface *output =
-            SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
+  switch (format) {
+  case BMP: {
+    surface = IMG_LoadBMP_IO(stream);
+  } break;
+  case JPG: {
+    surface = IMG_LoadJPG_IO(stream);
+  } break;
+  case PNG: {
+    surface = IMG_LoadPNG_IO(stream);
+  } break;
+  case TGA: {
+    surface = IMG_LoadTGA_IO(stream);
+  } break;
+  }
 
-        canvases.emplace_back(output);
-        canvases.back().name = file;
-        marked = canvases.size();
+  SDL_Surface *output = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
+
+  canvases.emplace_back(output);
+
+  canvases.back().name = file;
 
         SDL_DestroySurface(surface);
         SDL_CloseIO(stream);

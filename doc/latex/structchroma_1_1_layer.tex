@@ -1,0 +1,82 @@
+\doxysection{chroma::\+Layer Struct Reference}
+\hypertarget{structchroma_1_1_layer}{}\label{structchroma_1_1_layer}\index{chroma::Layer@{chroma::Layer}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structchroma_1_1_layer_a5a624efaca0b6a22b885988f140dc5ca}\label{structchroma_1_1_layer_a5a624efaca0b6a22b885988f140dc5ca} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Layer} () noexcept
+\begin{DoxyCompactList}\small\item\em Destroy the \doxylink{structchroma_1_1_layer}{Layer}:\+:\+ \doxylink{structchroma_1_1_layer}{Layer} object. \end{DoxyCompactList}\item 
+\Hypertarget{structchroma_1_1_layer_a72d42c15e24bb774e4d53622ead99d7e}\label{structchroma_1_1_layer_a72d42c15e24bb774e4d53622ead99d7e} 
+{\bfseries Layer} (const Layer \&)=delete
+\item 
+\Hypertarget{structchroma_1_1_layer_ad9222eca970cf7a54ed6de4631aa5f37}\label{structchroma_1_1_layer_ad9222eca970cf7a54ed6de4631aa5f37} 
+Layer \& {\bfseries operator=} (const Layer \&)=delete
+\item 
+\doxymbox{\hyperlink{structchroma_1_1_layer_a09c62d9fd5a5012f18410501d0a72d69}{Layer}} (Layer \&\&) noexcept
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{structchroma_1_1_layer}{Layer}:\+:\+ \doxylink{structchroma_1_1_layer}{Layer} object. \end{DoxyCompactList}\item 
+Layer \& \doxymbox{\hyperlink{structchroma_1_1_layer_a9244e1bde8adf10ea602851126832d14}{operator=}} (Layer \&\&) noexcept
+\begin{DoxyCompactList}\small\item\em Overload = operator to communicate data between layers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structchroma_1_1_layer_ae937c110e11b885346aa7c48d84787d3}\label{structchroma_1_1_layer_ae937c110e11b885346aa7c48d84787d3} 
+uint8\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries data} = nullptr
+\item 
+\Hypertarget{structchroma_1_1_layer_ab760734078a6fffef427a5b2953f72d0}\label{structchroma_1_1_layer_ab760734078a6fffef427a5b2953f72d0} 
+bool \texorpdfstring{$\ast$}{*} {\bfseries dirty\+\_\+flags} = nullptr
+\item 
+\Hypertarget{structchroma_1_1_layer_a78dd3a9f3732f43a3a8932518e95731d}\label{structchroma_1_1_layer_a78dd3a9f3732f43a3a8932518e95731d} 
+SDL\+\_\+\+GPUTransfer\+Buffer \texorpdfstring{$\ast$}{*} {\bfseries buffer} = nullptr
+\item 
+\Hypertarget{structchroma_1_1_layer_ab93170203867a60950c92f5a1da11fc8}\label{structchroma_1_1_layer_ab93170203867a60950c92f5a1da11fc8} 
+SDL\+\_\+\+GPUTexture \texorpdfstring{$\ast$}{*} {\bfseries texture} = nullptr
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{structchroma_1_1_layer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structchroma_1_1_layer_a09c62d9fd5a5012f18410501d0a72d69}\index{chroma::Layer@{chroma::Layer}!Layer@{Layer}}
+\index{Layer@{Layer}!chroma::Layer@{chroma::Layer}}
+\doxysubsubsection{\texorpdfstring{Layer()}{Layer()}}
+{\footnotesize\ttfamily \label{structchroma_1_1_layer_a09c62d9fd5a5012f18410501d0a72d69} 
+chroma::\+\+Layer::\+\+Layer (\begin{DoxyParamCaption}\item[{Layer \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Construct a new \doxylink{structchroma_1_1_layer}{Layer}:\+:\+ \doxylink{structchroma_1_1_layer}{Layer} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{structchroma_1_1_layer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structchroma_1_1_layer_a9244e1bde8adf10ea602851126832d14}\index{chroma::Layer@{chroma::Layer}!operator=@{operator=}}
+\index{operator=@{operator=}!chroma::Layer@{chroma::Layer}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \label{structchroma_1_1_layer_a9244e1bde8adf10ea602851126832d14} 
+Layer \& chroma::\+\+Layer::\+operator= (\begin{DoxyParamCaption}\item[{Layer \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Overload = operator to communicate data between layers. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{structchroma_1_1_layer}{Layer}\& 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+include/\+canvas/\+\doxymbox{\hyperlink{canvas_8hpp}{canvas.\+hpp}}\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+src/\+canvas/\+\doxymbox{\hyperlink{canvas_8cpp}{canvas.\+cpp}}\end{DoxyCompactItemize}

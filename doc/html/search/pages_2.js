@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['examples_0',['Visual examples',['../index.html#autotoc_md8',1,'']]]
+];

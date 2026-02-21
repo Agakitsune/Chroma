@@ -82,8 +82,21 @@ namespace chroma {
         update(x, y, color);
     }
 
-    void EraseCommand::discard(const Canvas &preview) noexcept {
-        undo(preview);
+    void EraseCommand::discard() noexcept {
+        uint8_t *mapping;
+        int pitch;
+        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+
+        for (uint32_t i = 0; i < positions.size(); i++) {
+            const SDL_FPoint &p = positions[i];
+            int x = p.x;
+            int y = p.y;
+
+            previous_colors[i].upload(mapping + x * 4 + y * surface->pitch);
+        }
+
+        SDL_UnlockTexture(texture);
+        
         positions.clear();
         previous_colors.clear();
     }

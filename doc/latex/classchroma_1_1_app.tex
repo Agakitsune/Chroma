@@ -1,0 +1,124 @@
+\doxysection{chroma::\+App Class Reference}
+\hypertarget{classchroma_1_1_app}{}\label{classchroma_1_1_app}\index{chroma::App@{chroma::App}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classchroma_1_1_app_a11023a91cb5b0ae7f4d84a7a0a5b74c2}\label{classchroma_1_1_app_a11023a91cb5b0ae7f4d84a7a0a5b74c2} 
+{\bfseries App} (const App \&)=delete
+\item 
+\Hypertarget{classchroma_1_1_app_a3ce9bd39cecce6371008be139f96e1b5}\label{classchroma_1_1_app_a3ce9bd39cecce6371008be139f96e1b5} 
+App \& {\bfseries operator=} (const App \&)=delete
+\item 
+\Hypertarget{classchroma_1_1_app_a3b3629c2b1bca8d8df6a90de2ac177d4}\label{classchroma_1_1_app_a3b3629c2b1bca8d8df6a90de2ac177d4} 
+{\bfseries App} (App \&\&)=delete
+\item 
+\Hypertarget{classchroma_1_1_app_a892e1b5e553b03edcac303a7dbb8a038}\label{classchroma_1_1_app_a892e1b5e553b03edcac303a7dbb8a038} 
+App \& {\bfseries operator=} (App \&\&)=delete
+\item 
+int \doxymbox{\hyperlink{classchroma_1_1_app_a5ebfcba6a3aab78a6a925a97490eebbf}{init}} () noexcept
+\begin{DoxyCompactList}\small\item\em \doxylink{classchroma_1_1_app}{App} initialization. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{classchroma_1_1_app_abf99feaf1083c7edba67b1981343d8da}{run}} () noexcept
+\begin{DoxyCompactList}\small\item\em \doxylink{classchroma_1_1_app}{App} execution. \end{DoxyCompactList}\item 
+\Hypertarget{classchroma_1_1_app_a0a20c679a34df92b29b31df47286b872}\label{classchroma_1_1_app_a0a20c679a34df92b29b31df47286b872} 
+{\footnotesize template$<$typename... A$>$ }\\void {\bfseries add\+\_\+signal} (const std::\+string \&name)
+\item 
+\Hypertarget{classchroma_1_1_app_a38cebe9b8eabc05f323c6191fd35f1a9}\label{classchroma_1_1_app_a38cebe9b8eabc05f323c6191fd35f1a9} 
+{\footnotesize template$<$typename O, typename... A$>$ }\\void {\bfseries connect\+\_\+signal} (const std::\+string \&name, O \texorpdfstring{$\ast$}{*}object, void(O::\+\texorpdfstring{$\ast$}{*}func)(A...))
+\item 
+\Hypertarget{classchroma_1_1_app_aca4aef1d30174ab0dd2f558ec83d3ca1}\label{classchroma_1_1_app_aca4aef1d30174ab0dd2f558ec83d3ca1} 
+void {\bfseries disconnect\+\_\+signal} (const std::\+string \&name, void \texorpdfstring{$\ast$}{*}object)
+\item 
+\Hypertarget{classchroma_1_1_app_a331fcc3dbbbd1cd257ed73ac93ed004e}\label{classchroma_1_1_app_a331fcc3dbbbd1cd257ed73ac93ed004e} 
+{\footnotesize template$<$typename... A$>$ }\\void {\bfseries emit\+\_\+signal} (const std::\+string \&name, A... args)
+\item 
+\Hypertarget{classchroma_1_1_app_a62208161ef3b96fa3c4f17593b1c260f}\label{classchroma_1_1_app_a62208161ef3b96fa3c4f17593b1c260f} 
+{\footnotesize template$<$typename I$>$ }\\I \texorpdfstring{$\ast$}{*} {\bfseries add\+\_\+menu} (const std::\+string \&menu)
+\item 
+\Hypertarget{classchroma_1_1_app_aaf56588f2eaff40c0e992e0a77577f30}\label{classchroma_1_1_app_aaf56588f2eaff40c0e992e0a77577f30} 
+void {\bfseries separator} (const std::\+string \&menu)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static App \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{classchroma_1_1_app_abc99af1f6309e9af4dd6d2d693a06593}{get\+\_\+instance}} () noexcept
+\begin{DoxyCompactList}\small\item\em Provides a global access to instance. \end{DoxyCompactList}\item 
+static SDL\+\_\+\+GPUDevice \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{classchroma_1_1_app_a05f45d86117599a77ee45de40d5298df}{get\+\_\+device}} () noexcept
+\begin{DoxyCompactList}\small\item\em Provides a global access to device. \end{DoxyCompactList}\item 
+static SDL\+\_\+\+GPUCommand\+Buffer \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{classchroma_1_1_app_a9ddec6e5b0715ba2eeaf638a8684c2e9}{get\+\_\+command\+\_\+buffer}} () noexcept
+\begin{DoxyCompactList}\small\item\em Provides a global access to command buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classchroma_1_1_app_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classchroma_1_1_app_a9ddec6e5b0715ba2eeaf638a8684c2e9}\index{chroma::App@{chroma::App}!get\_command\_buffer@{get\_command\_buffer}}
+\index{get\_command\_buffer@{get\_command\_buffer}!chroma::App@{chroma::App}}
+\doxysubsubsection{\texorpdfstring{get\_command\_buffer()}{get\_command\_buffer()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_app_a9ddec6e5b0715ba2eeaf638a8684c2e9} 
+SDL\+\_\+\+GPUCommand\+Buffer \texorpdfstring{$\ast$}{*} chroma::\+\+App::\+get\+\_\+command\+\_\+buffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Provides a global access to command buffer. 
+
+\begin{DoxyReturn}{Returns}
+SDL\+\_\+\+GPUCommand\+Buffer\texorpdfstring{$\ast$}{*} 
+\end{DoxyReturn}
+\Hypertarget{classchroma_1_1_app_a05f45d86117599a77ee45de40d5298df}\index{chroma::App@{chroma::App}!get\_device@{get\_device}}
+\index{get\_device@{get\_device}!chroma::App@{chroma::App}}
+\doxysubsubsection{\texorpdfstring{get\_device()}{get\_device()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_app_a05f45d86117599a77ee45de40d5298df} 
+SDL\+\_\+\+GPUDevice \texorpdfstring{$\ast$}{*} chroma::\+\+App::\+get\+\_\+device (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Provides a global access to device. 
+
+\begin{DoxyReturn}{Returns}
+SDL\+\_\+\+GPUDevice\texorpdfstring{$\ast$}{*} 
+\end{DoxyReturn}
+\Hypertarget{classchroma_1_1_app_abc99af1f6309e9af4dd6d2d693a06593}\index{chroma::App@{chroma::App}!get\_instance@{get\_instance}}
+\index{get\_instance@{get\_instance}!chroma::App@{chroma::App}}
+\doxysubsubsection{\texorpdfstring{get\_instance()}{get\_instance()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_app_abc99af1f6309e9af4dd6d2d693a06593} 
+App \texorpdfstring{$\ast$}{*} chroma::\+\+App::\+get\+\_\+instance (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Provides a global access to instance. 
+
+\begin{DoxyReturn}{Returns}
+App\texorpdfstring{$\ast$}{*} 
+\end{DoxyReturn}
+\Hypertarget{classchroma_1_1_app_a5ebfcba6a3aab78a6a925a97490eebbf}\index{chroma::App@{chroma::App}!init@{init}}
+\index{init@{init}!chroma::App@{chroma::App}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_app_a5ebfcba6a3aab78a6a925a97490eebbf} 
+int chroma::\+\+App::\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+\doxylink{classchroma_1_1_app}{App} initialization. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\Hypertarget{classchroma_1_1_app_abf99feaf1083c7edba67b1981343d8da}\index{chroma::App@{chroma::App}!run@{run}}
+\index{run@{run}!chroma::App@{chroma::App}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_app_abf99feaf1083c7edba67b1981343d8da} 
+int chroma::\+\+App::\+run (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+\doxylink{classchroma_1_1_app}{App} execution. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+include/\+\doxymbox{\hyperlink{app_8hpp}{app.\+hpp}}\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+src/\+\doxymbox{\hyperlink{app_8cpp}{app.\+cpp}}\end{DoxyCompactItemize}

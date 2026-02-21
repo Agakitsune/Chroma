@@ -86,7 +86,6 @@ Chroma/
 
 | Component      | Technologies                                                                 |
 | -------------- | -----------------------------------------------------------------------------|
-| Language       | C++ (Standard 20)                                                            |
-| Graphics API   | SDL3 GPU (Hardware-accelerated rendering)                                    |
+| Language       | C++20                                                                        |
+| Graphics API   | SDL3 Renderer Vulkan                                                         |
 | User Interface | Dear ImGui                                                                   |
-

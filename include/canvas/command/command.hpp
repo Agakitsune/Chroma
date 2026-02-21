@@ -1,4 +1,13 @@
-
+/**
+ * @file command.hpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief
+ * @version 0.1
+ * @date 2026-02-17
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
 #pragma once
 
 #include "SDL3/SDL.h"
@@ -29,13 +38,10 @@ namespace chroma {
         virtual Color get_main_color() noexcept { return BLACK; }
         virtual Color get_second_color() noexcept { return BLACK; }
 
-        virtual void start(uint32_t x, uint32_t y,
-                           const Color &color) noexcept = 0;
-        virtual void update(uint32_t x, uint32_t y,
-                            const Color &color) noexcept = 0;
-        virtual void end(uint32_t x, uint32_t y,
-                         const Color &color) noexcept = 0;
-        virtual void discard(const Canvas &preview) noexcept = 0;
+  virtual void start(uint32_t x, uint32_t y, const Color &color) noexcept = 0;
+  virtual void update(uint32_t x, uint32_t y, const Color &color) noexcept = 0;
+  virtual void end(uint32_t x, uint32_t y, const Color &color) noexcept = 0;
+  virtual void discard() noexcept = 0;
 
         virtual void preview(const Canvas &preview) noexcept = 0;
     };
