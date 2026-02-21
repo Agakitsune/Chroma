@@ -3,6 +3,8 @@
  *
  */
 
+#include "window/window.hpp"
+
 namespace chroma {
 /**
  * @brief Construct a new Window:: Window object
