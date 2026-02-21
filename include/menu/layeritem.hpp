@@ -7,13 +7,12 @@
 
 namespace chroma {
 
-    class NewLayerMenuItem : public MenuItem {
+    class LayerMenuItem : public MenuItem {
       public:
-        NewLayerMenuItem() noexcept = default;
-        virtual ~NewLayerMenuItem() noexcept override = default;
+        LayerMenuItem() noexcept = default;
+        virtual ~LayerMenuItem() noexcept override = default;
 
         virtual void menubar() noexcept override final;
-        virtual void action() noexcept override final;
         virtual void shortcuts() noexcept override final;
     };
 } // namespace chroma

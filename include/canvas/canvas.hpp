@@ -87,6 +87,7 @@ namespace chroma {
         void redo() noexcept;
 
         void add_layer() noexcept;
+        void delete_layer() noexcept;
 
         // void upload(SDL_GPUCopyPass *pass) noexcept;
 

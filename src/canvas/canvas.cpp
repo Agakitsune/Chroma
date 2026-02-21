@@ -11,8 +11,6 @@
 namespace chroma {
 
     Layer::~Layer() noexcept {
-        SDL_GPUDevice *device = App::get_device();
-
         if (texture) {
             SDL_DestroyTexture(texture);
         }
@@ -263,6 +261,18 @@ namespace chroma {
             layer.surface->pixels,
             layer.surface->pitch
         );
+    }
+
+    void Canvas::delete_layer() noexcept {
+        if (layers.size() == 1) {
+            return;
+        }
+
+        layers.erase(layers.begin() + layer);
+
+        if (layer > 0) {
+            layer--;
+        }
     }
 
 } // namespace chroma

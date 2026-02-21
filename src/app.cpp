@@ -9,7 +9,7 @@
 #include "menu/openitem.hpp"
 #include "menu/saveitem.hpp"
 #include "menu/undoredoitem.hpp"
-#include "menu/newlayeritem.hpp"
+#include "menu/layeritem.hpp"
 
 #include "window/color_picker.hpp"
 #include "window/palette.hpp"
@@ -108,15 +108,16 @@ namespace chroma {
         add_signal("edit_redo");
 
         add_signal("layer_new");
+        add_signal("layer_delete");
 
         add_signal("popup_save");
 
-        windows["Viewport"] = std::make_unique<ViewportWindow>();
-        windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
-        windows["Palette"] = std::make_unique<PaletteWindow>();
-        windows["Layer"] = std::make_unique<LayerWindow>();
+        windows.push_back(std::make_unique<ViewportWindow>());
+        windows.push_back(std::make_unique<ColorPickerWindow>());
+        windows.push_back(std::make_unique<PaletteWindow>());
+        windows.push_back(std::make_unique<LayerWindow>());
 
-        for (const auto &[_n, win] : windows) {
+        for (const auto &win : windows) {
             win->ready();
         }
 
@@ -131,7 +132,7 @@ namespace chroma {
         separator("Edit");
         add_menu<FlipMenuItem>("Edit");
 
-        add_menu<NewLayerMenuItem>("Layer");
+        add_menu<LayerMenuItem>("Layer");
 
         connect_signal("popup_save", save_menu, &SaveMenuItem::action);
 
@@ -249,7 +250,7 @@ namespace chroma {
             // palette.display();
             // viewport.display();
 
-            for (const auto &[label, window] : windows) {
+            for (const auto &window : windows) {
                 window->display();
             }
 

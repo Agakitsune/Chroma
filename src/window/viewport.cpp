@@ -58,6 +58,8 @@ namespace chroma {
 
         App::get_instance()->connect_signal("layer_new", this,
                                             &ViewportWindow::add_layer);
+        App::get_instance()->connect_signal("layer_delete", this,
+                                            &ViewportWindow::delete_layer);
     }
 
     void ViewportWindow::display() noexcept {
@@ -404,6 +406,15 @@ namespace chroma {
         Canvas &canvas = canvases[selected];
 
         canvas.add_layer();
+    }
+
+    void ViewportWindow::delete_layer() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
+        Canvas &canvas = canvases[selected];
+        canvas.delete_layer();
     }
 
     void ViewportWindow::undo() noexcept {

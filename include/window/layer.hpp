@@ -48,6 +48,7 @@ namespace chroma {
 
       private:
         void _on_canvas_selected(Canvas *canvas) noexcept;
+        void _on_layer_delete() noexcept;
         // void _on_main_color_changed(const Color &clr) noexcept;
         // void _on_second_color_changed(const Color &clr) noexcept;
     };

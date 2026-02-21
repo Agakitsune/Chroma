@@ -35,6 +35,10 @@ namespace chroma {
         App::get_instance()->connect_signal(
             "canvas_selected", this,
             &LayerWindow::_on_canvas_selected);
+        
+        App::get_instance()->connect_signal(
+            "layer_delete", this,
+            &LayerWindow::_on_layer_delete);
     }
 
     void LayerWindow::display() noexcept {
@@ -107,4 +111,11 @@ namespace chroma {
     void LayerWindow::_on_canvas_selected(Canvas *canvas) noexcept {
         this->canvas = canvas;
     }
+
+    void LayerWindow::_on_layer_delete() noexcept {
+        if (canvas) {
+            selected = canvas->layer;
+        }
+    }
+
 }

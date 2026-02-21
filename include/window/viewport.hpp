@@ -48,7 +48,10 @@ namespace chroma {
 
         void fliph() noexcept;
         void flipv() noexcept;
+        
         void add_layer() noexcept;
+        void delete_layer() noexcept;
+        
         void undo() noexcept;
         void redo() noexcept;
 
