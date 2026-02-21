@@ -1,0 +1,87 @@
+\doxysection{chroma::\+Palette\+Window Class Reference}
+\hypertarget{classchroma_1_1_palette_window}{}\label{classchroma_1_1_palette_window}\index{chroma::PaletteWindow@{chroma::PaletteWindow}}
+Inheritance diagram for chroma::\+Palette\+Window:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classchroma_1_1_palette_window}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classchroma_1_1_palette_window_ab2fdb106cd38fba75afd1e567ee29554}\label{classchroma_1_1_palette_window_ab2fdb106cd38fba75afd1e567ee29554} 
+{\bfseries Palette\+Window} () noexcept
+\begin{DoxyCompactList}\small\item\em Construct a new Palette \doxylink{classchroma_1_1_window}{Window}:\+:\+ Palette \doxylink{classchroma_1_1_window}{Window} object. \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{classchroma_1_1_palette_window_a8309b85252edbe692992e25133e5faac}{ready}} () noexcept override final
+\begin{DoxyCompactList}\small\item\em signal color has been picked from the palette \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{classchroma_1_1_palette_window_a0b938bfc19268d458b1fb5e97887ad73}{display}} () noexcept override final
+\begin{DoxyCompactList}\small\item\em Display the palette colors square and handle their spacing. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{classchroma_1_1_palette_window_a414b3979aa2dbcc160e5b1fbabc656e0}{add\+\_\+color}} (const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept
+\begin{DoxyCompactList}\small\item\em add a clickable color square at the palette \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \doxymbox{\hyperlink{classchroma_1_1_window}{chroma::\+\+Window}}}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classchroma_1_1_window_af081d8f24808f8381fc51b4cc78c49c4}{Window}} (const std::\+string \&label, Im\+Gui\+Window\+Flags flags) noexcept
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{classchroma_1_1_window}{Window}:\+:\+ \doxylink{classchroma_1_1_window}{Window} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \doxymbox{\hyperlink{classchroma_1_1_window}{chroma::\+\+Window}}}
+\begin{DoxyCompactItemize}
+\item 
+std::\+string {\bfseries label}
+\item 
+Im\+Gui\+Window\+Flags {\bfseries flags}
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classchroma_1_1_palette_window_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classchroma_1_1_palette_window_a414b3979aa2dbcc160e5b1fbabc656e0}\index{chroma::PaletteWindow@{chroma::PaletteWindow}!add\_color@{add\_color}}
+\index{add\_color@{add\_color}!chroma::PaletteWindow@{chroma::PaletteWindow}}
+\doxysubsubsection{\texorpdfstring{add\_color()}{add\_color()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_palette_window_a414b3979aa2dbcc160e5b1fbabc656e0} 
+void chroma::\+\+Palette\+Window::\+add\+\_\+color (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+add a clickable color square at the palette 
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classchroma_1_1_palette_window_a0b938bfc19268d458b1fb5e97887ad73}\index{chroma::PaletteWindow@{chroma::PaletteWindow}!display@{display}}
+\index{display@{display}!chroma::PaletteWindow@{chroma::PaletteWindow}}
+\doxysubsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_palette_window_a0b938bfc19268d458b1fb5e97887ad73} 
+void chroma::\+\+Palette\+Window::\+display (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [final]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Display the palette colors square and handle their spacing. 
+
+
+
+Implements \doxymbox{\hyperlink{classchroma_1_1_window}{chroma::\+\+Window}}.
+
+\Hypertarget{classchroma_1_1_palette_window_a8309b85252edbe692992e25133e5faac}\index{chroma::PaletteWindow@{chroma::PaletteWindow}!ready@{ready}}
+\index{ready@{ready}!chroma::PaletteWindow@{chroma::PaletteWindow}}
+\doxysubsubsection{\texorpdfstring{ready()}{ready()}}
+{\footnotesize\ttfamily \label{classchroma_1_1_palette_window_a8309b85252edbe692992e25133e5faac} 
+void chroma::\+\+Palette\+Window::\+ready (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [final]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+signal color has been picked from the palette 
+
+
+
+Reimplemented from \doxymbox{\hyperlink{classchroma_1_1_window}{chroma::\+\+Window}}.
+
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+include/\+window/\+\doxymbox{\hyperlink{palette_8hpp}{palette.\+hpp}}\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+src/\+window/\+\doxymbox{\hyperlink{palette_8cpp}{palette.\+cpp}}\end{DoxyCompactItemize}

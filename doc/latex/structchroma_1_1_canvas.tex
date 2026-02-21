@@ -1,0 +1,231 @@
+\doxysection{chroma::\+Canvas Struct Reference}
+\hypertarget{structchroma_1_1_canvas}{}\label{structchroma_1_1_canvas}\index{chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}{Canvas}} (uint32\+\_\+t width, uint32\+\_\+t height) noexcept
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{structchroma_1_1_canvas}{Canvas}:\+:\+ \doxylink{structchroma_1_1_canvas}{Canvas} object. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{structchroma_1_1_canvas_a2b9f1144609585f1b1b01d98c0cbffd7}{Canvas}} (SDL\+\_\+\+Surface \texorpdfstring{$\ast$}{*}surface) noexcept
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{structchroma_1_1_canvas}{Canvas}:\+:\+ \doxylink{structchroma_1_1_canvas}{Canvas} object. \end{DoxyCompactList}\item 
+\Hypertarget{structchroma_1_1_canvas_a89ca5f72abbc8c6b5f9ff56e55ace018}\label{structchroma_1_1_canvas_a89ca5f72abbc8c6b5f9ff56e55ace018} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Canvas} () noexcept
+\begin{DoxyCompactList}\small\item\em Destroy the \doxylink{structchroma_1_1_canvas}{Canvas}:\+:\+ \doxylink{structchroma_1_1_canvas}{Canvas} object. \end{DoxyCompactList}\item 
+\Hypertarget{structchroma_1_1_canvas_a4a1e4053507488732c6cc209f0942f2b}\label{structchroma_1_1_canvas_a4a1e4053507488732c6cc209f0942f2b} 
+{\bfseries Canvas} (const Canvas \&)=delete
+\item 
+\Hypertarget{structchroma_1_1_canvas_a650a8ad05a68a2434d746c4b7fa7af56}\label{structchroma_1_1_canvas_a650a8ad05a68a2434d746c4b7fa7af56} 
+\doxymbox{\hyperlink{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}{Canvas}} \& {\bfseries operator=} (const \doxymbox{\hyperlink{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}{Canvas}} \&)=delete
+\item 
+\doxymbox{\hyperlink{structchroma_1_1_canvas_aec919c3a485019055cf2dbec8a5b3c78}{Canvas}} (Canvas \&\&) noexcept
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{structchroma_1_1_canvas}{Canvas}:\+:\+ \doxylink{structchroma_1_1_canvas}{Canvas} object. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}{Canvas}} \& \doxymbox{\hyperlink{structchroma_1_1_canvas_a3d4a107dda182e87bcb985f61ee81ea5}{operator=}} (\doxymbox{\hyperlink{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}{Canvas}} \&\&) noexcept
+\begin{DoxyCompactList}\small\item\em Transfer data between layers. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \doxymbox{\hyperlink{structchroma_1_1_canvas_ad5b602e17d8317bbc961326eedd45310}{get\+\_\+color}} (uint32\+\_\+t x, uint32\+\_\+t y) const noexcept
+\begin{DoxyCompactList}\small\item\em Provides a global access to canva colors. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{structchroma_1_1_canvas_a1c1b8e6bb249c435ae806aa82f292a7c}{set\+\_\+color}} (uint32\+\_\+t x, uint32\+\_\+t y, const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&color) noexcept
+\begin{DoxyCompactList}\small\item\em Set layer colors. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{structchroma_1_1_canvas_a67bf5612ea95b4c96d2c1d4dec54b851}{add\+\_\+command}} (std::\+unique\+\_\+ptr$<$ \doxymbox{\hyperlink{classchroma_1_1_i_command}{ICommand}} $>$ \&\&cmd) noexcept
+\begin{DoxyCompactList}\small\item\em Push command in list of user actions. \end{DoxyCompactList}\item 
+\Hypertarget{structchroma_1_1_canvas_a1e7c360b45b27f6969978f74f7fee41a}\label{structchroma_1_1_canvas_a1e7c360b45b27f6969978f74f7fee41a} 
+void {\bfseries execute\+\_\+pending} () noexcept
+\begin{DoxyCompactList}\small\item\em Pop command from list of user actions. \end{DoxyCompactList}\item 
+\Hypertarget{structchroma_1_1_canvas_ad269122cccf81768f9dad8f2d9bfcc90}\label{structchroma_1_1_canvas_ad269122cccf81768f9dad8f2d9bfcc90} 
+void {\bfseries undo} () noexcept
+\begin{DoxyCompactList}\small\item\em Check if possible to undo an action, if so, proceide, if not, nothing happens. \end{DoxyCompactList}\item 
+\Hypertarget{structchroma_1_1_canvas_a3952c59aaffd012011948e76d88474d6}\label{structchroma_1_1_canvas_a3952c59aaffd012011948e76d88474d6} 
+void {\bfseries redo} () noexcept
+\begin{DoxyCompactList}\small\item\em Check if possible to replay an action, if so, proceide, if not, nothing happens. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{structchroma_1_1_canvas_a1a22b7dfb191a7bae912a13ecf099cdc}{upload}} (SDL\+\_\+\+GPUCopy\+Pass \texorpdfstring{$\ast$}{*}pass) noexcept
+\begin{DoxyCompactList}\small\item\em submit canva to GPU for rendering \end{DoxyCompactList}\item 
+\Hypertarget{structchroma_1_1_canvas_aff1f562934902e58b4c4c17782c04d66}\label{structchroma_1_1_canvas_aff1f562934902e58b4c4c17782c04d66} 
+void {\bfseries refresh} () noexcept
+\begin{DoxyCompactList}\small\item\em Call this function to update visually the canva content. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structchroma_1_1_canvas_a4e8e61bc821abc799c207b63341b293a}\label{structchroma_1_1_canvas_a4e8e61bc821abc799c207b63341b293a} 
+std::\+string {\bfseries name} = "{}Untitled"{}
+\item 
+\Hypertarget{structchroma_1_1_canvas_ab4f64f363bb3aa5656f2c07a1d1a6d48}\label{structchroma_1_1_canvas_ab4f64f363bb3aa5656f2c07a1d1a6d48} 
+std::\+vector$<$ \doxymbox{\hyperlink{structchroma_1_1_layer}{Layer}} $>$ {\bfseries layers}
+\item 
+\Hypertarget{structchroma_1_1_canvas_a3cbdda2c8f1beb39399d310979e3a781}\label{structchroma_1_1_canvas_a3cbdda2c8f1beb39399d310979e3a781} 
+SDL\+\_\+\+GPUTexture \texorpdfstring{$\ast$}{*} {\bfseries preview} = nullptr
+\item 
+\Hypertarget{structchroma_1_1_canvas_a138567e1d9cd04ddc076f325fc09e8f9}\label{structchroma_1_1_canvas_a138567e1d9cd04ddc076f325fc09e8f9} 
+std::\+vector$<$ std::\+unique\+\_\+ptr$<$ \doxymbox{\hyperlink{classchroma_1_1_i_command}{ICommand}} $>$ $>$ {\bfseries stack}
+\item 
+\Hypertarget{structchroma_1_1_canvas_a49be8a77079d10a827977fb8e271b64b}\label{structchroma_1_1_canvas_a49be8a77079d10a827977fb8e271b64b} 
+std::\+queue$<$ std::\+unique\+\_\+ptr$<$ \doxymbox{\hyperlink{classchroma_1_1_i_command}{ICommand}} $>$ $>$ {\bfseries pending}
+\item 
+\Hypertarget{structchroma_1_1_canvas_a8fe54c747a2bc9ac2ee7af2cc0853d02}\label{structchroma_1_1_canvas_a8fe54c747a2bc9ac2ee7af2cc0853d02} 
+uint32\+\_\+t {\bfseries stack\+\_\+index} = 0
+\item 
+\Hypertarget{structchroma_1_1_canvas_a7b22f920729f8c313a5c555fada0440a}\label{structchroma_1_1_canvas_a7b22f920729f8c313a5c555fada0440a} 
+uint32\+\_\+t {\bfseries layer} = 0
+\item 
+\Hypertarget{structchroma_1_1_canvas_a99319190feaed202777b0df731bfb054}\label{structchroma_1_1_canvas_a99319190feaed202777b0df731bfb054} 
+uint32\+\_\+t {\bfseries width} = 0
+\item 
+\Hypertarget{structchroma_1_1_canvas_a87d7dd1ab9f2e7bcc14ba344277d549d}\label{structchroma_1_1_canvas_a87d7dd1ab9f2e7bcc14ba344277d549d} 
+uint32\+\_\+t {\bfseries height} = 0
+\item 
+\Hypertarget{structchroma_1_1_canvas_affa2239667aed551ddca96321f99f183}\label{structchroma_1_1_canvas_affa2239667aed551ddca96321f99f183} 
+Im\+Vec2 {\bfseries offset} = Im\+Vec2(0, 0)
+\item 
+\Hypertarget{structchroma_1_1_canvas_a418cdd0e8fa39798532ae7ddfdb6749b}\label{structchroma_1_1_canvas_a418cdd0e8fa39798532ae7ddfdb6749b} 
+float {\bfseries zoom} = 1.\+0f
+\item 
+\Hypertarget{structchroma_1_1_canvas_a4c314494300eb29851710015e655bde0}\label{structchroma_1_1_canvas_a4c314494300eb29851710015e655bde0} 
+bool {\bfseries dirty} = false
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{structchroma_1_1_canvas_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}\index{chroma::Canvas@{chroma::Canvas}!Canvas@{Canvas}}
+\index{Canvas@{Canvas}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{Canvas()}{Canvas()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d} 
+chroma::\+\+Canvas::\+\+Canvas (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Construct a new \doxylink{structchroma_1_1_canvas}{Canvas}:\+:\+ \doxylink{structchroma_1_1_canvas}{Canvas} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em width} & \\
+\hline
+{\em height} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structchroma_1_1_canvas_a2b9f1144609585f1b1b01d98c0cbffd7}\index{chroma::Canvas@{chroma::Canvas}!Canvas@{Canvas}}
+\index{Canvas@{Canvas}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{Canvas()}{Canvas()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_a2b9f1144609585f1b1b01d98c0cbffd7} 
+chroma::\+\+Canvas::\+\+Canvas (\begin{DoxyParamCaption}\item[{SDL\+\_\+\+Surface \texorpdfstring{$\ast$}{*}}]{surface}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Construct a new \doxylink{structchroma_1_1_canvas}{Canvas}:\+:\+ \doxylink{structchroma_1_1_canvas}{Canvas} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em surface} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structchroma_1_1_canvas_aec919c3a485019055cf2dbec8a5b3c78}\index{chroma::Canvas@{chroma::Canvas}!Canvas@{Canvas}}
+\index{Canvas@{Canvas}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{Canvas()}{Canvas()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_aec919c3a485019055cf2dbec8a5b3c78} 
+chroma::\+\+Canvas::\+\+Canvas (\begin{DoxyParamCaption}\item[{Canvas \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Construct a new \doxylink{structchroma_1_1_canvas}{Canvas}:\+:\+ \doxylink{structchroma_1_1_canvas}{Canvas} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{structchroma_1_1_canvas_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structchroma_1_1_canvas_a67bf5612ea95b4c96d2c1d4dec54b851}\index{chroma::Canvas@{chroma::Canvas}!add\_command@{add\_command}}
+\index{add\_command@{add\_command}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{add\_command()}{add\_command()}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_a67bf5612ea95b4c96d2c1d4dec54b851} 
+void chroma::\+\+Canvas::\+add\+\_\+command (\begin{DoxyParamCaption}\item[{std::\+unique\+\_\+ptr$<$ \doxymbox{\hyperlink{classchroma_1_1_i_command}{ICommand}} $>$ \&\&}]{cmd}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Push command in list of user actions. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structchroma_1_1_canvas_ad5b602e17d8317bbc961326eedd45310}\index{chroma::Canvas@{chroma::Canvas}!get\_color@{get\_color}}
+\index{get\_color@{get\_color}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{get\_color()}{get\_color()}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_ad5b602e17d8317bbc961326eedd45310} 
+\doxymbox{\hyperlink{structchroma_1_1_color}{Color}} chroma::\+\+Canvas::\+get\+\_\+color (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{x}{, }\item[{uint32\+\_\+t}]{y}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Provides a global access to canva colors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & \\
+\hline
+{\em y} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{structchroma_1_1_color}{Color} 
+\end{DoxyReturn}
+\Hypertarget{structchroma_1_1_canvas_a3d4a107dda182e87bcb985f61ee81ea5}\index{chroma::Canvas@{chroma::Canvas}!operator=@{operator=}}
+\index{operator=@{operator=}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_a3d4a107dda182e87bcb985f61ee81ea5} 
+\doxymbox{\hyperlink{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}{Canvas}} \& chroma::\+\+Canvas::\+operator= (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{structchroma_1_1_canvas_a6620c5f0e5107c00f388bbf3004c468d}{Canvas}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Transfer data between layers. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{structchroma_1_1_canvas}{Canvas}\& 
+\end{DoxyReturn}
+\Hypertarget{structchroma_1_1_canvas_a1c1b8e6bb249c435ae806aa82f292a7c}\index{chroma::Canvas@{chroma::Canvas}!set\_color@{set\_color}}
+\index{set\_color@{set\_color}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{set\_color()}{set\_color()}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_a1c1b8e6bb249c435ae806aa82f292a7c} 
+void chroma::\+\+Canvas::\+set\+\_\+color (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{x}{, }\item[{uint32\+\_\+t}]{y}{, }\item[{const \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Set layer colors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & \\
+\hline
+{\em y} & \\
+\hline
+{\em color} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structchroma_1_1_canvas_a1a22b7dfb191a7bae912a13ecf099cdc}\index{chroma::Canvas@{chroma::Canvas}!upload@{upload}}
+\index{upload@{upload}!chroma::Canvas@{chroma::Canvas}}
+\doxysubsubsection{\texorpdfstring{upload()}{upload()}}
+{\footnotesize\ttfamily \label{structchroma_1_1_canvas_a1a22b7dfb191a7bae912a13ecf099cdc} 
+void chroma::\+\+Canvas::\+upload (\begin{DoxyParamCaption}\item[{SDL\+\_\+\+GPUCopy\+Pass \texorpdfstring{$\ast$}{*}}]{pass}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+submit canva to GPU for rendering 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pass} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+include/\+canvas/\+\doxymbox{\hyperlink{canvas_8hpp}{canvas.\+hpp}}\item 
+C:\+/\+\+Users/\+lucas/\+\+Desktop/\+\+EPITECH/\+\+Chroma/\+src/\+canvas/\+\doxymbox{\hyperlink{canvas_8cpp}{canvas.\+cpp}}\end{DoxyCompactItemize}

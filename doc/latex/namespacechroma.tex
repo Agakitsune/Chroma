@@ -1,0 +1,157 @@
+\doxysection{chroma Namespace Reference}
+\hypertarget{namespacechroma}{}\label{namespacechroma}\index{chroma@{chroma}}
+
+
+Chroma global namespace.  
+
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_app}{App}}
+\item 
+struct \doxymbox{\hyperlink{structchroma_1_1_layer}{Layer}}
+\item 
+struct \doxymbox{\hyperlink{structchroma_1_1_canvas}{Canvas}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_brush_command}{Brush\+Command}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_color_command}{Color\+Command}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_i_command}{ICommand}}
+\item 
+struct \doxymbox{\hyperlink{structchroma_1_1_color}{Color}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_cursor_manager}{Cursor\+Manager}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_exit_menu_item}{Exit\+Menu\+Item}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_flip_menu_item}{Flip\+Menu\+Item}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_menu_item}{Menu\+Item}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_new_menu_item}{New\+Menu\+Item}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_open_menu_item}{Open\+Menu\+Item}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_save_menu_item}{Save\+Menu\+Item}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_undo_redo_menu_item}{Undo\+Redo\+Menu\+Item}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_signal}{Signal}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_color_picker_window}{Color\+Picker\+Window}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_palette_window}{Palette\+Window}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_viewport_window}{Viewport\+Window}}
+\item 
+class \doxymbox{\hyperlink{classchroma_1_1_window}{Window}}
+\item 
+struct \doxymbox{\hyperlink{structchroma_1_1path__less__compare}{path\+\_\+less\+\_\+compare}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{namespacechroma_a8277ad9c7de5c8a53511b1ed829e8859}\label{namespacechroma_a8277ad9c7de5c8a53511b1ed829e8859} 
+enum class {\bfseries Cursor} \{ \newline
+{\bfseries Default}
+, {\bfseries Arrow} = Default
+, {\bfseries Cross}
+, {\bfseries Grab}
+, \newline
+{\bfseries Picker}
+, {\bfseries Point}
+, {\bfseries Count}
+ \}
+\item 
+\Hypertarget{namespacechroma_a630f5a1aedb0cb48f1eb3ced94b5571d}\label{namespacechroma_a630f5a1aedb0cb48f1eb3ced94b5571d} 
+enum {\bfseries File\+Format} \{ \newline
+{\bfseries All}
+, {\bfseries BMP}
+, {\bfseries JPG}
+, {\bfseries PNG}
+, \newline
+{\bfseries TGA}
+, {\bfseries Count}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{namespacechroma_addd44bb8acd5394c21b62a4ccc7afb62}\label{namespacechroma_addd44bb8acd5394c21b62a4ccc7afb62} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries WHITE} (1.\+0f, 1.\+0f, 1.\+0f)
+\item 
+\Hypertarget{namespacechroma_ab5f7e1fc36fe5fd96c33e13243f220f3}\label{namespacechroma_ab5f7e1fc36fe5fd96c33e13243f220f3} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries BLACK} (0.\+0f, 0.\+0f, 0.\+0f)
+\item 
+\Hypertarget{namespacechroma_a4af7ca8fa0f55b298ee5cbbd19eafb8c}\label{namespacechroma_a4af7ca8fa0f55b298ee5cbbd19eafb8c} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries RED} (1.\+0f, 0.\+0f, 0.\+0f)
+\item 
+\Hypertarget{namespacechroma_a1bf42c4e134e25845f85b273f19dc5c1}\label{namespacechroma_a1bf42c4e134e25845f85b273f19dc5c1} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries GREEN} (0.\+0f, 1.\+0f, 0.\+0f)
+\item 
+\Hypertarget{namespacechroma_a3cfb83b3129f8a2cdb559942ab9df18d}\label{namespacechroma_a3cfb83b3129f8a2cdb559942ab9df18d} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries BLUE} (0.\+0f, 0.\+0f, 1.\+0f)
+\item 
+\Hypertarget{namespacechroma_abe71833cb7d9d41e7f6003ca682068fd}\label{namespacechroma_abe71833cb7d9d41e7f6003ca682068fd} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries YELLOW} (1.\+0f, 1.\+0f, 0.\+0f)
+\item 
+\Hypertarget{namespacechroma_a9c9377764265cfd6fa561ae88a4a72ae}\label{namespacechroma_a9c9377764265cfd6fa561ae88a4a72ae} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries CYAN} (0.\+0f, 1.\+0f, 1.\+0f)
+\item 
+\Hypertarget{namespacechroma_ae24bb10ca431ea71fd9fc8e0cdd9fb69}\label{namespacechroma_ae24bb10ca431ea71fd9fc8e0cdd9fb69} 
+constexpr \doxymbox{\hyperlink{structchroma_1_1_color}{Color}} {\bfseries MAGENTA} (1.\+0f, 0.\+0f, 1.\+0f)
+\item 
+bool \doxymbox{\hyperlink{namespacechroma_a7dd314ee6150fbe533fe54d46deb95d6}{is\+\_\+image}} (const std::\+string \&ext) noexcept
+\begin{DoxyCompactList}\small\item\em return if given file is an image \end{DoxyCompactList}\item 
+File\+Format \doxymbox{\hyperlink{namespacechroma_a80f79b5dadfaa03b6c9c4f147fca61ff}{fetch\+\_\+format}} (const std::\+string \&ext) noexcept
+\begin{DoxyCompactList}\small\item\em get a given file format \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Chroma global namespace. 
+
+Handling whole window logic of Chroma. 
+
+\label{doc-func-members}
+\Hypertarget{namespacechroma_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacechroma_a80f79b5dadfaa03b6c9c4f147fca61ff}\index{chroma@{chroma}!fetch\_format@{fetch\_format}}
+\index{fetch\_format@{fetch\_format}!chroma@{chroma}}
+\doxysubsubsection{\texorpdfstring{fetch\_format()}{fetch\_format()}}
+{\footnotesize\ttfamily \label{namespacechroma_a80f79b5dadfaa03b6c9c4f147fca61ff} 
+File\+Format chroma::\+fetch\+\_\+format (\begin{DoxyParamCaption}\item[{const std::\+string \&}]{ext}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+get a given file format 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ext} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+File\+Format 
+\end{DoxyReturn}
+\Hypertarget{namespacechroma_a7dd314ee6150fbe533fe54d46deb95d6}\index{chroma@{chroma}!is\_image@{is\_image}}
+\index{is\_image@{is\_image}!chroma@{chroma}}
+\doxysubsubsection{\texorpdfstring{is\_image()}{is\_image()}}
+{\footnotesize\ttfamily \label{namespacechroma_a7dd314ee6150fbe533fe54d46deb95d6} 
+bool chroma::\+is\+\_\+image (\begin{DoxyParamCaption}\item[{const std::\+string \&}]{ext}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+return if given file is an image 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ext} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true 
+
+false 
+\end{DoxyReturn}

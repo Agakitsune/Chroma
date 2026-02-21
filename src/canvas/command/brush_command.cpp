@@ -7,8 +7,8 @@
 #include "app.hpp"
 
 #include <cstring>
-namespace chroma {
 
+namespace chroma {
     BrushCommand::BrushCommand() noexcept {
     }
 
@@ -84,7 +84,7 @@ namespace chroma {
         update(x, y, color);
     }
 
-    void BrushCommand::discard(const Canvas &preview) noexcept {
+    void BrushCommand::discard() noexcept {
         positions.clear();
         previous_colors.clear();
     }

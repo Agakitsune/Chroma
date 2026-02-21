@@ -1,4 +1,13 @@
-
+/**
+ * @file canvas.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Handle canva logic and ability to draw over
+ * @version 0.1
+ * @date 2026-02-17
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
 #include "canvas/canvas.hpp"
 
 #include "app.hpp"
@@ -174,7 +183,7 @@ namespace chroma {
 
         uint8_t *mapping = (uint8_t*)layer.surface->pixels;
 
-        Color ret;
+  Color ret;
 
         mapping += (x + y * width) * 4;
         ret.download(mapping);
@@ -187,7 +196,7 @@ namespace chroma {
         const uint64_t size = stack.size();
         const uint64_t remove = size - stack_index;
 
-        stack.erase(stack.end() - remove, stack.end());
+  stack.erase(stack.end() - remove, stack.end());
 
         pending.push(std::move(cmd));
     }
@@ -196,10 +205,10 @@ namespace chroma {
         while (!pending.empty()) {
             std::unique_ptr<ICommand> &cmd = pending.front();
 
-            cmd->redo(*this);
+    cmd->redo(*this);
 
-            stack.push_back(std::move(cmd));
-            ++stack_index;
+    stack.push_back(std::move(cmd));
+    ++stack_index;
 
             pending.pop();
         }

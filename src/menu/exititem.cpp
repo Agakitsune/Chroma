@@ -1,4 +1,13 @@
-
+/**
+ * @file exititem.cpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief Exit Chroma software
+ * @version 0.1
+ * @date 2026-02-17
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
 #include "menu/exititem.hpp"
 
 #include "imgui.h"
