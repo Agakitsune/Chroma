@@ -15,7 +15,7 @@ namespace chroma {
 class MenuItem {
 public:
   MenuItem() noexcept = default;
-  ~MenuItem() noexcept = default;
+  virtual ~MenuItem() noexcept = default;
 
   virtual void menubar() noexcept = 0;
   virtual void action() noexcept {};

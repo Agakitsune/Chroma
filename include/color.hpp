@@ -13,6 +13,7 @@
 #include "imgui.h"
 
 #include <cstdint>
+#include <iostream>
 
 namespace chroma {
 
@@ -66,12 +67,22 @@ struct Color {
   }
 };
 
-constexpr Color WHITE(1.0f, 1.0f, 1.0f);
-constexpr Color BLACK(0.0f, 0.0f, 0.0f);
+    inline std::ostream &operator<<(std::ostream &s, const Color &c) noexcept {
+        s << "r: " << c.r;
+        s << "g: " << c.g;
+        s << "b: " << c.b;
+        s << "a: " << c.a;
+        return s;
+    }
 
-constexpr Color RED(1.0f, 0.0f, 0.0f);
-constexpr Color GREEN(0.0f, 1.0f, 0.0f);
-constexpr Color BLUE(0.0f, 0.0f, 1.0f);
+    constexpr Color MASK(0.0f, 0.0f, 0.0f, 0.0f);
+    
+    constexpr Color WHITE(1.0f, 1.0f, 1.0f);
+    constexpr Color BLACK(0.0f, 0.0f, 0.0f);
+
+    constexpr Color RED(1.0f, 0.0f, 0.0f);
+    constexpr Color GREEN(0.0f, 1.0f, 0.0f);
+    constexpr Color BLUE(0.0f, 0.0f, 1.0f);
 
 constexpr Color YELLOW(1.0f, 1.0f, 0.0f);
 constexpr Color CYAN(0.0f, 1.0f, 1.0f);

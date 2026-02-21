@@ -11,12 +11,9 @@
 #pragma once
 
 #include "SDL3/SDL.h"
-#include "SDL3/SDL_gpu.h"
+// #include "SDL3/SDL_gpu.h"
 #include "color.hpp"
 
-#include "window/color_picker.hpp"
-#include "window/palette.hpp"
-#include "window/viewport.hpp"
 #include "window/window.hpp"
 
 #include "system/signal.hpp"
@@ -101,9 +98,10 @@ public:
     menu_bar[menu].emplace_back(nullptr);
   }
 
-  static App *get_instance() noexcept;
-  static SDL_GPUDevice *get_device() noexcept;
-  static SDL_GPUCommandBuffer *get_command_buffer() noexcept;
+        static App *get_instance() noexcept;
+        static SDL_GPUDevice *get_device() noexcept;
+        static SDL_Renderer *get_renderer() noexcept;
+        static SDL_GPUCommandBuffer *get_command_buffer() noexcept;
 
   // ViewportWindow viewport_window;
   // ColorPickerWindow color_picker;
@@ -121,26 +119,22 @@ private:
 
   int process_events(float delta) noexcept;
 
-  uint32_t w;
-  uint32_t h;
+        SDL_Window *window = nullptr;
 
-  // Color main_color;
-  // Color second_color;
+        SDL_GPUDevice *device = nullptr;
+        SDL_Renderer *renderer = nullptr;
+        // SDL_GPUCommandBuffer *cmd_buffer = nullptr;
 
-  SDL_Window *window = nullptr;
+        // SDL_GPUSampler *sampler = nullptr;
 
-  SDL_GPUDevice *device = nullptr;
-  SDL_GPUCommandBuffer *cmd_buffer = nullptr;
+        bool dockspace_initialized = false;
+        bool done = false;
+        bool idle = false;
 
-  SDL_GPUSampler *sampler = nullptr;
-
-  bool dockspace_initialized = false;
-  bool done = false;
-  bool idle = false;
-
-  std::unordered_map<std::string, std::unique_ptr<Window>> windows;
-  std::unordered_map<std::string, Signal> signals;
-  std::unordered_map<std::string, std::size_t> signal_hash;
+        std::vector<std::unique_ptr<Window>> windows;
+        
+        std::unordered_map<std::string, Signal> signals;
+        std::unordered_map<std::string, std::size_t> signal_hash;
 
   std::unordered_map<std::string, std::vector<std::unique_ptr<MenuItem>>>
       menu_bar;

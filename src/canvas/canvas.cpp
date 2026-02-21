@@ -18,582 +18,270 @@
 #define TILE_SIZE 32
 
 namespace chroma {
-/**
- * @brief Destroy the Layer:: Layer object
- *
- */
-Layer::~Layer() noexcept {
-  SDL_GPUDevice *device = App::get_device();
 
-  if (buffer) {
-    SDL_ReleaseGPUTransferBuffer(device, buffer);
-  }
-  if (texture) {
-    SDL_ReleaseGPUTexture(device, texture);
-  }
-  if (data) {
-    delete[] data;
-  }
-  if (dirty_flags) {
-    delete[] dirty_flags;
-  }
-}
-/**
- * @brief Construct a new Layer:: Layer object
- *
- * @param other
- */
-Layer::Layer(Layer &&other) noexcept
-    : data(other.data), dirty_flags(other.dirty_flags), buffer(other.buffer),
-      texture(other.texture) {
-  other.data = nullptr;
-  other.dirty_flags = nullptr;
-  other.buffer = nullptr;
-  other.texture = nullptr;
-}
-/**
- * @brief Overload = operator to communicate data between layers
- *
- * @param other
- * @return Layer&
- */
-Layer &Layer::operator=(Layer &&other) noexcept {
-  if (this != &other) {
-    data = other.data;
-    dirty_flags = other.dirty_flags;
-    buffer = other.buffer;
-    texture = other.texture;
+    Layer::~Layer() noexcept {
+        if (texture) {
+            SDL_DestroyTexture(texture);
+        }
+        if (surface) {
+            SDL_DestroySurface(surface);
+        }
+    }
 
-    other.data = nullptr;
-    other.dirty_flags = nullptr;
-    other.buffer = nullptr;
-    other.texture = nullptr;
-  }
-  return *this;
-}
+    Layer::Layer(Layer &&other) noexcept
+        : texture(other.texture), surface(other.surface), name(other.name) {
+        other.texture = nullptr;
+        other.surface = nullptr;
+        other.name = "";
+    }
 
-/**
- * @brief Construct a new Canvas:: Canvas object
- *
- * @param width
- * @param height
- */
-Canvas::Canvas(uint32_t width, uint32_t height) noexcept
-    : width(width), height(height) {
-  SDL_GPUDevice *device = App::get_device();
+    Layer &Layer::operator=(Layer &&other) noexcept {
+        if (this != &other) {
+            texture = other.texture;
+            surface = other.surface;
+            name = other.name;
 
-  const uint64_t buffer_size = (width * height) * 4; // RGBA8
-  const uint64_t tile_x =
-      (width / TILE_SIZE) + ((width & (TILE_SIZE - 1)) ? 1 : 0);
-  const uint64_t tile_y =
-      (height / TILE_SIZE) + ((height & (TILE_SIZE - 1)) ? 1 : 0);
-  const uint64_t dirty_flags_size = tile_x * tile_y;
+            other.texture = nullptr;
+            other.surface = nullptr;
+            other.name = "";
+        }
+        return *this;
+    }
 
-  SDL_GPUTextureCreateInfo texture_info = {};
-  texture_info.type = SDL_GPU_TEXTURETYPE_2D;
-  texture_info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
-  texture_info.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
-  texture_info.width = width;
-  texture_info.height = height;
-  texture_info.layer_count_or_depth = 1;
-  texture_info.num_levels = 1;
-  texture_info.sample_count = SDL_GPU_SAMPLECOUNT_1;
-  texture_info.props = 0;
+    Canvas::Canvas(uint32_t width, uint32_t height) noexcept
+        : width(width), height(height) {
+        SDL_Renderer *renderer = App::get_renderer();
 
-  SDL_GPUTransferBufferCreateInfo buffer_info = {};
-  buffer_info.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
-  buffer_info.size = buffer_size;
-  buffer_info.props = 0;
+        Layer &layer = layers.emplace_back();
+        layer.name = "Layer 1";
 
-  Layer &layer = layers.emplace_back();
-  TileTransfer transfer;
+        layer.surface = SDL_CreateSurface(
+            width,
+            height,
+            SDL_PIXELFORMAT_RGBA32
+        );
 
-  transfer.offset = 0;
-  transfer.w = width;
-  transfer.h = height;
-  transfer.x = 0;
-  transfer.y = 0;
+        layer.texture = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_STREAMING,
+            width,
+            height
+        );
 
-  pending_uploads.push_back(transfer);
+        this->preview = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_TARGET,
+            width,
+            height
+        );
 
-  layer.texture = SDL_CreateGPUTexture(device, &texture_info);
+        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
 
-  layer.buffer = SDL_CreateGPUTransferBuffer(device, &buffer_info);
+        SDL_FillSurfaceRect(
+            layer.surface,
+            NULL,
+            0
+        );
+        SDL_UpdateTexture(
+            layer.texture,
+            NULL,
+            layer.surface->pixels,
+            layer.surface->pitch
+        );
 
-  uint64_t *mapping =
-      (uint64_t *)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+        SDL_SetRenderTarget(renderer, this->preview);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderClear(renderer);
+        SDL_SetRenderTarget(renderer, NULL);
+    }
 
-  for (uint64_t i = 0; i < buffer_size / 8; i++) {
-    mapping = 0;
-  }
+    Canvas::Canvas(SDL_Surface *surface) noexcept
+        : width(surface->w), height(surface->h) {
+        SDL_Renderer *renderer = App::get_renderer();
 
-  SDL_UnmapGPUTransferBuffer(device, layer.buffer);
+        Layer &layer = layers.emplace_back();
+        layer.name = "Layer 1";
 
-  texture_info.usage |= SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
+        layer.surface = surface;
 
-  preview = SDL_CreateGPUTexture(device, &texture_info);
-}
-/**
- * @brief Construct a new Canvas:: Canvas object
- *
- * @param surface
- */
-Canvas::Canvas(SDL_Surface *surface) noexcept
-    : width(surface->w), height(surface->h) {
-  SDL_GPUDevice *device = App::get_device();
+        layer.texture = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_STREAMING,
+            width,
+            height
+        );
 
-  const uint64_t buffer_size = (width * height) * 4; // RGBA8
-  const uint64_t tile_x =
-      (width / TILE_SIZE) + ((width & (TILE_SIZE - 1)) ? 1 : 0);
-  const uint64_t tile_y =
-      (height / TILE_SIZE) + ((height & (TILE_SIZE - 1)) ? 1 : 0);
-  const uint64_t dirty_flags_size = tile_x * tile_y;
+        this->preview = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_TARGET,
+            width,
+            height
+        );
 
-  SDL_GPUTextureCreateInfo texture_info = {};
-  texture_info.type = SDL_GPU_TEXTURETYPE_2D;
-  texture_info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
-  texture_info.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
-  texture_info.width = width;
-  texture_info.height = height;
-  texture_info.layer_count_or_depth = 1;
-  texture_info.num_levels = 1;
-  texture_info.sample_count = SDL_GPU_SAMPLECOUNT_1;
-  texture_info.props = 0;
+        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
 
-  SDL_GPUTransferBufferCreateInfo buffer_info = {};
-  buffer_info.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
-  buffer_info.size = buffer_size;
-  buffer_info.props = 0;
+        SDL_UpdateTexture(
+            layer.texture,
+            NULL,
+            layer.surface->pixels,
+            layer.surface->pitch
+        );
 
-  Layer &layer = layers.emplace_back();
-  TileTransfer transfer;
+        SDL_SetRenderTarget(renderer, this->preview);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderClear(renderer);
+        SDL_SetRenderTarget(renderer, NULL);
+    }
 
-  transfer.offset = 0;
-  transfer.w = width;
-  transfer.h = height;
-  transfer.x = 0;
-  transfer.y = 0;
+    Canvas::~Canvas() noexcept {
+        if (preview) {
+            SDL_DestroyTexture(this->preview);
+        }
+        if (this->overlay) {
+            SDL_DestroyTexture(this->overlay);
+        }
+    }
 
-  pending_uploads.push_back(transfer);
+    Canvas::Canvas(Canvas &&other) noexcept
+        : name(std::move(other.name)), layers(std::move(other.layers)),
+          preview(other.preview), stack(std::move(other.stack)),
+          pending(std::move(other.pending)), width(other.width),
+          height(other.height), stack_index(other.stack_index),
+          layer(other.layer), offset(other.offset), zoom(other.zoom),
+          dirty(other.dirty) {
+        other.preview = nullptr;
+    }
 
-  layer.texture = SDL_CreateGPUTexture(device, &texture_info);
+    Canvas &Canvas::operator=(Canvas &&other) noexcept {
+        if (this != &other) {
+            width = other.width;
+            height = other.height;
+            name = std::move(other.name);
+            stack = std::move(other.stack);
+            pending = std::move(other.pending);
+            layers = std::move(other.layers);
+            preview = other.preview;
+            stack_index = other.stack_index;
+            layer = other.layer;
+            offset = other.offset;
+            zoom = other.zoom;
+            dirty = other.dirty;
 
-  layer.buffer = SDL_CreateGPUTransferBuffer(device, &buffer_info);
+            other.preview = nullptr;
+        }
+        return *this;
+    }
 
-  uint8_t *mapping =
-      (uint8_t *)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+    Color Canvas::get_color(uint32_t x, uint32_t y) const noexcept {
+        const Layer &layer = layers[this->layer];
 
-  std::memcpy(mapping, surface->pixels, width * height * 4);
-
-  SDL_UnmapGPUTransferBuffer(device, layer.buffer);
-
-  texture_info.usage |= SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
-
-  preview = SDL_CreateGPUTexture(device, &texture_info);
-}
-/**
- * @brief Destroy the Canvas:: Canvas object
- *
- */
-Canvas::~Canvas() noexcept {
-  SDL_GPUDevice *device = App::get_device();
-
-  if (preview) {
-    SDL_ReleaseGPUTexture(device, preview);
-  }
-}
-/**
- * @brief Construct a new Canvas:: Canvas object
- *
- * @param other
- */
-Canvas::Canvas(Canvas &&other) noexcept
-    : name(std::move(other.name)), layers(std::move(other.layers)),
-      preview(other.preview), stack(std::move(other.stack)),
-      pending(std::move(other.pending)), width(other.width),
-      height(other.height), stack_index(other.stack_index), layer(other.layer),
-      offset(other.offset), zoom(other.zoom), dirty(other.dirty) {
-  other.preview = nullptr;
-}
-/**
- * @brief Transfer data between layers
- *
- * @param other
- * @return Canvas&
- */
-Canvas &Canvas::operator=(Canvas &&other) noexcept {
-  if (this != &other) {
-    width = other.width;
-    height = other.height;
-    name = std::move(other.name);
-    stack = std::move(other.stack);
-    pending = std::move(other.pending);
-    layers = std::move(other.layers);
-    preview = other.preview;
-    stack_index = other.stack_index;
-    layer = other.layer;
-    offset = other.offset;
-    zoom = other.zoom;
-    dirty = other.dirty;
-
-    other.preview = nullptr;
-  }
-  return *this;
-}
-/**
- * @brief Provides a global access to canva colors
- *
- * @param x
- * @param y
- * @return Color
- */
-Color Canvas::get_color(uint32_t x, uint32_t y) const noexcept {
-  const Layer &layer = layers[this->layer];
-
-  SDL_GPUDevice *device = App::get_device();
-
-  uint8_t *mapping =
-      (uint8_t *)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
+        uint8_t *mapping = (uint8_t*)layer.surface->pixels;
 
   Color ret;
 
-  mapping += (x + y * width) * 4;
-  ret.download(mapping);
+        mapping += (x + y * width) * 4;
+        ret.download(mapping);
 
-  SDL_UnmapGPUTransferBuffer(device, layer.buffer);
-
-  return ret;
-}
-/**
- * @brief Set layer colors
- *
- * @param x
- * @param y
- * @param color
- */
-void Canvas::set_color(uint32_t x, uint32_t y, const Color &color) noexcept {
-  const Layer &layer = layers[this->layer];
-
-  const uint64_t div_x = x / TILE_SIZE;
-  const uint64_t div_y = y / TILE_SIZE;
-  const uint64_t mod_x = x & (TILE_SIZE - 1);
-  const uint64_t mod_y = y & (TILE_SIZE - 1);
-
-  const uint64_t div_width = width / TILE_SIZE;
-  const uint64_t div_height = height / TILE_SIZE;
-  const uint64_t mod_width = width & (TILE_SIZE - 1);
-  const uint64_t mod_height = height & (TILE_SIZE - 1);
-
-  SDL_GPUDevice *device = App::get_device();
-
-  uint8_t *mapping =
-      (uint8_t *)SDL_MapGPUTransferBuffer(device, layer.buffer, true);
-
-  TileTransfer transfer;
-  bool new_transfer = true;
-
-  mapping += (x + y * width) * 4;
-  color.upload(mapping);
-
-  transfer.offset = (div_y * width + div_x) * TILE_SIZE * 4;
-  transfer.x = div_x * TILE_SIZE;
-  transfer.y = div_y * TILE_SIZE;
-  transfer.w = (div_x == div_width) ? mod_width : TILE_SIZE;
-  transfer.h = (div_y == div_height) ? mod_height : TILE_SIZE;
-
-  for (const TileTransfer &t : pending_uploads) {
-    if (transfer.offset == t.offset) {
-      new_transfer = false;
-      break;
+        return ret;
     }
-  }
 
-  if (new_transfer) {
-    pending_uploads.push_back(transfer);
-  }
-
-  SDL_UnmapGPUTransferBuffer(device, layer.buffer);
-}
-/**
- * @brief Push command in list of user actions
- *
- * @param cmd
- */
-void Canvas::add_command(std::unique_ptr<ICommand> &&cmd) noexcept {
-  // Remove undone commands
-  const uint64_t size = stack.size();
-  const uint64_t remove = size - stack_index;
+    void Canvas::add_command(std::unique_ptr<ICommand> &&cmd) noexcept {
+        // Remove undone commands
+        const uint64_t size = stack.size();
+        const uint64_t remove = size - stack_index;
 
   stack.erase(stack.end() - remove, stack.end());
 
-  pending.push(std::move(cmd));
-}
-/**
- * @brief Pop command from list of user actions
- *
- */
-void Canvas::execute_pending() noexcept {
-  while (!pending.empty()) {
-    std::unique_ptr<ICommand> &cmd = pending.front();
+        pending.push(std::move(cmd));
+    }
+
+    void Canvas::execute_pending() noexcept {
+        while (!pending.empty()) {
+            std::unique_ptr<ICommand> &cmd = pending.front();
 
     cmd->redo(*this);
 
     stack.push_back(std::move(cmd));
     ++stack_index;
 
-    pending.pop();
-  }
-}
-/**
- * @brief Check if possible to undo an action, if so, proceide, if not, nothing
- * happens
- *
- */
-void Canvas::undo() noexcept {
-  if (stack_index == 0) {
-    return;
-  }
+            pending.pop();
+        }
+    }
 
-  ICommand &cmd = *stack[stack_index - 1];
-  cmd.undo(*this);
-  --stack_index;
-}
-/**
- * @brief Check if possible to replay an action, if so, proceide, if not,
- * nothing happens
- *
- */
-void Canvas::redo() noexcept {
-  if (stack_index >= stack.size()) {
-    return;
-  }
+    void Canvas::undo() noexcept {
+        if (stack_index == 0) {
+            return;
+        }
 
-  ICommand &cmd = *stack[stack_index];
-  cmd.redo(*this);
-  ++stack_index;
-}
-/**
- * @brief submit canva to GPU for rendering
- *
- * @param pass
- */
-void Canvas::upload(SDL_GPUCopyPass *pass) noexcept {
-  const Layer &layer = layers[this->layer];
+        ICommand &cmd = *stack[stack_index - 1];
+        cmd.undo(*this);
+        --stack_index;
+    }
 
-  // const uint64_t div_width = width / TILE_SIZE;
-  // const uint64_t div_height = height / TILE_SIZE;
-  // const uint64_t mod_width = width & (TILE_SIZE - 1);
-  // const uint64_t mod_height = height & (TILE_SIZE - 1);
+    void Canvas::redo() noexcept {
+        if (stack_index >= stack.size()) {
+            return;
+        }
 
-  SDL_GPUDevice *device = App::get_device();
+        ICommand &cmd = *stack[stack_index];
+        cmd.redo(*this);
+        ++stack_index;
+    }
 
-  // uint8_t *mapping = (uint8_t*)SDL_MapGPUTransferBuffer(device, layer.buffer,
-  // true);
+    void Canvas::add_layer() noexcept {
+        char l[64] = {0};
+        SDL_Renderer *renderer = App::get_renderer();
 
-  SDL_GPUTextureTransferInfo source = {};
-  SDL_GPUTextureRegion destination = {};
+        Layer &layer = layers.emplace_back();
+        sprintf(l, "Layer %i", layers.size());
 
-  destination.mip_level = 0;
-  destination.layer = 0;
-  destination.z = 0;
-  destination.d = 1;
+        layer.name = l;
 
-  source.transfer_buffer = layer.buffer;
-  destination.texture = layer.texture;
+        layer.surface = SDL_CreateSurface(
+            width,
+            height,
+            SDL_PIXELFORMAT_RGBA32
+        );
 
-  for (const TileTransfer &transfer : pending_uploads) {
-    source.offset = transfer.offset;
-    source.pixels_per_row = width;
-    source.rows_per_layer = 0;
+        layer.texture = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_STREAMING,
+            width,
+            height
+        );
 
-    destination.w = transfer.w;
-    destination.h = transfer.h;
-    destination.x = transfer.x;
-    destination.y = transfer.y;
+        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
 
-    SDL_UploadToGPUTexture(pass, &source, &destination, false);
-  }
+        SDL_FillSurfaceRect(
+            layer.surface,
+            NULL,
+            0
+        );
+        SDL_UpdateTexture(
+            layer.texture,
+            NULL,
+            layer.surface->pixels,
+            layer.surface->pitch
+        );
+    }
 
-  pending_uploads.clear();
+    void Canvas::delete_layer() noexcept {
+        if (layers.size() == 1) {
+            return;
+        }
 
-  // SDL_UnmapGPUTransferBuffer(device, layer.buffer);
+        layers.erase(layers.begin() + layer);
 
-  // for (Layer &layer : layers) {
-  //     mapping = SDL_MapGPUTransferBuffer(
-  //         device,
-  //         layer.buffer,
-  //         true
-  //     );
-
-  //     source.transfer_buffer = layer.buffer;
-  //     destination.texture = layer.texture;
-
-  //     for (uint64_t y = 0; y < div_height; ++y) {
-  //         for (uint64_t x = 0; x < div_width; ++x) {
-  //             const uint64_t flag_index = x + y * div_width;
-
-  //             if (layer.dirty_flags[flag_index]) {
-  //                 layer.dirty_flags[flag_index] = false;
-
-  //                 index = (x * TILE_SIZE) + (y * (div_width * TILE_SIZE));
-  //                 const uint8_t *base = layer.data + (index * 4);
-
-  //                 uint8_t *dst = (uint8_t*)mapping + (index * 4);
-  //                 std::memcpy(
-  //                     dst,
-  //                     base,
-  //                     TILE_SIZE * TILE_SIZE * 4
-  //                 );
-
-  //                 source.offset = index * 4;
-  //                 source.pixels_per_row = TILE_SIZE;
-  //                 source.rows_per_layer = TILE_SIZE;
-
-  //                 destination.w = TILE_SIZE;
-  //                 destination.h = TILE_SIZE;
-  //                 destination.x = x * TILE_SIZE;
-  //                 destination.y = y * TILE_SIZE;
-
-  //                 SDL_UploadToGPUTexture(
-  //                     pass,
-  //                     &source,
-  //                     &destination,
-  //                     true
-  //                 );
-  //             }
-  //         }
-  //     }
-
-  //     for (uint64_t y = 0; y < div_height; ++y) {
-  //         const uint64_t flag_index = div_width * div_height + y;
-
-  //         if (layer.dirty_flags[flag_index]) {
-  //             layer.dirty_flags[flag_index] = false;
-
-  //             index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); //
-  //             Skip all full tiles index += y * (mod_width * TILE_SIZE);
-
-  //             const uint8_t *base = layer.data + (index * 4);
-
-  //             uint8_t *dst = (uint8_t*)mapping + (index * 4);
-  //             std::memcpy(
-  //                 dst,
-  //                 base,
-  //                 mod_width * TILE_SIZE * 4
-  //             );
-
-  //             source.offset = index * 4;
-  //             source.pixels_per_row = mod_width;
-  //             source.rows_per_layer = TILE_SIZE;
-
-  //             destination.w = mod_width;
-  //             destination.h = TILE_SIZE;
-  //             destination.x = div_width * TILE_SIZE;
-  //             destination.y = y * TILE_SIZE;
-
-  //             SDL_UploadToGPUTexture(
-  //                 pass,
-  //                 &source,
-  //                 &destination,
-  //                 true
-  //             );
-  //         }
-  //     }
-
-  //     for (uint64_t x = 0; x < div_width; ++x) {
-  //         const uint64_t flag_index = x + div_height + div_height *
-  //         div_width;
-
-  //         if (layer.dirty_flags[flag_index]) {
-  //             layer.dirty_flags[flag_index] = false;
-
-  //             index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); //
-  //             Skip all full tiles index += div_height * (mod_width *
-  //             TILE_SIZE); index += x * (mod_height * TILE_SIZE);
-
-  //             const uint8_t *base = layer.data + (index * 4);
-
-  //             uint8_t *dst = (uint8_t*)mapping + (index * 4);
-  //             std::memcpy(
-  //                 dst,
-  //                 base,
-  //                 TILE_SIZE * mod_height * 4
-  //             );
-
-  //             source.offset = index * 4;
-  //             source.pixels_per_row = TILE_SIZE;
-  //             source.rows_per_layer = mod_height;
-
-  //             destination.w = TILE_SIZE;
-  //             destination.h = mod_height;
-  //             destination.x = x * TILE_SIZE;
-  //             destination.y = div_height * TILE_SIZE;
-
-  //             SDL_UploadToGPUTexture(
-  //                 pass,
-  //                 &source,
-  //                 &destination,
-  //                 true
-  //             );
-  //         }
-  //     }
-
-  //     const uint64_t flag_index = div_width * div_height + div_height +
-  //     div_width;
-
-  //     if (layer.dirty_flags[flag_index]) {
-  //         layer.dirty_flags[flag_index] = false;
-
-  //         index = (div_width * TILE_SIZE) * (div_height * TILE_SIZE); // Skip
-  //         all full tiles index += div_width * (mod_height * TILE_SIZE); index
-  //         += div_height * (mod_width * TILE_SIZE);
-
-  //         const uint8_t *base = layer.data + (index * 4);
-
-  //         uint8_t *dst = (uint8_t*)mapping + (index * 4);
-  //         std::memcpy(
-  //             dst,
-  //             base,
-  //             mod_width * mod_height * 4
-  //         );
-
-  //         source.offset = index * 4;
-  //         source.pixels_per_row = mod_width;
-  //         source.rows_per_layer = mod_height;
-
-  //         destination.w = mod_width;
-  //         destination.h = mod_height;
-  //         destination.x = div_width * TILE_SIZE;
-  //         destination.y = div_height* TILE_SIZE;
-
-  //         SDL_UploadToGPUTexture(
-  //             pass,
-  //             &source,
-  //             &destination,
-  //             true
-  //         );
-  //     }
-
-  //     SDL_UnmapGPUTransferBuffer(
-  //         device,
-  //         layer.buffer
-  //     );
-  // }
-}
-/**
- * @brief Call this function to update visually the canva content
- *
- */
-void Canvas::refresh() noexcept {
-  TileTransfer transfer;
-
-  transfer.offset = 0;
-  transfer.w = width;
-  transfer.h = height;
-  transfer.x = 0;
-  transfer.y = 0;
-
-  pending_uploads.push_back(transfer);
-}
+        if (layer > 0) {
+            layer--;
+        }
+    }
 
 } // namespace chroma

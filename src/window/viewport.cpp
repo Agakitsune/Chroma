@@ -20,9 +20,12 @@
 #include "app.hpp"
 
 #include "canvas/command/brush_command.hpp"
+#include "canvas/command/shape_command.hpp"
+#include "canvas/command/erase_command.hpp"
 
 #include "menu/fileformat.hpp"
 
+#include <cstring>
 #include <cstring>
 #include <filesystem>
 
@@ -69,20 +72,24 @@ void ViewportWindow::ready() noexcept {
   App::get_instance()->connect_signal(
       "second_color_changed", this, &ViewportWindow::_on_second_color_changed);
 
-  App::get_instance()->connect_signal("edit_fliph", this,
-                                      &ViewportWindow::fliph);
-  App::get_instance()->connect_signal("edit_flipv", this,
-                                      &ViewportWindow::flipv);
+        App::get_instance()->connect_signal("edit_fliph", this,
+                                            &ViewportWindow::fliph);
+        App::get_instance()->connect_signal("edit_flipv", this,
+                                            &ViewportWindow::flipv);
 
-  App::get_instance()->connect_signal("edit_undo", this, &ViewportWindow::undo);
-  App::get_instance()->connect_signal("edit_redo", this, &ViewportWindow::redo);
-}
-/**
- * @brief Setup the viewport window layout and additional tabs
- *
- */
-void ViewportWindow::display() noexcept {
-  ImGui::Begin(label.c_str(), nullptr, flags);
+        App::get_instance()->connect_signal("edit_undo", this,
+                                            &ViewportWindow::undo);
+        App::get_instance()->connect_signal("edit_redo", this,
+                                            &ViewportWindow::redo);
+
+        App::get_instance()->connect_signal("layer_new", this,
+                                            &ViewportWindow::add_layer);
+        App::get_instance()->connect_signal("layer_delete", this,
+                                            &ViewportWindow::delete_layer);
+    }
+
+    void ViewportWindow::display() noexcept {
+        ImGui::Begin(label.c_str(), nullptr, flags);
 
   ImGuiIO &io = ImGui::GetIO();
 
@@ -231,9 +238,12 @@ void ViewportWindow::display() noexcept {
   Canvas &canvas = canvases[selected];
   Color old;
 
-  const ImVec2 canvas_size = ImVec2(canvas.width, canvas.height) * canvas.zoom;
-  const ImVec2 canvas_offset =
-      origin + (window_size - canvas_size) * 0.5f + canvas.offset;
+        cmd->set_layer(canvas.layers[canvas.layer]);
+
+        const ImVec2 canvas_size =
+            ImVec2(canvas.width, canvas.height) * canvas.zoom;
+        const ImVec2 canvas_offset =
+            origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
   if (ImGui::IsMouseHoveringRect(canvas_offset, canvas_offset + canvas_size)) {
     const ImVec2 local = mouse - canvas_offset;
@@ -270,7 +280,15 @@ void ViewportWindow::display() noexcept {
     } else if (brushing) {
       cmd->end(x, y, old);
 
-      auto tmp = std::make_unique<BrushCommand>();
+                std::unique_ptr<ICommand> tmp;
+
+                if (dynamic_cast<BrushCommand*>(cmd.get())) {
+                    tmp = std::make_unique<BrushCommand>();
+                } else if (dynamic_cast<EraseCommand*>(cmd.get())) {
+                    tmp = std::make_unique<EraseCommand>();
+                } else if (dynamic_cast<ShapeCommand*>(cmd.get())) {
+                    tmp = std::make_unique<ShapeCommand>();
+                }
 
       tmp->set_main_color(cmd->get_main_color());
       tmp->set_second_color(cmd->get_second_color());
@@ -280,171 +298,64 @@ void ViewportWindow::display() noexcept {
 
       canvas.dirty = true;
 
-      // Prepare new command
-      cmd = std::move(tmp);
-    } else {
-      discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) ||
-                  ImGui::IsMouseDown(ImGuiMouseButton_Right);
-    }
-  }
+                // Prepare new command
+                cmd = std::move(tmp);
+            } else {
+                discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) ||
+                            ImGui::IsMouseDown(ImGuiMouseButton_Right);
+            }
+        }
 
-  if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
-    // if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S))
-    //     ImGui::OpenPopup("MyPopup");
-    // if (ImGui::BeginPopup("MyPopup"))
-    // {
-    //     ImGui::Text("Hello popup !");
-    //     void *pixels = canvas.layers[0].data;
-    //     // void* pixels = SDL_MapGPUTransferBuffer(device,
-    //     canvas.layers[0].buffer, false); SDL_Surface* surface =
-    //     SDL_CreateSurfaceFrom(16, 16, SDL_PIXELFORMAT_RGBA32, pixels, 16 *
-    //     4);
-    //     // if (SDL_FlipSurface(surface, SDL_FLIP_VERTICAL) == true);
-    //     //     ImGui::Text("FLIPED SURFACE");
-    //     if (SDL_SaveBMP(surface, "./chroma.bmp") == true)
-    //         ImGui::Text("BMP SAVED");
+        if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
+            CursorManager::set_cursor(Cursor::Cross);
 
-    //     if (ImGui::Button("cool :)")) {
-    //         ImGui::CloseCurrentPopup();
-    //     }
-    //     SDL_DestroySurface(surface);
-    //     // SDL_UnmapGPUTransferBuffer(device, transfer_buffer);
+            dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
 
-    //     ImGui::EndPopup();
-    // }
+            if (io.MouseWheel > 0.0f) {
+                canvas.zoom = std::min(canvas.zoom * 1.5f, 16.0f);
+            } else if (io.MouseWheel < 0.0f) {
+                canvas.zoom = std::max(canvas.zoom * 0.75f, 0.1f);
+            }
+        }
 
-    CursorManager::set_cursor(Cursor::Cross);
-
-    dragging = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
-
-    if (io.MouseWheel > 0.0f) {
-      canvas.zoom = std::min(canvas.zoom * 1.5f, 16.0f);
-    } else if (io.MouseWheel < 0.0f) {
-      canvas.zoom = std::max(canvas.zoom * 0.75f, 0.1f);
-    }
-  }
-
-  if (dragging) {
-    CursorManager::set_cursor(Cursor::Grab);
-    ImVec2 mouse_delta = io.MouseDelta;
-    canvas.offset += mouse_delta;
-
-    // const ImVec2 canvas_end = canvas_offset + canvas_size;
-    // const ImVec2 window_end = origin + window_size;
-
-    // if (canvas_offset.x < origin.x) {
-    //     canvas.offset.x += (origin.x - canvas_offset.x);
-    // }
-    // if (canvas_offset.y < origin.y) {
-    //     canvas.offset.y += (origin.y - canvas_offset.y);
-    // }
-
-    // if (canvas_end.x > window_end.x) {
-    //     canvas.offset.x -= canvas_end.x - window_end.x;
-    // }
-    // if (canvas_end.y > window_end.y) {
-    //     canvas.offset.y -= canvas_end.y - window_end.y;
-    // }
-  }
+        if (dragging) {
+            CursorManager::set_cursor(Cursor::Grab);
+            ImVec2 mouse_delta = io.MouseDelta;
+            canvas.offset += mouse_delta;
+        }
 
   ImGui::End();
 
-  constexpr float near = 0.0f;
-  constexpr float far = 10.0f;
+        cmd->preview(canvas);
 
-  float data[24] = {0.0f};
-  // float ortho[4][4] = (float*)data;
-  data[0] = 2.0f / canvas.width;
-  data[5] = -2.0f / canvas.height;
-  data[10] = -2.0f / (far - near);
-  data[12] = -1.0f;
-  data[13] = 1.0f;
-  data[14] = -(far + near) / (far - near);
-  data[15] = 1.0f;
+        if (!canvas.pending.empty()) {
+            canvas.execute_pending();
+        }
+    }
 
-  cmd->get_main_color().upload(&data[16]);
-  cmd->get_second_color().upload(&data[20]);
+    void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept {
+        selected = canvases.size();
+        canvases.emplace_back(width, height);
+        App::get_instance()->emit_signal<Canvas*>("canvas_selected", &canvases[selected]);
+        marked = canvases.size();
+    }
 
-  SDL_PushGPUVertexUniformData(cmd_buffer, 0, data, sizeof(data));
+    void ViewportWindow::save_canvas(const std::filesystem::path &directory,
+                                     const std::filesystem::path &file,
+                                     FileFormat format) noexcept {
+        Canvas &canvas = canvases[selected];
 
-  SDL_GPUColorTargetInfo target_info = {};
-  target_info.texture = canvas.preview;
-  target_info.clear_color = SDL_FColor{1.0f, 1.0f, 1.0f, 0.0f};
-  target_info.load_op = SDL_GPU_LOADOP_CLEAR;
-  target_info.store_op = SDL_GPU_STOREOP_STORE;
-  target_info.mip_level = 0;
-  target_info.layer_or_depth_plane = 0;
-  target_info.cycle = false;
-
-  SDL_GPURenderPass *render_pass =
-      SDL_BeginGPURenderPass(cmd_buffer, &target_info, 1, nullptr);
-
-  cmd->preview(render_pass);
-
-  SDL_EndGPURenderPass(render_pass);
-
-  if (!canvas.pending.empty()) {
-    canvas.execute_pending();
-  }
-
-  SDL_GPUCopyPass *copy_pass = SDL_BeginGPUCopyPass(cmd_buffer);
-
-  canvas.upload(copy_pass);
-
-  SDL_EndGPUCopyPass(copy_pass);
-}
-/**
- * @brief create a new canva to draw on
- *
- * @param width
- * @param height
- */
-void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept {
-  canvases.emplace_back(width, height);
-  marked = canvases.size();
-
-  // if (!canvas.layers[0].texture) {
-  //     return false;
-  // }
-
-  // if (!canvas.layers[0].buffer) {
-  //     return false;
-  // }
-
-  // if (!canvas.preview) {
-  //     return false;
-  // }
-
-  // return true;
-}
-/**
- * @brief save canva as a file in the filesystem, custom directory path and file
- * format available
- *
- * @param directory
- * @param file
- * @param format
- */
-void ViewportWindow::save_canvas(const std::filesystem::path &directory,
-                                 const std::filesystem::path &file,
-                                 FileFormat format) noexcept {
-  Canvas &canvas = canvases[selected];
-
-  SDL_GPUDevice *device = App::get_device();
+  // SDL_GPUDevice *device = App::get_device();
 
   std::filesystem::path file_path = directory / file;
   const char *path = file_path.c_str();
 
-  canvas.name = file;
-  canvas.dirty = false;
-
-  void *pixels =
-      SDL_MapGPUTransferBuffer(device, canvas.layers[0].buffer, true);
-  SDL_Surface *surface =
-      SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32,
-                            pixels, canvas.width * 4);
+        canvas.name = file;
+        canvas.dirty = false;
 
   bool result = false;
+
+  SDL_Surface *surface = canvas.layers[0].surface;
 
   switch (format) {
   case BMP: {
@@ -462,7 +373,7 @@ void ViewportWindow::save_canvas(const std::filesystem::path &directory,
   }
 
   SDL_DestroySurface(surface);
-  SDL_UnmapGPUTransferBuffer(device, canvas.layers[0].buffer);
+  // SDL_UnmapGPUTransferBuffer(device, canvas.layers[0].buffer);
 }
 /**
  * @brief Open an image from user filesystem if this is a supported image
@@ -502,112 +413,73 @@ void ViewportWindow::open_canvas(const std::filesystem::path &directory,
 
   canvases.back().name = file;
 
-  SDL_DestroySurface(output);
-  SDL_DestroySurface(surface);
-  SDL_CloseIO(stream);
-}
-/**
- * @brief Horizontally flip the current canva
- *
- */
-void ViewportWindow::fliph() noexcept {
-  Canvas &canvas = canvases[selected];
-  const Layer &layer = canvas.layers[canvas.layer];
+        SDL_DestroySurface(surface);
+        SDL_CloseIO(stream);
+    }
 
-  SDL_GPUDevice *device = App::get_device();
+    void ViewportWindow::fliph() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
 
-  void *pixels = SDL_MapGPUTransferBuffer(device, layer.buffer, true);
-  SDL_Surface *surface =
-      SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32,
-                            pixels, canvas.width * 4);
+        Canvas &canvas = canvases[selected];
+        const Layer &layer = canvas.layers[canvas.layer];
 
-  SDL_FlipSurface(surface, SDL_FlipMode::SDL_FLIP_HORIZONTAL);
+        SDL_FlipSurface(layer.surface, SDL_FlipMode::SDL_FLIP_HORIZONTAL);
+        SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels, layer.surface->pitch);
+    }
 
-  SDL_DestroySurface(surface);
-  SDL_UnmapGPUTransferBuffer(device, layer.buffer);
+    void ViewportWindow::flipv() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
 
-  canvas.refresh();
-}
-/**
- * @brief Vertically flip the current canva
- *
- */
-void ViewportWindow::flipv() noexcept {
-  Canvas &canvas = canvases[selected];
-  const Layer &layer = canvas.layers[canvas.layer];
+        Canvas &canvas = canvases[selected];
+        const Layer &layer = canvas.layers[canvas.layer];
 
-  SDL_GPUDevice *device = App::get_device();
+        SDL_FlipSurface(layer.surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
+        SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels, layer.surface->pitch);
+    }
 
-  void *pixels = SDL_MapGPUTransferBuffer(device, layer.buffer, true);
-  SDL_Surface *surface =
-      SDL_CreateSurfaceFrom(canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32,
-                            pixels, canvas.width * 4);
+    void ViewportWindow::add_layer() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
 
-  SDL_FlipSurface(surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
+        Canvas &canvas = canvases[selected];
 
-  SDL_DestroySurface(surface);
-  SDL_UnmapGPUTransferBuffer(device, layer.buffer);
+        canvas.add_layer();
+    }
 
-  canvas.refresh();
-}
-/**
- * @brief Call undo action from Canva
- *
- */
-void ViewportWindow::undo() noexcept {
-  Canvas &canvas = canvases[selected];
-  canvas.undo();
-  // const Layer &layer = canvas.layers[canvas.layer];
+    void ViewportWindow::delete_layer() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
 
-  // SDL_GPUDevice *device = App::get_device();
+        Canvas &canvas = canvases[selected];
+        canvas.delete_layer();
+    }
 
-  // void *pixels = SDL_MapGPUTransferBuffer(device, layer.buffer, true);
-  // SDL_Surface* surface = SDL_CreateSurfaceFrom(canvas.width, canvas.height,
-  // SDL_PIXELFORMAT_RGBA32, pixels, canvas.width * 4);
+    void ViewportWindow::undo() noexcept {
+        Canvas &canvas = canvases[selected];
+        canvas.undo();
+    }
 
-  // SDL_FlipSurface(surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
+    void ViewportWindow::redo() noexcept {
+        Canvas &canvas = canvases[selected];
+        canvas.redo();
+    }
 
-  // SDL_DestroySurface(surface);
-  // SDL_UnmapGPUTransferBuffer(device, layer.buffer);
+    bool ViewportWindow::is_empty() const noexcept { return canvases.empty(); }
 
-  // canvas.refresh();
-}
-/**
- * @brief call redo action from Canva
- *
- */
-void ViewportWindow::redo() noexcept {
-  Canvas &canvas = canvases[selected];
-  canvas.redo();
-}
-/**
- * @brief Return if canva layer currently empty or not
- *
- * @return true
- * @return false
- */
-bool ViewportWindow::is_empty() const noexcept { return canvases.empty(); }
-/**
- * @brief Provides a global access to canva content
- *
- * @return Canvas&
- */
-Canvas &ViewportWindow::get_canvas() noexcept { return canvases[selected]; }
-/**
- * @brief set brush main color
- *
- * @param clr
- */
-void ViewportWindow::_on_main_color_changed(const Color &clr) noexcept {
-  cmd->set_main_color(clr);
-}
-/**
- * @brief set second color
- *
- * @param clr
- */
-void ViewportWindow::_on_second_color_changed(const Color &clr) noexcept {
-  cmd->set_second_color(clr);
-}
+    Canvas &ViewportWindow::get_canvas() noexcept { return canvases[selected]; }
+
+    void ViewportWindow::_on_main_color_changed(const Color &clr) noexcept {
+        cmd->set_main_color(clr);
+    }
+
+    void ViewportWindow::_on_second_color_changed(const Color &clr) noexcept {
+        cmd->set_second_color(clr);
+    }
 
 } // namespace chroma
