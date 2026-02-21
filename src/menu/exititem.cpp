@@ -4,9 +4,9 @@
  * @brief Exit Chroma software
  * @version 0.1
  * @date 2026-02-17
- * 
+ *
  * @copyright Copyright (c) 2026
- * 
+ *
  */
 #include "menu/exititem.hpp"
 
@@ -18,27 +18,25 @@
 namespace chroma {
 /**
  * @brief Handle the exit button behavior, push the event
- * 
+ *
  */
-    void ExitMenuItem::menubar() noexcept
-    {
-        if (ImGui::MenuItem("Exit", "Ctrl+Q")) {
-            SDL_Event event;
-            event.type = SDL_EVENT_QUIT;
-            SDL_PushEvent(&event);
-        }
-    }
+void ExitMenuItem::menubar() noexcept {
+  if (ImGui::MenuItem("Exit", "Ctrl+Q")) {
+    SDL_Event event;
+    event.type = SDL_EVENT_QUIT;
+    SDL_PushEvent(&event);
+  }
+}
 /**
  * @brief Handle exit shortcut command Ctrl+Q
- * 
+ *
  */
-    void ExitMenuItem::shortcuts() noexcept
-    {
-        if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Q)) {
-            SDL_Event event;
-            event.type = SDL_EVENT_QUIT;
-            SDL_PushEvent(&event);
-            // App::get_instance()->emit_signal("edit_flipv");
-        }
-    }
+void ExitMenuItem::shortcuts() noexcept {
+  if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Q)) {
+    SDL_Event event;
+    event.type = SDL_EVENT_QUIT;
+    SDL_PushEvent(&event);
+    // App::get_instance()->emit_signal("edit_flipv");
+  }
 }
+} // namespace chroma

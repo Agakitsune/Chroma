@@ -1,12 +1,12 @@
 /**
  * @file brush_command.hpp
  * @author Zeustygien (lucas.gangnant@epitech.eu)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2026-02-17
- * 
+ *
  * @copyright Copyright (c) 2026
- * 
+ *
  */
 #pragma once
 
@@ -19,37 +19,41 @@
 
 namespace chroma {
 
-    class BrushCommand : public ColorCommand {
-        struct Pos {
-            float x;
-            float y;
-        };
+class BrushCommand : public ColorCommand {
+  struct Pos {
+    float x;
+    float y;
+  };
 
-        std::vector<Pos> positions;
-        std::vector<Color> previous_colors;
+  std::vector<Pos> positions;
+  std::vector<Color> previous_colors;
 
-        SDL_GPUGraphicsPipeline *pipeline = nullptr;
-        SDL_GPUShader *vertex_shader = nullptr;
-        SDL_GPUShader *fragment_shader = nullptr;
+  SDL_GPUGraphicsPipeline *pipeline = nullptr;
+  SDL_GPUShader *vertex_shader = nullptr;
+  SDL_GPUShader *fragment_shader = nullptr;
 
-        SDL_GPUBuffer *instance_buffer = nullptr;
+  SDL_GPUBuffer *instance_buffer = nullptr;
 
-        public:
-            BrushCommand() noexcept;
-            virtual ~BrushCommand() noexcept override;
+public:
+  BrushCommand() noexcept;
+  virtual ~BrushCommand() noexcept override;
 
-            void add(uint32_t x, uint32_t y, const Color &old) noexcept;
-            bool contains(uint32_t x, uint32_t y) const noexcept;
+  void add(uint32_t x, uint32_t y, const Color &old) noexcept;
+  bool contains(uint32_t x, uint32_t y) const noexcept;
 
-            virtual void redo(Canvas &canvas) noexcept override final;
-            virtual void undo(Canvas &canvas) noexcept override final;
+  virtual void redo(Canvas &canvas) noexcept override final;
+  virtual void undo(Canvas &canvas) noexcept override final;
 
-            virtual void start(uint32_t x, uint32_t y, const Color &color) noexcept override final;
-            virtual void update(uint32_t x, uint32_t y, const Color &color) noexcept override final;
-            virtual void end(uint32_t x, uint32_t y, const Color &color) noexcept override final;
-            virtual void discard() noexcept override final;
+  virtual void start(uint32_t x, uint32_t y,
+                     const Color &color) noexcept override final;
+  virtual void update(uint32_t x, uint32_t y,
+                      const Color &color) noexcept override final;
+  virtual void end(uint32_t x, uint32_t y,
+                   const Color &color) noexcept override final;
+  virtual void discard() noexcept override final;
 
-            virtual void preview(SDL_GPURenderPass *render_pass) const noexcept override final;
-    };
+  virtual void
+  preview(SDL_GPURenderPass *render_pass) const noexcept override final;
+};
 
-}
+} // namespace chroma

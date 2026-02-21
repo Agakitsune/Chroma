@@ -1,12 +1,12 @@
 /**
  * @file cursor.hpp
  * @author Zeustygien (lucas.gangnant@epitech.eu)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2026-02-17
- * 
+ *
  * @copyright Copyright (c) 2026
- * 
+ *
  */
 #pragma once
 
@@ -16,37 +16,37 @@
 #include <vector>
 
 namespace chroma {
-    
-    enum class Cursor {
-        Default,
-        
-        Arrow = Default,
-        Cross,
-        Grab,
-        Picker,
-        Point,
 
-        Count
-    };
+enum class Cursor {
+  Default,
 
-    class CursorManager {
-        static std::unique_ptr<CursorManager> instance;
+  Arrow = Default,
+  Cross,
+  Grab,
+  Picker,
+  Point,
 
-        std::vector<SDL_Cursor*> cursors;
+  Count
+};
 
-        SDL_Cursor* last_cursor = nullptr;
-        
-        Cursor cursor = Cursor::Default;
+class CursorManager {
+  static std::unique_ptr<CursorManager> instance;
 
-        CursorManager() noexcept;
+  std::vector<SDL_Cursor *> cursors;
 
-        static CursorManager& get_instance() noexcept;
+  SDL_Cursor *last_cursor = nullptr;
 
-        public:
-            ~CursorManager() noexcept;
+  Cursor cursor = Cursor::Default;
 
-            static void set_cursor(Cursor cursor) noexcept;
-            static void update() noexcept;
-    };
+  CursorManager() noexcept;
+
+  static CursorManager &get_instance() noexcept;
+
+public:
+  ~CursorManager() noexcept;
+
+  static void set_cursor(Cursor cursor) noexcept;
+  static void update() noexcept;
+};
 
 } // namespace chroma

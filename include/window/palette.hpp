@@ -1,12 +1,12 @@
 /**
  * @file palette.hpp
  * @author Zeustygien (lucas.gangnant@epitech.eu)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2026-02-17
- * 
+ *
  * @copyright Copyright (c) 2026
- * 
+ *
  */
 #pragma once
 
@@ -23,18 +23,18 @@
 
 namespace chroma {
 
-    class PaletteWindow : public Window {
-        std::vector<Color> palette;
-        uint32_t selected = 0;
+class PaletteWindow : public Window {
+  std::vector<Color> palette;
+  uint32_t selected = 0;
 
-        public:
-            PaletteWindow() noexcept;
-            virtual ~PaletteWindow() noexcept = default; 
+public:
+  PaletteWindow() noexcept;
+  virtual ~PaletteWindow() noexcept = default;
 
-            virtual void ready() noexcept override final;
-            virtual void display() noexcept override final;
+  virtual void ready() noexcept override final;
+  virtual void display() noexcept override final;
 
-            void add_color(const Color &color) noexcept;
-    };
+  void add_color(const Color &color) noexcept;
+};
 
-}
+} // namespace chroma

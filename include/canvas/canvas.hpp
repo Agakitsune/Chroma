@@ -1,12 +1,12 @@
 /**
  * @file canvas.hpp
  * @author Zeustygien (lucas.gangnant@epitech.eu)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2026-02-17
- * 
+ *
  * @copyright Copyright (c) 2026
- * 
+ *
  */
 #pragma once
 
@@ -17,89 +17,89 @@
 
 #include "command/command.hpp"
 
+#include <memory>
+#include <queue>
 #include <string>
 #include <vector>
-#include <queue>
-#include <memory>
 
 namespace chroma {
 
-    struct Layer {
-        uint8_t *data = nullptr;
-        bool *dirty_flags = nullptr;
+struct Layer {
+  uint8_t *data = nullptr;
+  bool *dirty_flags = nullptr;
 
-        SDL_GPUTransferBuffer *buffer = nullptr;
-        SDL_GPUTexture *texture = nullptr;
+  SDL_GPUTransferBuffer *buffer = nullptr;
+  SDL_GPUTexture *texture = nullptr;
 
-        Layer() noexcept = default;
-        ~Layer() noexcept;
+  Layer() noexcept = default;
+  ~Layer() noexcept;
 
-        Layer(const Layer&) = delete;
-        Layer& operator=(const Layer&) = delete;
+  Layer(const Layer &) = delete;
+  Layer &operator=(const Layer &) = delete;
 
-        Layer(Layer&&) noexcept;
-        Layer& operator=(Layer&&) noexcept;
-    };
+  Layer(Layer &&) noexcept;
+  Layer &operator=(Layer &&) noexcept;
+};
 
-    struct Canvas {
-        std::string name = "Untitled";
+struct Canvas {
+  std::string name = "Untitled";
 
-        std::vector<Layer> layers;
+  std::vector<Layer> layers;
 
-        SDL_GPUTexture *preview = nullptr;
+  SDL_GPUTexture *preview = nullptr;
 
-        std::vector<std::unique_ptr<ICommand>> stack;
-        std::queue<std::unique_ptr<ICommand>> pending;
-        
-        uint32_t stack_index = 0;
+  std::vector<std::unique_ptr<ICommand>> stack;
+  std::queue<std::unique_ptr<ICommand>> pending;
 
-        uint32_t layer = 0;
+  uint32_t stack_index = 0;
 
-        uint32_t width = 0;
-        uint32_t height = 0;
+  uint32_t layer = 0;
 
-        // -- ImGui related --
+  uint32_t width = 0;
+  uint32_t height = 0;
 
-        ImVec2 offset = ImVec2(0, 0);
-        float zoom = 1.0f;
+  // -- ImGui related --
 
-        bool dirty = false;
+  ImVec2 offset = ImVec2(0, 0);
+  float zoom = 1.0f;
 
-        Canvas(uint32_t width, uint32_t height) noexcept;
-        Canvas(SDL_Surface *surface) noexcept;
-        ~Canvas() noexcept;
+  bool dirty = false;
 
-        Canvas(const Canvas&) = delete;
-        Canvas& operator=(const Canvas&) = delete;
+  Canvas(uint32_t width, uint32_t height) noexcept;
+  Canvas(SDL_Surface *surface) noexcept;
+  ~Canvas() noexcept;
 
-        Canvas(Canvas&&) noexcept;
-        Canvas& operator=(Canvas&&) noexcept;
+  Canvas(const Canvas &) = delete;
+  Canvas &operator=(const Canvas &) = delete;
 
-        Color get_color(uint32_t x, uint32_t y) const noexcept;
-        void set_color(uint32_t x, uint32_t y, const Color &color) noexcept;
+  Canvas(Canvas &&) noexcept;
+  Canvas &operator=(Canvas &&) noexcept;
 
-        void add_command(std::unique_ptr<ICommand> &&cmd) noexcept;
-        void execute_pending() noexcept;
+  Color get_color(uint32_t x, uint32_t y) const noexcept;
+  void set_color(uint32_t x, uint32_t y, const Color &color) noexcept;
 
-        void undo() noexcept;
-        void redo() noexcept;
+  void add_command(std::unique_ptr<ICommand> &&cmd) noexcept;
+  void execute_pending() noexcept;
 
-        void upload(SDL_GPUCopyPass *pass) noexcept;
+  void undo() noexcept;
+  void redo() noexcept;
 
-        void refresh() noexcept;
+  void upload(SDL_GPUCopyPass *pass) noexcept;
 
-        private:
-            struct TileTransfer {
-                uint32_t offset;
+  void refresh() noexcept;
 
-                uint32_t w;
-                uint32_t h;
-                
-                uint32_t x;
-                uint32_t y;
-            };
+private:
+  struct TileTransfer {
+    uint32_t offset;
 
-            std::vector<TileTransfer> pending_uploads;
-    };
+    uint32_t w;
+    uint32_t h;
 
-}
+    uint32_t x;
+    uint32_t y;
+  };
+
+  std::vector<TileTransfer> pending_uploads;
+};
+
+} // namespace chroma
