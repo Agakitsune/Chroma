@@ -31,11 +31,11 @@ namespace chroma {
     }
 
     void BrushCommand::redo(const Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        // const Layer &layer = canvas.layers[canvas.layer];
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
 
         for (const SDL_FPoint &p : positions) {
             int x = p.x;
@@ -45,15 +45,15 @@ namespace chroma {
             main.upload(((uint8_t*)layer.surface->pixels) + (x + y * canvas.width) * 4);
         }
 
-        SDL_UnlockTexture(layer.texture);
+        SDL_UnlockTexture(texture);
     }
 
     void BrushCommand::undo(const Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        // const Layer &layer = canvas.layers[canvas.layer];
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
 
         for (uint32_t i = 0; i < positions.size(); i++) {
             const SDL_FPoint &p = positions[i];
@@ -64,7 +64,7 @@ namespace chroma {
             previous_colors[i].upload(((uint8_t*)layer.surface->pixels) + (x + y * canvas.width) * 4);
         }
 
-        SDL_UnlockTexture(layer.texture);
+        SDL_UnlockTexture(texture);
     }
 
     void BrushCommand::start(uint32_t x, uint32_t y,

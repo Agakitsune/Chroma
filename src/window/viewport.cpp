@@ -56,6 +56,11 @@ namespace chroma {
                                             &ViewportWindow::undo);
         App::get_instance()->connect_signal("edit_redo", this,
                                             &ViewportWindow::redo);
+
+        App::get_instance()->connect_signal("layer_new", this,
+                                            &ViewportWindow::add_layer);
+        App::get_instance()->connect_signal("layer_delete", this,
+                                            &ViewportWindow::delete_layer);
     }
 
     void ViewportWindow::display() noexcept {
@@ -111,6 +116,9 @@ namespace chroma {
 
                 bool open = true;
                 if (ImGui::BeginTabItem(canvas.name.c_str(), &open, flags)) {
+                    if (selected != i) {
+                        App::get_instance()->emit_signal<Canvas*>("canvas_selected", &canvases[i]);
+                    }
                     selected = i;
                     draw_list->PushClipRectFullScreen();
                     draw_list->AddRectFilled(origin, origin + window_size,
@@ -130,9 +138,11 @@ namespace chroma {
                         0, 16.0f * canvas.zoom, ImVec2(0, 0));
 
                     for (uint64_t i = 0; i < canvas.layers.size(); i++) {
-                        draw_list->AddImage(
-                            (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
-                            canvas_offset, canvas_offset + canvas_size);
+                        if (canvas.layers[i].visible) {
+                            draw_list->AddImage(
+                                (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
+                                canvas_offset, canvas_offset + canvas_size);
+                        }
 
                         if (i == canvas.layer) {
                             draw_list->AddImage(
@@ -211,13 +221,15 @@ namespace chroma {
         Canvas &canvas = canvases[selected];
         Color old;
 
+        cmd->set_layer(canvas.layers[canvas.layer]);
+
         const ImVec2 canvas_size =
             ImVec2(canvas.width, canvas.height) * canvas.zoom;
         const ImVec2 canvas_offset =
             origin + (window_size - canvas_size) * 0.5f + canvas.offset;
 
         if (ImGui::IsMouseHoveringRect(canvas_offset,
-                                       canvas_offset + canvas_size)) {
+                                       canvas_offset + canvas_size) && canvas.layers[canvas.layer].visible) {
             const ImVec2 local = mouse - canvas_offset;
             const ImVec2 local_zoomed = local * (1.0f / canvas.zoom);
             // const ImVec2 local = local_zoomed * (1.0f / canvas.zoom);
@@ -290,7 +302,9 @@ namespace chroma {
     }
 
     void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept {
+        selected = canvases.size();
         canvases.emplace_back(width, height);
+        App::get_instance()->emit_signal<Canvas*>("canvas_selected", &canvases[selected]);
         marked = canvases.size();
     }
 
@@ -362,6 +376,10 @@ namespace chroma {
     }
 
     void ViewportWindow::fliph() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
         Canvas &canvas = canvases[selected];
         const Layer &layer = canvas.layers[canvas.layer];
 
@@ -370,11 +388,34 @@ namespace chroma {
     }
 
     void ViewportWindow::flipv() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
         Canvas &canvas = canvases[selected];
         const Layer &layer = canvas.layers[canvas.layer];
 
         SDL_FlipSurface(layer.surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
         SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels, layer.surface->pitch);
+    }
+
+    void ViewportWindow::add_layer() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
+        Canvas &canvas = canvases[selected];
+
+        canvas.add_layer();
+    }
+
+    void ViewportWindow::delete_layer() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
+        Canvas &canvas = canvases[selected];
+        canvas.delete_layer();
     }
 
     void ViewportWindow::undo() noexcept {

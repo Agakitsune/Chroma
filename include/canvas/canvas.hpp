@@ -25,6 +25,9 @@ namespace chroma {
         SDL_Surface *surface = nullptr; // for data manipulation purposes
         SDL_Texture *texture = nullptr; // woosh, i'm paperthin
 
+        std::string name = "";
+        bool visible = true;
+
         Layer() noexcept = default;
         ~Layer() noexcept;
 
@@ -82,6 +85,9 @@ namespace chroma {
 
         void undo() noexcept;
         void redo() noexcept;
+
+        void add_layer() noexcept;
+        void delete_layer() noexcept;
 
         // void upload(SDL_GPUCopyPass *pass) noexcept;
 

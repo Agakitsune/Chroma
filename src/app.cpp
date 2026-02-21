@@ -9,6 +9,12 @@
 #include "menu/openitem.hpp"
 #include "menu/saveitem.hpp"
 #include "menu/undoredoitem.hpp"
+#include "menu/layeritem.hpp"
+
+#include "window/color_picker.hpp"
+#include "window/palette.hpp"
+#include "window/viewport.hpp"
+#include "window/layer.hpp"
 
 #include "backends/imgui_impl_sdl3.h"
 // #include "backends/imgui_impl_sdlgpu3.h"
@@ -93,19 +99,25 @@ namespace chroma {
                    FileFormat>("save_canvas_requested");
         add_signal<const std::filesystem::path &, const std::filesystem::path &,
                    FileFormat>("open_canvas_requested");
+        
+        add_signal<Canvas *>("canvas_selected");
 
         add_signal("edit_fliph");
         add_signal("edit_flipv");
         add_signal("edit_undo");
         add_signal("edit_redo");
 
+        add_signal("layer_new");
+        add_signal("layer_delete");
+
         add_signal("popup_save");
 
-        windows["Viewport"] = std::make_unique<ViewportWindow>();
-        windows["ColorPicker"] = std::make_unique<ColorPickerWindow>();
-        windows["Palette"] = std::make_unique<PaletteWindow>();
+        windows.push_back(std::make_unique<ViewportWindow>());
+        windows.push_back(std::make_unique<ColorPickerWindow>());
+        windows.push_back(std::make_unique<PaletteWindow>());
+        windows.push_back(std::make_unique<LayerWindow>());
 
-        for (const auto &[_n, win] : windows) {
+        for (const auto &win : windows) {
             win->ready();
         }
 
@@ -119,6 +131,8 @@ namespace chroma {
         add_menu<UndoRedoMenuItem>("Edit");
         separator("Edit");
         add_menu<FlipMenuItem>("Edit");
+
+        add_menu<LayerMenuItem>("Layer");
 
         connect_signal("popup_save", save_menu, &SaveMenuItem::action);
 
@@ -236,7 +250,7 @@ namespace chroma {
             // palette.display();
             // viewport.display();
 
-            for (const auto &[label, window] : windows) {
+            for (const auto &window : windows) {
                 window->display();
             }
 
@@ -257,9 +271,9 @@ namespace chroma {
             //     SDL_EndGPUCopyPass(copy_pass);
             // }
 
-            ImGui::Begin("Layer", nullptr, window_flags);
-            ImGui::Text("Layer and shit");
-            ImGui::End();
+            // ImGui::Begin("Layer", nullptr, window_flags);
+            // ImGui::Text("Layer and shit");
+            // ImGui::End();
 
             // Rendering
             ImGui::Render();

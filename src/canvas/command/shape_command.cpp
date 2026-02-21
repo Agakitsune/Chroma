@@ -20,41 +20,43 @@ namespace chroma {
     }
 
     void ShapeCommand::redo(const Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        // const Layer &layer = canvas.layers[canvas.layer];
         const uint64_t stride = rect.w * 4;
         const uint64_t buffer_size = rect.h * stride;
         const uint64_t skip = (rect.x + rect.y * canvas.width) * 4;
 
-        previous_data = new uint8_t[buffer_size];
-        uint8_t *mapping = (uint8_t*)layer.surface->pixels;
+        if (!previous_data) {
+            previous_data = new uint8_t[buffer_size];
+        }
+        uint8_t *mapping = (uint8_t*)surface->pixels;
 
         mapping += skip;
 
         for (uint32_t i = 0; i < rect.h; i++) {
             std::memcpy(&previous_data[i * stride], mapping, stride);
-            mapping += layer.surface->pitch;
+            mapping += surface->pitch;
         }
         
-        SDL_FillSurfaceRect(layer.surface, &this->rect, main.to_u32());
-        SDL_UpdateTexture(layer.texture, &this->rect, (uint8_t*)layer.surface->pixels + skip, layer.surface->pitch);
+        SDL_FillSurfaceRect(surface, &this->rect, main.to_u32());
+        SDL_UpdateTexture(texture, &this->rect, (uint8_t*)surface->pixels + skip, surface->pitch);
     }
 
     void ShapeCommand::undo(const Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        // const Layer &layer = canvas.layers[canvas.layer];
         const uint64_t stride = rect.w * 4;
         const uint64_t buffer_size = rect.h * stride;
         const uint64_t skip = (rect.x + rect.y * canvas.width) * 4;
 
-        uint8_t *mapping = (uint8_t*)layer.surface->pixels;
+        uint8_t *mapping = (uint8_t*)surface->pixels;
 
         mapping += skip;
 
         for (uint32_t i = 0; i < rect.h; i++) {
             std::memcpy(mapping, &previous_data[i * stride], stride);
-            mapping += layer.surface->pitch;
+            mapping += surface->pitch;
         }
 
-        SDL_UpdateTexture(layer.texture, &this->rect, (uint8_t*)layer.surface->pixels + skip, layer.surface->pitch);
+        SDL_UpdateTexture(texture, &this->rect, (uint8_t*)surface->pixels + skip, surface->pitch);
     }
 
     void ShapeCommand::start(uint32_t x, uint32_t y,

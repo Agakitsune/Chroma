@@ -11,8 +11,6 @@
 namespace chroma {
 
     Layer::~Layer() noexcept {
-        SDL_GPUDevice *device = App::get_device();
-
         if (texture) {
             SDL_DestroyTexture(texture);
         }
@@ -22,17 +20,21 @@ namespace chroma {
     }
 
     Layer::Layer(Layer &&other) noexcept
-        : texture(other.texture), surface(other.surface) {
+        : texture(other.texture), surface(other.surface), name(other.name) {
         other.texture = nullptr;
+        other.surface = nullptr;
+        other.name = "";
     }
 
     Layer &Layer::operator=(Layer &&other) noexcept {
         if (this != &other) {
             texture = other.texture;
             surface = other.surface;
+            name = other.name;
 
             other.texture = nullptr;
             other.surface = nullptr;
+            other.name = "";
         }
         return *this;
     }
@@ -42,6 +44,7 @@ namespace chroma {
         SDL_Renderer *renderer = App::get_renderer();
 
         Layer &layer = layers.emplace_back();
+        layer.name = "Layer 1";
 
         layer.surface = SDL_CreateSurface(
             width,
@@ -91,6 +94,7 @@ namespace chroma {
         SDL_Renderer *renderer = App::get_renderer();
 
         Layer &layer = layers.emplace_back();
+        layer.name = "Layer 1";
 
         layer.surface = surface;
 
@@ -109,6 +113,9 @@ namespace chroma {
             width,
             height
         );
+
+        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
 
         SDL_UpdateTexture(
             layer.texture,
@@ -216,6 +223,56 @@ namespace chroma {
         ICommand &cmd = *stack[stack_index];
         cmd.redo(*this);
         ++stack_index;
+    }
+
+    void Canvas::add_layer() noexcept {
+        char l[64] = {0};
+        SDL_Renderer *renderer = App::get_renderer();
+
+        Layer &layer = layers.emplace_back();
+        sprintf(l, "Layer %i", layers.size());
+
+        layer.name = l;
+
+        layer.surface = SDL_CreateSurface(
+            width,
+            height,
+            SDL_PIXELFORMAT_RGBA32
+        );
+
+        layer.texture = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_STREAMING,
+            width,
+            height
+        );
+
+        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+
+        SDL_FillSurfaceRect(
+            layer.surface,
+            NULL,
+            0
+        );
+        SDL_UpdateTexture(
+            layer.texture,
+            NULL,
+            layer.surface->pixels,
+            layer.surface->pitch
+        );
+    }
+
+    void Canvas::delete_layer() noexcept {
+        if (layers.size() == 1) {
+            return;
+        }
+
+        layers.erase(layers.begin() + layer);
+
+        if (layer > 0) {
+            layer--;
+        }
     }
 
 } // namespace chroma
