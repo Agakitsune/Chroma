@@ -1,0 +1,27 @@
+name: Format and Fix C++
+
+on: [push, pull_request]
+
+jobs:
+  fix-style:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Crucial: Allows the bot to push changes
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Clang-Format
+        run: sudo apt-get install -y clang-format
+
+      - name: Run Clang-Format Fixer
+        run: |
+          # Finds all .cpp, .h, .cc, and .hpp files and formats
+          find . -iname *.h -o -iname *.cpp -o -iname *.cc -o -iname *.hpp | xargs clang-format -i
+
+      - name: Check for changes and commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-fix formatting and trailing spaces"
+          file_pattern: '*' # Commit all changed files
