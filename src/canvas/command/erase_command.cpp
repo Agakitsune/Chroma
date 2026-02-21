@@ -48,7 +48,7 @@ namespace chroma {
     }
 
     void EraseCommand::undo(const Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        // const Layer &layer = canvas.layers[canvas.layer];
 
         uint8_t *mapping;
         int pitch;
