@@ -31,11 +31,11 @@ namespace chroma {
     }
 
     void EraseCommand::redo(const Canvas &canvas) noexcept {
-        const Layer &layer = canvas.layers[canvas.layer];
+        // const Layer &layer = canvas.layers[canvas.layer];
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
 
         for (const SDL_FPoint &p : positions) {
             int x = p.x;
@@ -44,7 +44,7 @@ namespace chroma {
             MASK.upload(mapping + (x + y * canvas.width) * 4);
         }
 
-        SDL_UnlockTexture(layer.texture);
+        SDL_UnlockTexture(texture);
     }
 
     void EraseCommand::undo(const Canvas &canvas) noexcept {
@@ -52,7 +52,7 @@ namespace chroma {
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
 
         for (uint32_t i = 0; i < positions.size(); i++) {
             const SDL_FPoint &p = positions[i];
@@ -62,7 +62,7 @@ namespace chroma {
             previous_colors[i].upload(mapping + (x + y * canvas.width) * 4);
         }
 
-        SDL_UnlockTexture(layer.texture);
+        SDL_UnlockTexture(texture);
     }
 
     void EraseCommand::start(uint32_t x, uint32_t y,

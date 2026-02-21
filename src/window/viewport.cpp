@@ -90,6 +90,29 @@ namespace chroma {
             marked = canvases.size();
         }
 
+        if (ImGui::IsKeyChordPressed(ImGuiKey_B)) {
+            auto tmp = std::make_unique<BrushCommand>();
+
+            tmp->set_main_color(cmd->get_main_color());
+            tmp->set_second_color(cmd->get_second_color());
+            // Prepare new command
+            cmd = std::move(tmp);
+        } else if (ImGui::IsKeyChordPressed(ImGuiKey_E)) {
+            auto tmp = std::make_unique<EraseCommand>();
+
+            tmp->set_main_color(cmd->get_main_color());
+            tmp->set_second_color(cmd->get_second_color());
+            // Prepare new command
+            cmd = std::move(tmp);
+        } else if (ImGui::IsKeyChordPressed(ImGuiKey_S)) {
+            auto tmp = std::make_unique<ShapeCommand>();
+
+            tmp->set_main_color(cmd->get_main_color());
+            tmp->set_second_color(cmd->get_second_color());
+            // Prepare new command
+            cmd = std::move(tmp);
+        }
+
         uint64_t modal = 0;
         if (ImGui::BeginTabBar("##ViewportTabs",
                                ImGuiTabBarFlags_NoCloseWithMiddleMouseButton |
@@ -256,7 +279,15 @@ namespace chroma {
             } else if (brushing) {
                 cmd->end(x, y, old);
 
-                auto tmp = std::make_unique<EraseCommand>();
+                std::unique_ptr<ICommand> tmp;
+
+                if (dynamic_cast<BrushCommand*>(cmd.get())) {
+                    tmp = std::make_unique<BrushCommand>();
+                } else if (dynamic_cast<EraseCommand*>(cmd.get())) {
+                    tmp = std::make_unique<EraseCommand>();
+                } else if (dynamic_cast<ShapeCommand*>(cmd.get())) {
+                    tmp = std::make_unique<ShapeCommand>();
+                }
 
                 tmp->set_main_color(cmd->get_main_color());
                 tmp->set_second_color(cmd->get_second_color());
