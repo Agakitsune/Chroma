@@ -18,11 +18,11 @@ namespace chroma {
       public:
         virtual ~ICommand() noexcept = default;
 
-        virtual void redo(Canvas &canvas) noexcept = 0;
-        virtual void undo(Canvas &canvas) noexcept = 0;
+        virtual void redo(const Canvas &canvas) noexcept = 0;
+        virtual void undo(const Canvas &canvas) noexcept = 0;
 
-        virtual void set_main_color(const Color &color) noexcept = 0;
-        virtual void set_second_color(const Color &color) noexcept = 0;
+        virtual void set_main_color(const Color &color) noexcept {};
+        virtual void set_second_color(const Color &color) noexcept {};
 
         virtual void set_layer(const Layer &layer) noexcept;
 
@@ -35,9 +35,9 @@ namespace chroma {
                             const Color &color) noexcept = 0;
         virtual void end(uint32_t x, uint32_t y,
                          const Color &color) noexcept = 0;
-        virtual void discard() noexcept = 0;
+        virtual void discard(const Canvas &preview) noexcept = 0;
 
-        virtual void preview(SDL_Texture *preview) const noexcept = 0;
+        virtual void preview(const Canvas &preview) noexcept = 0;
     };
 
 } // namespace chroma

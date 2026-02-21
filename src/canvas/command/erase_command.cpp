@@ -2,26 +2,26 @@
 #include "SDL3/SDL.h"
 
 #include "canvas/canvas.hpp"
-#include "canvas/command/brush_command.hpp"
+#include "canvas/command/erase_command.hpp"
 
 #include "app.hpp"
 
 #include <cstring>
 namespace chroma {
 
-    BrushCommand::BrushCommand() noexcept {
+    EraseCommand::EraseCommand() noexcept {
     }
 
-    BrushCommand::~BrushCommand() noexcept {
+    EraseCommand::~EraseCommand() noexcept {
     }
 
-    void BrushCommand::add(uint32_t x, uint32_t y,
+    void EraseCommand::add(uint32_t x, uint32_t y,
                            const Color &color) noexcept {
         positions.push_back({(float)x, (float)y});
         previous_colors.push_back(color);
     }
 
-    bool BrushCommand::contains(uint32_t x, uint32_t y) const noexcept {
+    bool EraseCommand::contains(uint32_t x, uint32_t y) const noexcept {
         for (size_t i = 0; i < positions.size(); ++i) {
             if (positions[i].x == x && positions[i].y == y) {
                 return true;
@@ -30,30 +30,29 @@ namespace chroma {
         return false;
     }
 
-    void BrushCommand::redo(const Canvas &canvas) noexcept {
-        // const Layer &layer = canvas.layers[canvas.layer];
+    void EraseCommand::redo(const Canvas &canvas) noexcept {
+        const Layer &layer = canvas.layers[canvas.layer];
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
 
         for (const SDL_FPoint &p : positions) {
             int x = p.x;
             int y = p.y;
 
-            main.upload(mapping + (x + y * canvas.width) * 4);
-            main.upload(((uint8_t*)layer.surface->pixels) + (x + y * canvas.width) * 4);
+            MASK.upload(mapping + (x + y * canvas.width) * 4);
         }
 
-        SDL_UnlockTexture(texture);
+        SDL_UnlockTexture(layer.texture);
     }
 
-    void BrushCommand::undo(const Canvas &canvas) noexcept {
-        // const Layer &layer = canvas.layers[canvas.layer];
+    void EraseCommand::undo(const Canvas &canvas) noexcept {
+        const Layer &layer = canvas.layers[canvas.layer];
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
 
         for (uint32_t i = 0; i < positions.size(); i++) {
             const SDL_FPoint &p = positions[i];
@@ -61,50 +60,59 @@ namespace chroma {
             int y = p.y;
 
             previous_colors[i].upload(mapping + (x + y * canvas.width) * 4);
-            previous_colors[i].upload(((uint8_t*)layer.surface->pixels) + (x + y * canvas.width) * 4);
         }
 
-        SDL_UnlockTexture(texture);
+        SDL_UnlockTexture(layer.texture);
     }
 
-    void BrushCommand::start(uint32_t x, uint32_t y,
+    void EraseCommand::start(uint32_t x, uint32_t y,
                              const Color &color) noexcept {
         add(x, y, color);
     }
 
-    void BrushCommand::update(uint32_t x, uint32_t y,
+    void EraseCommand::update(uint32_t x, uint32_t y,
                               const Color &color) noexcept {
         if (!contains(x, y)) {
             add(x, y, color);
         }
     }
 
-    void BrushCommand::end(uint32_t x, uint32_t y,
+    void EraseCommand::end(uint32_t x, uint32_t y,
                            const Color &color) noexcept {
         update(x, y, color);
     }
 
-    void BrushCommand::discard(const Canvas &preview) noexcept {
+    void EraseCommand::discard(const Canvas &preview) noexcept {
+        undo(preview);
         positions.clear();
         previous_colors.clear();
     }
 
-    void BrushCommand::preview(const Canvas &canvas) noexcept {
+    void EraseCommand::preview(const Canvas &canvas) noexcept {
+        const Layer &layer = canvas.layers[canvas.layer];
         SDL_Renderer *renderer = App::get_renderer();
 
         SDL_SetRenderTarget(renderer, canvas.preview);
         SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
         SDL_RenderClear(renderer);
+        SDL_SetRenderTarget(renderer, NULL);
 
         if (positions.empty()) {
-            SDL_SetRenderTarget(renderer, NULL);
             return;
         }
-        
-        SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
-        SDL_RenderPoints(renderer, positions.data(), positions.size());
-        
-        SDL_SetRenderTarget(renderer, NULL);
+
+        uint8_t *mapping;
+        int pitch;
+        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
+
+        for (const SDL_FPoint &p : positions) {
+            int x = p.x;
+            int y = p.y;
+
+            MASK.upload(mapping + (x + y * canvas.width) * 4);
+        }
+
+        SDL_UnlockTexture(layer.texture);
     }
 
 } // namespace chroma

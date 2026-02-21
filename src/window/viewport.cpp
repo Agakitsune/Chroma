@@ -12,6 +12,7 @@
 
 #include "canvas/command/brush_command.hpp"
 #include "canvas/command/shape_command.hpp"
+#include "canvas/command/erase_command.hpp"
 
 #include "menu/fileformat.hpp"
 
@@ -28,7 +29,7 @@ namespace chroma {
         : Window("Viewport",
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove) {
-        cmd = std::make_unique<ShapeCommand>(); // default command
+        cmd = std::make_unique<BrushCommand>(); // default command
     }
 
     void ViewportWindow::ready() noexcept {
@@ -248,14 +249,14 @@ namespace chroma {
                     cmd->update(x, y, old);
                     if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
                         discarded = true;
-                        cmd->discard();
+                        cmd->discard(canvas);
                         brushing = false;
                     }
                 }
             } else if (brushing) {
                 cmd->end(x, y, old);
 
-                auto tmp = std::make_unique<ShapeCommand>();
+                auto tmp = std::make_unique<EraseCommand>();
 
                 tmp->set_main_color(cmd->get_main_color());
                 tmp->set_second_color(cmd->get_second_color());
@@ -293,7 +294,7 @@ namespace chroma {
 
         ImGui::End();
 
-        cmd->preview(canvas.preview);
+        cmd->preview(canvas);
 
         if (!canvas.pending.empty()) {
             canvas.execute_pending();

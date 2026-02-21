@@ -70,6 +70,8 @@ namespace chroma {
         return s;
     }
 
+    constexpr Color MASK(0.0f, 0.0f, 0.0f, 0.0f);
+    
     constexpr Color WHITE(1.0f, 1.0f, 1.0f);
     constexpr Color BLACK(0.0f, 0.0f, 0.0f);
 
