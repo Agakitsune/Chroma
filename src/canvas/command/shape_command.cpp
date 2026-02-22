@@ -7,17 +7,14 @@
 
 #include "app.hpp"
 
-#include <cstring>
 #include <cmath>
+#include <cstring>
 
 namespace chroma {
 
-    ShapeCommand::ShapeCommand() noexcept {
-    }
+    ShapeCommand::ShapeCommand() noexcept {}
 
-    ShapeCommand::~ShapeCommand() noexcept {
-        delete[] previous_data;
-    }
+    ShapeCommand::~ShapeCommand() noexcept { delete[] previous_data; }
 
     void ShapeCommand::redo(const Canvas &canvas) noexcept {
         // const Layer &layer = canvas.layers[canvas.layer];
@@ -28,7 +25,7 @@ namespace chroma {
         if (!previous_data) {
             previous_data = new uint8_t[buffer_size];
         }
-        uint8_t *mapping = (uint8_t*)surface->pixels;
+        uint8_t *mapping = (uint8_t *)surface->pixels;
 
         mapping += skip;
 
@@ -36,9 +33,10 @@ namespace chroma {
             std::memcpy(&previous_data[i * stride], mapping, stride);
             mapping += surface->pitch;
         }
-        
+
         SDL_FillSurfaceRect(surface, &this->rect, main.to_u32());
-        SDL_UpdateTexture(texture, &this->rect, (uint8_t*)surface->pixels + skip, surface->pitch);
+        SDL_UpdateTexture(texture, &this->rect,
+                          (uint8_t *)surface->pixels + skip, surface->pitch);
     }
 
     void ShapeCommand::undo(const Canvas &canvas) noexcept {
@@ -47,7 +45,7 @@ namespace chroma {
         const uint64_t buffer_size = rect.h * stride;
         const uint64_t skip = (rect.x + rect.y * canvas.width) * 4;
 
-        uint8_t *mapping = (uint8_t*)surface->pixels;
+        uint8_t *mapping = (uint8_t *)surface->pixels;
 
         mapping += skip;
 
@@ -56,38 +54,23 @@ namespace chroma {
             mapping += surface->pitch;
         }
 
-        SDL_UpdateTexture(texture, &this->rect, (uint8_t*)surface->pixels + skip, surface->pitch);
+        SDL_UpdateTexture(texture, &this->rect,
+                          (uint8_t *)surface->pixels + skip, surface->pitch);
     }
 
     void ShapeCommand::start(uint32_t x, uint32_t y,
                              const Color &color) noexcept {
-        s = SDL_Point{
-            (int)x,
-            (int)y
-        };
+        s = SDL_Point{(int)x, (int)y};
         rect.w = 0;
     }
 
     void ShapeCommand::update(uint32_t x, uint32_t y,
                               const Color &color) noexcept {
-        e = SDL_Point{
-            (int)x,
-            (int)y
-        };
-        SDL_Point min = SDL_Point{
-            std::min(s.x, e.x),
-            std::min(s.y, e.y)
-        };
-        SDL_Point max = SDL_Point{
-            std::max(s.x, e.x),
-            std::max(s.y, e.y)
-        };
-        this->rect = SDL_Rect{
-            min.x,
-            min.y,
-            max.x - min.x + 1,
-            max.y - min.y + 1
-        };
+        e = SDL_Point{(int)x, (int)y};
+        SDL_Point min = SDL_Point{std::min(s.x, e.x), std::min(s.y, e.y)};
+        SDL_Point max = SDL_Point{std::max(s.x, e.x), std::max(s.y, e.y)};
+        this->rect =
+            SDL_Rect{min.x, min.y, max.x - min.x + 1, max.y - min.y + 1};
     }
 
     void ShapeCommand::end(uint32_t x, uint32_t y,
@@ -95,9 +78,7 @@ namespace chroma {
         update(x, y, color);
     }
 
-    void ShapeCommand::discard() noexcept {
-        rect.w = 0;
-    }
+    void ShapeCommand::discard() noexcept { rect.w = 0; }
 
     void ShapeCommand::preview(const Canvas &canvas) noexcept {
         SDL_Renderer *renderer = App::get_renderer();
@@ -111,12 +92,8 @@ namespace chroma {
             return;
         }
 
-        SDL_FRect rect = {
-            this->rect.x,
-            this->rect.y,
-            this->rect.w,
-            this->rect.h
-        };
+        SDL_FRect rect = {this->rect.x, this->rect.y, this->rect.w,
+                          this->rect.h};
 
         SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
         SDL_RenderRect(renderer, &rect);

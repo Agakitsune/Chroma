@@ -9,11 +9,9 @@
 #include <cstring>
 
 namespace chroma {
-    BrushCommand::BrushCommand() noexcept {
-    }
+    BrushCommand::BrushCommand() noexcept {}
 
-    BrushCommand::~BrushCommand() noexcept {
-    }
+    BrushCommand::~BrushCommand() noexcept {}
 
     void BrushCommand::add(uint32_t x, uint32_t y,
                            const Color &color) noexcept {
@@ -35,14 +33,15 @@ namespace chroma {
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
 
         for (const SDL_FPoint &p : positions) {
             int x = p.x;
             int y = p.y;
 
             main.upload(mapping + (x + y * canvas.width) * 4);
-            main.upload(((uint8_t*)surface->pixels) + (x + y * canvas.width) * 4);
+            main.upload(((uint8_t *)surface->pixels) +
+                        (x + y * canvas.width) * 4);
         }
 
         SDL_UnlockTexture(texture);
@@ -53,7 +52,7 @@ namespace chroma {
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
 
         for (uint32_t i = 0; i < positions.size(); i++) {
             const SDL_FPoint &p = positions[i];
@@ -61,7 +60,8 @@ namespace chroma {
             int y = p.y;
 
             previous_colors[i].upload(mapping + (x + y * canvas.width) * 4);
-            previous_colors[i].upload(((uint8_t*)surface->pixels) + (x + y * canvas.width) * 4);
+            previous_colors[i].upload(((uint8_t *)surface->pixels) +
+                                      (x + y * canvas.width) * 4);
         }
 
         SDL_UnlockTexture(texture);
@@ -100,10 +100,10 @@ namespace chroma {
             SDL_SetRenderTarget(renderer, NULL);
             return;
         }
-        
+
         SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
         SDL_RenderPoints(renderer, positions.data(), positions.size());
-        
+
         SDL_SetRenderTarget(renderer, NULL);
     }
 

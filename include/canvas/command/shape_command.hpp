@@ -12,9 +12,7 @@ namespace chroma {
     class ShapeCommand : public ColorCommand {
         SDL_Point s;
         SDL_Point e;
-        SDL_Rect rect = {
-            0, 0, 0, 0
-        };
+        SDL_Rect rect = {0, 0, 0, 0};
 
         uint8_t *previous_data = nullptr;
 
@@ -33,8 +31,7 @@ namespace chroma {
                          const Color &color) noexcept override final;
         virtual void discard() noexcept override final;
 
-        virtual void
-        preview(const Canvas &canvas) noexcept override final;
+        virtual void preview(const Canvas &canvas) noexcept override final;
     };
 
 } // namespace chroma

@@ -25,49 +25,57 @@
 
 namespace chroma {
 
-class ViewportWindow : public Window {
-  std::vector<Canvas> canvases;
-  uint32_t marked = 0;
-  uint32_t selected = 0;
+    class ViewportWindow : public Window {
+        std::vector<Canvas> canvases;
+        uint32_t marked = 0;
+        uint32_t selected = 0;
 
-  bool dragging = false;
-  bool brushing = false;
-  bool discarded = false;
+        bool dragging = false;
+        bool brushing = false;
+        bool discarded = false;
 
-  std::unique_ptr<ICommand> cmd;
+        std::unique_ptr<ICommand> cmd;
 
-  SDL_GPUTransferBuffer *transfer_buffer = nullptr;
-  SDL_GPUBuffer *uniform_buffer = nullptr;
+        SDL_Rect selection = {
+          0, 0, 0, 0
+        };
 
-public:
-  ViewportWindow() noexcept;
-  virtual ~ViewportWindow() noexcept = default;
+        // SDL_GPUTransferBuffer *transfer_buffer = nullptr;
+        // SDL_GPUBuffer *uniform_buffer = nullptr;
 
-  virtual void ready() noexcept override final;
-  virtual void display() noexcept override final;
+      public:
+        ViewportWindow() noexcept;
+        virtual ~ViewportWindow() noexcept = default;
 
-  void new_canvas(uint32_t width, uint32_t height) noexcept;
-  void save_canvas(const std::filesystem::path &directory,
-                   const std::filesystem::path &file,
-                   FileFormat format) noexcept;
-  void open_canvas(const std::filesystem::path &directory,
-                   const std::filesystem::path &file,
-                   FileFormat format) noexcept;
-  bool is_empty() const noexcept;
+        virtual void ready() noexcept override final;
+        virtual void display() noexcept override final;
 
-  void fliph() noexcept;
-  void flipv() noexcept;
-  
-  void add_layer() noexcept;
-  void delete_layer() noexcept;
+        void new_canvas(uint32_t width, uint32_t height) noexcept;
+        void save_canvas(const std::filesystem::path &directory,
+                         const std::filesystem::path &file,
+                         FileFormat format) noexcept;
+        void open_canvas(const std::filesystem::path &directory,
+                         const std::filesystem::path &file,
+                         FileFormat format) noexcept;
+        bool is_empty() const noexcept;
 
-  void undo() noexcept;
-  void redo() noexcept;
+        void fliph() noexcept;
+        void flipv() noexcept;
 
-  Canvas &get_canvas() noexcept;
+        void add_layer() noexcept;
+        void delete_layer() noexcept;
 
-private:
-  void _on_main_color_changed(const Color &clr) noexcept;
-  void _on_second_color_changed(const Color &clr) noexcept;
-};
+        void select_mark(SDL_Rect rect) noexcept;
+        // void select_move() noexcept;
+        // void select_clear() noexcept;
+
+        void undo() noexcept;
+        void redo() noexcept;
+
+        Canvas &get_canvas() noexcept;
+
+      private:
+        void _on_main_color_changed(const Color &clr) noexcept;
+        void _on_second_color_changed(const Color &clr) noexcept;
+    };
 } // namespace chroma
