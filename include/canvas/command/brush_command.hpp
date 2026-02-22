@@ -19,7 +19,9 @@
 namespace chroma {
 
     class BrushCommand : public ColorCommand {
-        std::vector<SDL_FPoint> positions; // forced to use floats since SDL doesn't have a method to draw with int :c
+        std::vector<SDL_FPoint>
+            positions; // forced to use floats since SDL doesn't have a method
+                       // to draw with int :c
         std::vector<Color> previous_colors;
 
       public:
@@ -39,13 +41,13 @@ namespace chroma {
         // virtual void end(uint32_t x, uint32_t y,
         //                  const Color &color) noexcept override final;
         // virtual void discard(const Canvas &preview) noexcept override final;
-  virtual void start(uint32_t x, uint32_t y,
-                     const Color &color) noexcept override final;
-  virtual void update(uint32_t x, uint32_t y,
-                      const Color &color) noexcept override final;
-  virtual void end(uint32_t x, uint32_t y,
-                   const Color &color) noexcept override final;
-  virtual void discard() noexcept override final;
+        virtual void start(uint32_t x, uint32_t y,
+                           const Color &color) noexcept override final;
+        virtual void update(uint32_t x, uint32_t y,
+                            const Color &color) noexcept override final;
+        virtual void end(uint32_t x, uint32_t y,
+                         const Color &color) noexcept override final;
+        virtual void discard() noexcept override final;
 
         virtual void preview(const Canvas &canvas) noexcept override final;
     };

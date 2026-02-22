@@ -10,4 +10,4 @@ namespace chroma {
         texture = layer.texture;
     }
 
-}
+} // namespace chroma

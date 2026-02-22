@@ -35,6 +35,7 @@ file(GLOB CPP_SOURCES
     # src/lua/imgui/*.cpp
     src/canvas/*.cpp
     src/canvas/command/*.cpp
+    src/canvas/command/select/*.cpp
 )
 
 set(imgui_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/imgui)

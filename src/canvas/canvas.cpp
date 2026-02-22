@@ -55,45 +55,33 @@ namespace chroma {
         Layer &layer = layers.emplace_back();
         layer.name = "Layer 1";
 
-        layer.surface = SDL_CreateSurface(
-            width,
-            height,
-            SDL_PIXELFORMAT_RGBA32
-        );
+        layer.surface =
+            SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGBA32);
 
-        layer.texture = SDL_CreateTexture(
-            renderer,
-            SDL_PIXELFORMAT_RGBA32,
-            SDL_TEXTUREACCESS_STREAMING,
-            width,
-            height
-        );
+        layer.texture =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                              SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        this->preview = SDL_CreateTexture(
-            renderer,
-            SDL_PIXELFORMAT_RGBA32,
-            SDL_TEXTUREACCESS_TARGET,
-            width,
-            height
-        );
+        this->preview =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                              SDL_TEXTUREACCESS_TARGET, width, height);
+        
+        this->overlay =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                              SDL_TEXTUREACCESS_TARGET, width, height);
 
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
         SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureScaleMode(this->overlay, SDL_SCALEMODE_NEAREST);
 
-        SDL_FillSurfaceRect(
-            layer.surface,
-            NULL,
-            0
-        );
-        SDL_UpdateTexture(
-            layer.texture,
-            NULL,
-            layer.surface->pixels,
-            layer.surface->pitch
-        );
+        SDL_FillSurfaceRect(layer.surface, NULL, 0);
+        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
+                          layer.surface->pitch);
 
-        SDL_SetRenderTarget(renderer, this->preview);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_SetRenderTarget(renderer, this->preview);
+        SDL_RenderClear(renderer);
+        SDL_SetRenderTarget(renderer, this->overlay);
         SDL_RenderClear(renderer);
         SDL_SetRenderTarget(renderer, NULL);
     }
@@ -107,34 +95,28 @@ namespace chroma {
 
         layer.surface = surface;
 
-        layer.texture = SDL_CreateTexture(
-            renderer,
-            SDL_PIXELFORMAT_RGBA32,
-            SDL_TEXTUREACCESS_STREAMING,
-            width,
-            height
-        );
+        layer.texture =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                              SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        this->preview = SDL_CreateTexture(
-            renderer,
-            SDL_PIXELFORMAT_RGBA32,
-            SDL_TEXTUREACCESS_TARGET,
-            width,
-            height
-        );
+        this->preview =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                              SDL_TEXTUREACCESS_TARGET, width, height);
+        
+        this->overlay =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                              SDL_TEXTUREACCESS_TARGET, width, height);
 
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
         SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
 
-        SDL_UpdateTexture(
-            layer.texture,
-            NULL,
-            layer.surface->pixels,
-            layer.surface->pitch
-        );
+        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
+                          layer.surface->pitch);
 
-        SDL_SetRenderTarget(renderer, this->preview);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_SetRenderTarget(renderer, this->preview);
+        SDL_RenderClear(renderer);
+        SDL_SetRenderTarget(renderer, this->overlay);
         SDL_RenderClear(renderer);
         SDL_SetRenderTarget(renderer, NULL);
     }
@@ -181,9 +163,9 @@ namespace chroma {
     Color Canvas::get_color(uint32_t x, uint32_t y) const noexcept {
         const Layer &layer = layers[this->layer];
 
-        uint8_t *mapping = (uint8_t*)layer.surface->pixels;
+        uint8_t *mapping = (uint8_t *)layer.surface->pixels;
 
-  Color ret;
+        Color ret;
 
         mapping += (x + y * width) * 4;
         ret.download(mapping);
@@ -196,7 +178,7 @@ namespace chroma {
         const uint64_t size = stack.size();
         const uint64_t remove = size - stack_index;
 
-  stack.erase(stack.end() - remove, stack.end());
+        stack.erase(stack.end() - remove, stack.end());
 
         pending.push(std::move(cmd));
     }
@@ -205,10 +187,10 @@ namespace chroma {
         while (!pending.empty()) {
             std::unique_ptr<ICommand> &cmd = pending.front();
 
-    cmd->redo(*this);
+            cmd->redo(*this);
 
-    stack.push_back(std::move(cmd));
-    ++stack_index;
+            stack.push_back(std::move(cmd));
+            ++stack_index;
 
             pending.pop();
         }
@@ -243,33 +225,18 @@ namespace chroma {
 
         layer.name = l;
 
-        layer.surface = SDL_CreateSurface(
-            width,
-            height,
-            SDL_PIXELFORMAT_RGBA32
-        );
+        layer.surface =
+            SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGBA32);
 
-        layer.texture = SDL_CreateTexture(
-            renderer,
-            SDL_PIXELFORMAT_RGBA32,
-            SDL_TEXTUREACCESS_STREAMING,
-            width,
-            height
-        );
+        layer.texture =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                              SDL_TEXTUREACCESS_STREAMING, width, height);
 
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
 
-        SDL_FillSurfaceRect(
-            layer.surface,
-            NULL,
-            0
-        );
-        SDL_UpdateTexture(
-            layer.texture,
-            NULL,
-            layer.surface->pixels,
-            layer.surface->pitch
-        );
+        SDL_FillSurfaceRect(layer.surface, NULL, 0);
+        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
+                          layer.surface->pitch);
     }
 
     void Canvas::delete_layer() noexcept {

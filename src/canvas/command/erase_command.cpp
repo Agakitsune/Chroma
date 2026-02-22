@@ -9,11 +9,9 @@
 #include <cstring>
 namespace chroma {
 
-    EraseCommand::EraseCommand() noexcept {
-    }
+    EraseCommand::EraseCommand() noexcept {}
 
-    EraseCommand::~EraseCommand() noexcept {
-    }
+    EraseCommand::~EraseCommand() noexcept {}
 
     void EraseCommand::add(uint32_t x, uint32_t y,
                            const Color &color) noexcept {
@@ -35,7 +33,7 @@ namespace chroma {
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
 
         for (const SDL_FPoint &p : positions) {
             int x = p.x;
@@ -52,7 +50,7 @@ namespace chroma {
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
 
         for (uint32_t i = 0; i < positions.size(); i++) {
             const SDL_FPoint &p = positions[i];
@@ -85,7 +83,7 @@ namespace chroma {
     void EraseCommand::discard() noexcept {
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
 
         for (uint32_t i = 0; i < positions.size(); i++) {
             const SDL_FPoint &p = positions[i];
@@ -96,7 +94,7 @@ namespace chroma {
         }
 
         SDL_UnlockTexture(texture);
-        
+
         positions.clear();
         previous_colors.clear();
     }
@@ -116,7 +114,7 @@ namespace chroma {
 
         uint8_t *mapping;
         int pitch;
-        SDL_LockTexture(layer.texture, NULL, (void**)&mapping, &pitch);
+        SDL_LockTexture(layer.texture, NULL, (void **)&mapping, &pitch);
 
         for (const SDL_FPoint &p : positions) {
             int x = p.x;

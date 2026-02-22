@@ -22,23 +22,19 @@ namespace chroma {
         // App::get_instance()->add_signal<const Color &>("main_color_changed");
         // App::get_instance()->add_signal<const Color &>(
         //     "secondary_color_changed");
-    
+
         name = new char[1024];
         name[0] = '\0';
     }
 
-    LayerWindow::~LayerWindow() noexcept {
-        delete[] name;
-    }
+    LayerWindow::~LayerWindow() noexcept { delete[] name; }
 
     void LayerWindow::ready() noexcept {
-        App::get_instance()->connect_signal(
-            "canvas_selected", this,
-            &LayerWindow::_on_canvas_selected);
-        
-        App::get_instance()->connect_signal(
-            "layer_delete", this,
-            &LayerWindow::_on_layer_delete);
+        App::get_instance()->connect_signal("canvas_selected", this,
+                                            &LayerWindow::_on_canvas_selected);
+
+        App::get_instance()->connect_signal("layer_delete", this,
+                                            &LayerWindow::_on_layer_delete);
     }
 
     void LayerWindow::display() noexcept {
@@ -59,30 +55,33 @@ namespace chroma {
                 }
 
                 ImGui::PushID(i);
-                
+
                 ImU32 check_col = ImGui::GetColorU32(ImGuiCol_CheckMark);
-                ImGuiWindow* window = ImGui::GetCurrentWindow();
+                ImGuiWindow *window = ImGui::GetCurrentWindow();
                 ImGui::SetNextItemAllowOverlap();
-                ImVec2 label_size = ImGui::CalcTextSize("##visible", NULL, true);
-                ImGuiContext& g = *GImGui;
-                const ImGuiStyle& style = g.Style;
+                ImVec2 label_size =
+                    ImGui::CalcTextSize("##visible", NULL, true);
+                ImGuiContext &g = *GImGui;
+                const ImGuiStyle &style = g.Style;
                 ImVec2 pos = window->DC.CursorPos;
                 bool e = false;
                 float sz = label_size.y - style.ItemSpacing.x * 0.5;
-                
+
                 if (ImGui::Selectable("##visible", &e, 0, ImVec2(sz, 0.0f))) {
                     layer.visible = !layer.visible;
                 }
                 if (layer.visible) {
-                    
-                    ImGui::RenderCheckMark(window->DrawList, pos, check_col, sz);
+
+                    ImGui::RenderCheckMark(window->DrawList, pos, check_col,
+                                           sz);
                 }
 
                 ImGui::SameLine();
                 ImGui::PopID();
 
                 ImGui::PushID(layer.surface);
-                if (ImGui::Selectable(c, &s, ImGuiSelectableFlags_AllowDoubleClick)) {
+                if (ImGui::Selectable(c, &s,
+                                      ImGuiSelectableFlags_AllowDoubleClick)) {
                     canvas->layer = i - 1;
                     this->selected = i - 1;
                     if (ImGui::IsMouseDoubleClicked(0)) {
@@ -90,22 +89,18 @@ namespace chroma {
                         ImGui::OpenPopup("Layer Properties");
                         open = true;
                         ImGui::PopID();
-                        strcpy(name, canvas->layers[this->selected].name.c_str());
+                        strcpy(name,
+                               canvas->layers[this->selected].name.c_str());
                     }
                 }
                 ImGui::PopID();
 
-                std::cout << "--- " << (i - i) << std::endl;
-                std::cout << ImGui::IsItemActive() << std::endl;
-
                 if (ImGui::IsItemActive() && !ImGui::IsItemHovered()) {
-                    int n_next = (i - 1) + (ImGui::GetMouseDragDelta(0).y < 0.f ? 1 : -1);
+                    int n_next = (i - 1) +
+                                 (ImGui::GetMouseDragDelta(0).y < 0.f ? 1 : -1);
                     if (n_next >= 0 && n_next < canvas->layers.size()) {
-                        std::cout << "swap" << std::endl;
-                        std::swap(
-                            canvas->layers[n_next],
-                            canvas->layers[i - 1]
-                        );
+                        std::swap(canvas->layers[n_next],
+                                  canvas->layers[i - 1]);
                         ImGui::ResetMouseDragDelta();
                     }
                 }
@@ -143,4 +138,4 @@ namespace chroma {
         }
     }
 
-}
+} // namespace chroma

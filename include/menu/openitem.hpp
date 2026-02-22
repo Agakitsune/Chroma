@@ -18,29 +18,29 @@
 
 namespace chroma {
 
-class OpenMenuItem : public MenuItem {
-  char *name;
-  char *directory;
+    class OpenMenuItem : public MenuItem {
+        char *name;
+        char *directory;
 
-  std::filesystem::path home;
-  std::filesystem::path current;
+        std::filesystem::path home;
+        std::filesystem::path current;
 
-  std::vector<std::filesystem::path> directories;
-  std::vector<std::filesystem::path> files;
+        std::vector<std::filesystem::path> directories;
+        std::vector<std::filesystem::path> files;
 
-  uint32_t selected = 0;
+        uint32_t selected = 0;
 
-  bool hidden = false;
+        bool hidden = false;
 
-public:
-  OpenMenuItem() noexcept;
-  ~OpenMenuItem() noexcept;
+      public:
+        OpenMenuItem() noexcept;
+        ~OpenMenuItem() noexcept;
 
-  void query_current_directory() noexcept;
+        void query_current_directory() noexcept;
 
-  virtual void menubar() noexcept override final;
-  virtual void action() noexcept override final;
-  virtual void display() noexcept override final;
-  virtual void shortcuts() noexcept override final;
-};
+        virtual void menubar() noexcept override final;
+        virtual void action() noexcept override final;
+        virtual void display() noexcept override final;
+        virtual void shortcuts() noexcept override final;
+    };
 } // namespace chroma

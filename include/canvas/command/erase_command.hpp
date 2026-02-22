@@ -10,7 +10,9 @@
 namespace chroma {
 
     class EraseCommand : public ICommand {
-        std::vector<SDL_FPoint> positions; // forced to use floats since SDL doesn't have a method to draw with int :c
+        std::vector<SDL_FPoint>
+            positions; // forced to use floats since SDL doesn't have a method
+                       // to draw with int :c
         std::vector<Color> previous_colors;
 
       public:

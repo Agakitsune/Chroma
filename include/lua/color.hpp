@@ -4,7 +4,7 @@
 extern "C" {}
 
 namespace chroma {
-struct Color;
+    struct Color;
 }
 
 // namespace chroma::lua {
