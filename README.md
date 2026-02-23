@@ -23,17 +23,20 @@ Chroma aim to provide an easy-to-use and ready-to-go with most useful features f
 
 ### Installation
 
-At the root of the project:
+Clone the repository and pull the dependencies using ```git clone --recursive <url>```
+
+If you cloned only using ```git clone <url>``` :
+
+- Once cloned, pull dependencies yourself using ```git submodule update --init --recursive```
+
+Build the project:
+
+```cmake -B build```
+
+Once done, use the following command to launch the project:
 
 ```bash
-cmake -B build
-```
-
-Once done, go to /build folder and enter:
-
-```bash
-cd build
-cmake --build . && ./chroma
+cmake --build build && ./build/chroma
 ```
 
 ## Basic Controls
