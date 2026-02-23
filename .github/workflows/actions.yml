@@ -6,11 +6,6 @@ on:
   pull_request:
     types:
       - opened
-      - closed
-      - review_requested
-    branches:
-      - main
-      - dev
 
 jobs:
   build:
@@ -37,7 +32,7 @@ jobs:
 
 
   format:
-    if: github.event_name == 'pull_request' && (github.event.action == 'closed' || github.event.action == 'review_requested')
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     permissions:
