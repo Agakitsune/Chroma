@@ -17,13 +17,13 @@
 namespace chroma {
 
 /**
- * @brief Layer Menu item
+ * @brief Select item
  *
  */
-class LayerMenuItem : public MenuItem {
+class SelectItem : public MenuItem {
 public:
-    LayerMenuItem() noexcept = default;
-    virtual ~LayerMenuItem() noexcept override = default;
+    SelectItem() noexcept = default;
+    virtual ~SelectItem() noexcept override = default;
 
     virtual void menubar() noexcept override final;
     virtual void shortcuts() noexcept override final;

@@ -24,28 +24,28 @@ struct Layer;
  */
 class Command {
 protected:
-  // Layer data
-  SDL_Surface *surface;
-  SDL_Texture *texture;
+    // Layer data
+    SDL_Surface* surface;
+    SDL_Texture* texture;
 
 public:
-  virtual ~Command() noexcept = default;
+    virtual ~Command() noexcept = default;
 
-  /**
-   * @brief Execute command on layer data
-   *
-   * @param selection The current selection
-   */
-  virtual void redo(SDL_Rect &selection) noexcept = 0;
+    /**
+     * @brief Execute command on layer data
+     *
+     * @param selection The current selection
+     */
+    virtual void redo(SDL_Rect& selection) noexcept = 0;
 
-  /**
-   * @brief Undo the command on layer data
-   *
-   * @param selection The current selection
-   */
-  virtual void undo(SDL_Rect &selection) noexcept = 0;
+    /**
+     * @brief Undo the command on layer data
+     *
+     * @param selection The current selection
+     */
+    virtual void undo(SDL_Rect& selection) noexcept = 0;
 
-  void set_layer(const Layer &layer) noexcept;
+    void set_layer(const Layer& layer) noexcept;
 };
 
 } // namespace chroma

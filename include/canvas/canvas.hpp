@@ -31,20 +31,20 @@ namespace chroma {
  *
  */
 struct Layer {
-  SDL_Surface *surface = nullptr; // for data manipulation purposes
-  SDL_Texture *texture = nullptr; // woosh, i'm paperthin
+    SDL_Surface* surface = nullptr; // for data manipulation purposes
+    SDL_Texture* texture = nullptr; // woosh, i'm paperthin
 
-  std::string name = "";
-  bool visible = true;
+    std::string name = "";
+    bool visible = true;
 
-  Layer() noexcept = default;
-  ~Layer() noexcept;
+    Layer() noexcept = default;
+    ~Layer() noexcept;
 
-  Layer(const Layer &) = delete;
-  Layer &operator=(const Layer &) = delete;
+    Layer(const Layer&) = delete;
+    Layer& operator=(const Layer&) = delete;
 
-  Layer(Layer &&) noexcept;
-  Layer &operator=(Layer &&) noexcept;
+    Layer(Layer&&) noexcept;
+    Layer& operator=(Layer&&) noexcept;
 };
 
 /**
@@ -52,47 +52,47 @@ struct Layer {
  *
  */
 struct Canvas {
-  std::string name = "Untitled";
+    std::string name = "Untitled";
 
-  std::vector<Layer> layers;
+    std::vector<Layer> layers;
 
-  std::vector<std::unique_ptr<Command>> stack;
-  std::queue<std::unique_ptr<Command>> pending;
+    std::vector<std::unique_ptr<Command>> stack;
+    std::queue<std::unique_ptr<Command>> pending;
 
-  uint32_t stack_index = 0;
+    uint32_t stack_index = 0;
 
-  uint32_t layer = 0;
+    uint32_t layer = 0;
 
-  uint32_t width = 0;
-  uint32_t height = 0;
+    uint32_t width = 0;
+    uint32_t height = 0;
 
-  // -- ImGui related --
+    // -- ImGui related --
 
-  ImVec2 offset = ImVec2(0, 0);
-  float zoom = 1.0f;
+    ImVec2 offset = ImVec2(0, 0);
+    float zoom = 1.0f;
 
-  bool dirty = false;
+    bool dirty = false;
 
-  Canvas(uint32_t width, uint32_t height) noexcept;
-  Canvas(SDL_Surface *surface) noexcept;
-  ~Canvas() noexcept;
+    Canvas(uint32_t width, uint32_t height) noexcept;
+    Canvas(SDL_Surface* surface) noexcept;
+    ~Canvas() noexcept;
 
-  Canvas(const Canvas &) = delete;
-  Canvas &operator=(const Canvas &) = delete;
+    Canvas(const Canvas&) = delete;
+    Canvas& operator=(const Canvas&) = delete;
 
-  Canvas(Canvas &&) noexcept;
-  Canvas &operator=(Canvas &&) noexcept;
+    Canvas(Canvas&&) noexcept;
+    Canvas& operator=(Canvas&&) noexcept;
 
-  Color get_color(uint32_t x, uint32_t y) const noexcept;
+    Color get_color(uint32_t x, uint32_t y) const noexcept;
 
-  void add_command(std::unique_ptr<Command> &&cmd) noexcept;
-  void execute_pending(SDL_Rect &selection) noexcept;
+    void add_command(std::unique_ptr<Command>&& cmd) noexcept;
+    void execute_pending(SDL_Rect& selection) noexcept;
 
-  void undo(SDL_Rect &selection) noexcept;
-  void redo(SDL_Rect &selection) noexcept;
+    void undo(SDL_Rect& selection) noexcept;
+    void redo(SDL_Rect& selection) noexcept;
 
-  void add_layer() noexcept;
-  void delete_layer() noexcept;
+    void add_layer() noexcept;
+    void delete_layer() noexcept;
 };
 
 } // namespace chroma
