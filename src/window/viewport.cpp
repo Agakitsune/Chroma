@@ -19,10 +19,16 @@
 
 #include "app.hpp"
 
-#include "canvas/command/brush_command.hpp"
-#include "canvas/command/erase_command.hpp"
-#include "canvas/command/select/select_mark_command.hpp"
-#include "canvas/command/shape_command.hpp"
+#include "canvas/cmd/brush_command.hpp"
+#include "canvas/cmd/shape_command.hpp"
+#include "canvas/cmd/erase_command.hpp"
+#include "canvas/cmd/select_mark_command.hpp"
+
+// #include "canvas/command/brush_command.hpp"
+// #include "canvas/command/erase_command.hpp"
+// #include "canvas/command/select/select_mark_command.hpp"
+// #include "canvas/command/select/select_move_command.hpp"
+// #include "canvas/command/shape_command.hpp"
 
 #include "menu/fileformat.hpp"
 
@@ -92,6 +98,14 @@ namespace chroma {
 
         App::get_instance()->connect_signal("select_mark", this,
                                             &ViewportWindow::select_mark);
+        App::get_instance()->connect_signal("select_move_start", this,
+                                            &ViewportWindow::select_move_start);
+        App::get_instance()->connect_signal("select_move", this,
+                                            &ViewportWindow::select_move);
+        App::get_instance()->connect_signal("select_move_end", this,
+                                            &ViewportWindow::select_move_end);
+        App::get_instance()->connect_signal("select_clear", this,
+                                            &ViewportWindow::select_clear);
     }
 
     void ViewportWindow::display() noexcept {
@@ -111,6 +125,7 @@ namespace chroma {
         const ImVec2 mouse = io.MousePos;
 
         SDL_GPUDevice *device = App::get_device();
+        SDL_Renderer *renderer = App::get_renderer();
         SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
 
         if (marked < canvases.size()) {
@@ -147,7 +162,11 @@ namespace chroma {
 
                 bool open = true;
                 if (ImGui::BeginTabItem(canvas.name.c_str(), &open, flags)) {
-                    selected = i;
+                    if (selected != i) {
+                        selected = i;
+                        reload();
+                    }
+                    
                     draw_list->PushClipRectFullScreen();
                     draw_list->AddRectFilled(origin, origin + window_size,
                                              IM_COL32(101, 85, 97, 255));
@@ -172,13 +191,13 @@ namespace chroma {
 
                         if (i == canvas.layer) {
                             draw_list->AddImage(
-                                (ImTextureRef)(uintptr_t)canvas.preview,
+                                (ImTextureRef)(uintptr_t)preview,
                                 canvas_offset, canvas_offset + canvas_size);
                         }
                     }
 
                     draw_list->AddImage(
-                        (ImTextureRef)(uintptr_t)canvas.overlay,
+                        (ImTextureRef)(uintptr_t)overlay,
                         canvas_offset, canvas_offset + canvas_size);
 
                     draw_list->PopClipRect();
@@ -249,7 +268,7 @@ namespace chroma {
         }
 
         Canvas &canvas = canvases[selected];
-        Color old;
+        // Color old;
 
         cmd->set_layer(canvas.layers[canvas.layer]);
 
@@ -266,12 +285,14 @@ namespace chroma {
             const ImVec2 snapped =
                 ImVec2(floorf(local_zoomed.x), floorf(local_zoomed.y));
 
-            uint32_t x = static_cast<uint32_t>(snapped.x);
-            uint32_t y = static_cast<uint32_t>(snapped.y);
+            int32_t x = static_cast<int32_t>(snapped.x);
+            int32_t y = static_cast<int32_t>(snapped.y);
 
-            old = canvas.get_color(x, y);
+            // old = canvas.get_color(x, y);
 
             SDL_Point p = {x, y};
+
+            on_select = (selection.w > 0) && SDL_PointInRect(&p, &selection);
 
             // printf("Mouse at (%f, %f) -> Local (%f, %f) -> Snapped (%f, %f)
             // -> Pos
@@ -284,58 +305,62 @@ namespace chroma {
 
             if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && !discarded) {
                 if (!brushing) {
-                    if (selection.w == 0 || SDL_PointInRect(&p, &selection)) {
-                        cmd->start(x, y, old);
+
+                    if (cmd->can_transform()) {
+                        if (on_select) {
+                            cmd = cmd->transform();
+                        } else {
+                            std::unique_ptr<MouseCommand> tmp = cmd->next();
+
+                            if (tmp != cmd) {
+                                canvas.add_command(std::move(cmd));
+                            }
+                            
+                            // Prepare new command
+                            cmd = std::move(tmp);
+                        }
                     }
+
+                    cmd->start(p, selection);
                     brushing = true;
                 } else {
-                    if (selection.w == 0 || SDL_PointInRect(&p, &selection)) {
-                        cmd->update(x, y, old);
-                    }
+                    cmd->update(p, selection);
                     if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
                         discarded = true;
-                        cmd->discard();
+                        cmd->discard(selection);
                         brushing = false;
                     }
                 }
             } else if (brushing) {
-                if (selection.w == 0 || SDL_PointInRect(&p, &selection)) {
-                    cmd->end(x, y, old);
+                cmd->end(p, selection);
+
+                if (!cmd->is_persitent()) {
+                    std::unique_ptr<MouseCommand> tmp = cmd->next();
+
+                    if (tmp != cmd) {
+                        canvas.add_command(std::move(cmd));
+                    }
+                    
+                    // Prepare new command
+                    cmd = std::move(tmp);
                 }
 
-                std::unique_ptr<ICommand> tmp;
-
-                if (dynamic_cast<BrushCommand *>(cmd.get())) {
-                    tmp = std::make_unique<BrushCommand>();
-                } else if (dynamic_cast<EraseCommand *>(cmd.get())) {
-                    tmp = std::make_unique<EraseCommand>();
-                } else if (dynamic_cast<ShapeCommand *>(cmd.get())) {
-                    tmp = std::make_unique<ShapeCommand>();
-                } else if (dynamic_cast<SelectMarkCommand *>(cmd.get())) {
-                    tmp = std::make_unique<SelectMarkCommand>();
-                }
-
-                tmp->set_main_color(cmd->get_main_color());
-                tmp->set_second_color(cmd->get_second_color());
-
-                canvas.add_command(std::move(cmd));
                 brushing = false;
-
                 canvas.dirty = true;
-
-                // Prepare new command
-                cmd = std::move(tmp);
             } else {
                 discarded = ImGui::IsMouseDown(ImGuiMouseButton_Left) ||
                             ImGui::IsMouseDown(ImGuiMouseButton_Right);
             }
         }
 
-        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-            if (dynamic_cast<SelectMarkCommand *>(cmd.get())) {
-                selection.w = 0;
-            }
-        }
+        SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
+        SDL_SetRenderTarget(renderer, preview);
+        SDL_RenderClear(renderer);
+        SDL_SetRenderTarget(renderer, overlay);
+        SDL_RenderClear(renderer);
+        SDL_SetRenderTarget(renderer, nullptr);
+
+        cmd->render(preview, overlay, selection);
 
         if (ImGui::IsMouseHoveringRect(origin, origin + window_size)) {
             CursorManager::set_cursor(Cursor::Cross);
@@ -355,9 +380,7 @@ namespace chroma {
             canvas.offset += mouse_delta;
         }
 
-        cmd->preview(canvas);
-
-        if (selection.w != 0) {
+        if (selection.w > 0) {
             ImGuiWindow *w = ImGui::GetCurrentWindow();
             ImDrawList *draw_list = w->DrawList;
             ImDrawList *foreground = ImGui::GetForegroundDrawList();
@@ -387,7 +410,7 @@ namespace chroma {
         ImGui::End();
 
         if (!canvas.pending.empty()) {
-            canvas.execute_pending();
+            canvas.execute_pending(selection);
         }
     }
 
@@ -397,6 +420,8 @@ namespace chroma {
         App::get_instance()->emit_signal<Canvas *>("canvas_selected",
                                                    &canvases[selected]);
         marked = canvases.size();
+
+        reload();
     }
 
     void ViewportWindow::save_canvas(const std::filesystem::path &directory,
@@ -523,24 +548,164 @@ namespace chroma {
     }
 
     void ViewportWindow::select_mark(SDL_Rect rect) noexcept {
-        selection = rect;
+        // if (select_data) {
+        //     delete[] select_data;
+        // }
 
-        SDL_Renderer *renderer = App::get_renderer();
+        // selection = rect;
 
-        SDL_SetRenderTarget(renderer, canvases[selected].overlay);
-        SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderTarget(renderer, nullptr);
+        // const Canvas &canvas = canvases[selected];
+        // const Layer &layer = canvas.layers[canvas.layer];
+
+        // const uint64_t stride = rect.w * 4;
+        // const uint64_t buffer_size = rect.h * stride;
+        // const uint64_t skip = (rect.x + rect.y * canvas.width) * 4;
+
+        // select_data = new uint8_t[buffer_size];
+        // uint8_t *mapping = (uint8_t *)layer.surface->pixels;
+
+        // mapping += skip;
+
+        // for (uint32_t i = 0; i < rect.h; i++) {
+        //     std::memcpy(&select_data[i * stride], mapping, stride);
+        //     mapping += layer.surface->pitch;
+        // }
+
+        // void *clear;
+        // SDL_LockTexture(layer.texture, &rect, );
+
+        // SDL_UnlockTexture(layer.texture);
+
+        // SDL_UpdateTexture(canvas.preview, &rect, select_data, stride);
+    }
+
+    void ViewportWindow::select_move_start() noexcept {
+        // const Canvas &canvas = canvases[selected];
+        // const Layer &layer = canvas.layers[canvas.layer];
+
+        // const uint64_t stride = selection.w * 4;
+        // const uint64_t buffer_size = selection.h * stride;
+        // const uint64_t skip = (selection.x + selection.y * canvas.width) * 4;
+
+        // if (select_data) {
+        //     delete[] select_data;
+        //     SDL_DestroyTexture(select_texture);
+        // }
+
+        // select_data = new uint8_t[buffer_size];
+        // uint8_t *mapping = (uint8_t *)layer.surface->pixels;
+
+        // SDL_Renderer *renderer = App::get_renderer();
+
+        // select_texture = SDL_CreateTexture(
+        //     renderer,
+        //     SDL_PIXELFORMAT_RGBA32,
+        //     SDL_TEXTUREACCESS_STREAMING,
+        //     selection.w,
+        //     selection.h
+        // );
+
+        // mapping += skip;
+
+        // uint8_t *clear;
+        // int pitch;
+        // SDL_LockTexture(select_texture, &selection, (void**)&clear, &pitch);
+
+        // for (uint32_t i = 0; i < selection.h; i++) {
+        //     std::memcpy(&clear[i * stride], mapping, stride);
+        //     std::memcpy(&select_data[i * stride], mapping, stride);
+        //     mapping += layer.surface->pitch;
+        // }
+
+        // SDL_UnlockTexture(select_texture);
+
+        // SDL_LockTexture(layer.texture, &selection, (void**)&clear, &pitch);
+
+        // std::memset(clear, 0, buffer_size);
+
+        // SDL_UnlockTexture(layer.texture);
+    }
+
+    void ViewportWindow::select_move(SDL_Point p) noexcept {
+        // selection.x += p.x;
+        // selection.y += p.y;
+
+        // const Canvas &canvas = canvases[selected];
+        // const Layer &layer = canvas.layers[canvas.layer];
+
+        // SDL_Renderer *renderer = App::get_renderer();
+
+        // SDL_FRect rect = {
+        //     (float)selection.x,
+        //     (float)selection.y,
+        //     (float)selection.w,
+        //     (float)selection.h
+        // };
+
+        // SDL_SetRenderTarget(renderer, canvas.preview);
+
+        // SDL_RenderTexture(renderer, select_texture, nullptr, &rect);
+
+        // SDL_SetRenderTarget(renderer, nullptr);
+    }
+
+    void ViewportWindow::select_move_end() noexcept {
+        // const Canvas &canvas = canvases[selected];
+        // const Layer &layer = canvas.layers[canvas.layer];
+
+        // const uint64_t stride = selection.w * 4;
+        // const uint64_t buffer_size = selection.h * stride;
+        // const uint64_t skip = (selection.x + selection.y * canvas.width) * 4;
+
+        // uint8_t *mapping = (uint8_t *)layer.surface->pixels;
+        // mapping += skip;
+        
+        // uint8_t *clear;
+        // int pitch;
+        // SDL_LockTexture(layer.texture, &selection, (void**)&clear, &pitch);
+
+        // for (uint32_t i = 0; i < selection.h; i++) {
+        //     std::memcpy(mapping, &select_data[i * stride], stride);
+        //     mapping += layer.surface->pitch;
+        // }
+
+        // SDL_UnlockTexture(layer.texture);
+    }
+
+    void ViewportWindow::select_clear() noexcept {
+        selection.w == 0;
     }
 
     void ViewportWindow::undo() noexcept {
         Canvas &canvas = canvases[selected];
-        canvas.undo();
+        canvas.undo(selection);
     }
 
     void ViewportWindow::redo() noexcept {
         Canvas &canvas = canvases[selected];
-        canvas.redo();
+        canvas.redo(selection);
+    }
+
+    void ViewportWindow::reload() noexcept {
+        const Canvas &canvas = canvases[selected];
+
+        SDL_Renderer *renderer = App::get_renderer();
+
+        if (preview) {
+            SDL_DestroyTexture(preview);
+            SDL_DestroyTexture(overlay);
+        }
+
+        preview =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                SDL_TEXTUREACCESS_TARGET, canvas.width, canvas.height);
+        
+        overlay =
+            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                SDL_TEXTUREACCESS_TARGET, canvas.width, canvas.height);
+        
+        SDL_SetTextureScaleMode(preview, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureScaleMode(overlay, SDL_SCALEMODE_NEAREST);
     }
 
     bool ViewportWindow::is_empty() const noexcept { return canvases.empty(); }

@@ -58,46 +58,45 @@ namespace chroma {
                           (uint8_t *)surface->pixels + skip, surface->pitch);
     }
 
-    void ShapeCommand::start(uint32_t x, uint32_t y,
-                             const Color &color) noexcept {
-        s = SDL_Point{(int)x, (int)y};
+    void ShapeCommand::start(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        s = p;
         rect.w = 0;
     }
 
-    void ShapeCommand::update(uint32_t x, uint32_t y,
-                              const Color &color) noexcept {
-        e = SDL_Point{(int)x, (int)y};
+    void ShapeCommand::update(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        e = p;
         SDL_Point min = SDL_Point{std::min(s.x, e.x), std::min(s.y, e.y)};
         SDL_Point max = SDL_Point{std::max(s.x, e.x), std::max(s.y, e.y)};
         this->rect =
             SDL_Rect{min.x, min.y, max.x - min.x + 1, max.y - min.y + 1};
     }
 
-    void ShapeCommand::end(uint32_t x, uint32_t y,
-                           const Color &color) noexcept {
-        update(x, y, color);
+    void ShapeCommand::end(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        update(canvas, p, color);
     }
 
-    void ShapeCommand::discard() noexcept { rect.w = 0; }
+    void ShapeCommand::discard(const Canvas &canvas) noexcept { rect.w = 0; }
 
     void ShapeCommand::preview(const Canvas &canvas) noexcept {
         SDL_Renderer *renderer = App::get_renderer();
 
-        SDL_SetRenderTarget(renderer, canvas.preview);
-        SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
-        SDL_RenderClear(renderer);
+        // SDL_SetRenderTarget(renderer, canvas.preview);
+        // SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
+        // SDL_RenderClear(renderer);
 
         if (this->rect.w == 0) {
-            SDL_SetRenderTarget(renderer, NULL);
+            // SDL_SetRenderTarget(renderer, NULL);
             return;
         }
 
-        SDL_FRect rect = {this->rect.x, this->rect.y, this->rect.w,
-                          this->rect.h};
+        // SDL_SetRenderTarget(renderer, canvas.preview);
 
-        SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
-        SDL_RenderRect(renderer, &rect);
-        SDL_SetRenderTarget(renderer, NULL);
+        // SDL_FRect rect = {this->rect.x, this->rect.y, this->rect.w,
+        //                   this->rect.h};
+
+        // SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
+        // SDL_RenderRect(renderer, &rect);
+        // SDL_SetRenderTarget(renderer, NULL);
     }
 
 } // namespace chroma

@@ -19,6 +19,8 @@
 #include "canvas/canvas.hpp"
 #include "menu/fileformat.hpp"
 
+#include "canvas/cmd/mouse_command.hpp"
+
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -33,15 +35,21 @@ namespace chroma {
         bool dragging = false;
         bool brushing = false;
         bool discarded = false;
+        bool on_select = false;
 
-        std::unique_ptr<ICommand> cmd;
+        std::unique_ptr<MouseCommand> cmd;
 
         SDL_Rect selection = {
           0, 0, 0, 0
         };
+        // uint8_t *select_data = nullptr;
+        // SDL_Texture *select_texture = nullptr;
 
         // SDL_GPUTransferBuffer *transfer_buffer = nullptr;
         // SDL_GPUBuffer *uniform_buffer = nullptr;
+
+        SDL_Texture *preview = nullptr;
+        SDL_Texture *overlay = nullptr;
 
       public:
         ViewportWindow() noexcept;
@@ -66,11 +74,15 @@ namespace chroma {
         void delete_layer() noexcept;
 
         void select_mark(SDL_Rect rect) noexcept;
-        // void select_move() noexcept;
-        // void select_clear() noexcept;
+        void select_move_start() noexcept;
+        void select_move(SDL_Point p) noexcept;
+        void select_move_end() noexcept;
+        void select_clear() noexcept;
 
         void undo() noexcept;
         void redo() noexcept;
+
+        void reload() noexcept;
 
         Canvas &get_canvas() noexcept;
 

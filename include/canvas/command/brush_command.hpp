@@ -28,26 +28,22 @@ namespace chroma {
         BrushCommand() noexcept;
         virtual ~BrushCommand() noexcept override;
 
-        void add(uint32_t x, uint32_t y, const Color &old) noexcept;
-        bool contains(uint32_t x, uint32_t y) const noexcept;
+        void add(const SDL_Point &point, const Color &old) noexcept;
+        bool contains(const SDL_Point &point) const noexcept;
 
         virtual void redo(const Canvas &canvas) noexcept override final;
         virtual void undo(const Canvas &canvas) noexcept override final;
 
-        // virtual void start(uint32_t x, uint32_t y,
-        //                    const Color &color) noexcept override final;
-        // virtual void update(uint32_t x, uint32_t y,
-        //                     const Color &color) noexcept override final;
-        // virtual void end(uint32_t x, uint32_t y,
-        //                  const Color &color) noexcept override final;
-        // virtual void discard(const Canvas &preview) noexcept override final;
-        virtual void start(uint32_t x, uint32_t y,
+        virtual void start(const Canvas &canvas,
+                           const SDL_Point &point,
                            const Color &color) noexcept override final;
-        virtual void update(uint32_t x, uint32_t y,
-                            const Color &color) noexcept override final;
-        virtual void end(uint32_t x, uint32_t y,
-                         const Color &color) noexcept override final;
-        virtual void discard() noexcept override final;
+        virtual void update(const Canvas &canvas,
+                           const SDL_Point &point,
+                           const Color &color) noexcept override final;
+        virtual void end(const Canvas &canvas,
+                           const SDL_Point &point,
+                           const Color &color) noexcept override final;
+        virtual void discard(const Canvas &canvas) noexcept override final;
 
         virtual void preview(const Canvas &canvas) noexcept override final;
     };

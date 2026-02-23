@@ -34,6 +34,7 @@ file(GLOB CPP_SOURCES
     # src/lua/*.cpp
     # src/lua/imgui/*.cpp
     src/canvas/*.cpp
+    src/canvas/cmd/*.cpp
     src/canvas/command/*.cpp
     src/canvas/command/select/*.cpp
 )

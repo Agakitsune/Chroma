@@ -7,7 +7,7 @@
 #include "imgui_internal.h"
 
 #include "canvas/canvas.hpp"
-#include "canvas/command/select/select_mark_command.hpp"
+#include "canvas/command/select/select_move_command.hpp"
 
 #include "app.hpp"
 
@@ -15,17 +15,17 @@
 
 namespace chroma {
 
-    SelectMarkCommand::SelectMarkCommand() noexcept {}
+    SelectMoveCommand::SelectMoveCommand() noexcept {}
 
-    SelectMarkCommand::~SelectMarkCommand() noexcept {}
+    SelectMoveCommand::~SelectMoveCommand() noexcept {}
 
-    // void SelectMarkCommand::add(uint32_t x, uint32_t y,
+    // void SelectMoveCommand::add(uint32_t x, uint32_t y,
     //                        const Color &color) noexcept {
     //     positions.push_back({(float)x, (float)y});
     //     previous_colors.push_back(color);
     // }
 
-    // bool SelectMarkCommand::contains(uint32_t x, uint32_t y) const noexcept {
+    // bool SelectMoveCommand::contains(uint32_t x, uint32_t y) const noexcept {
     //     for (size_t i = 0; i < positions.size(); ++i) {
     //         if (positions[i].x == x && positions[i].y == y) {
     //             return true;
@@ -34,7 +34,7 @@ namespace chroma {
     //     return false;
     // }
 
-    void SelectMarkCommand::redo(const Canvas &canvas) noexcept {
+    void SelectMoveCommand::redo(const Canvas &canvas) noexcept {
         // const Layer &layer = canvas.layers[canvas.layer];
 
         // uint8_t *mapping;
@@ -49,10 +49,14 @@ namespace chroma {
         // }
 
         // SDL_UnlockTexture(texture);
-        App::get_instance()->emit_signal<SDL_Rect>("select_mark", this->rect);
+        SDL_Point delta{
+            e.x - s.x,
+            e.y - s.y,
+        };
+        App::get_instance()->emit_signal<SDL_Point>("select_move", delta);
     }
 
-    void SelectMarkCommand::undo(const Canvas &canvas) noexcept {
+    void SelectMoveCommand::undo(const Canvas &canvas) noexcept {
         // const Layer &layer = canvas.layers[canvas.layer];
 
         // uint8_t *mapping;
@@ -69,44 +73,56 @@ namespace chroma {
 
         // SDL_UnlockTexture(texture);
         // App::get_instance()->emit_signal<SDL_Rect>("select_mark", this->rect);
+        SDL_Point delta{
+            s.x - e.x,
+            s.y - e.y,
+        };
+        App::get_instance()->emit_signal<SDL_Point>("select_move", delta);
     }
 
-    void SelectMarkCommand::start(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+    void SelectMoveCommand::start(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
         s = p;
-        rect.w = 0;
-    }
-
-    void SelectMarkCommand::update(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
         e = p;
-        SDL_Point min = SDL_Point{std::min(s.x, e.x), std::min(s.y, e.y)};
-        SDL_Point max = SDL_Point{std::max(s.x, e.x), std::max(s.y, e.y)};
-        this->rect =
-            SDL_Rect{min.x, min.y, max.x - min.x + 1, max.y - min.y + 1};
+
+        App::get_instance()->emit_signal("select_move_start");
     }
 
-    void SelectMarkCommand::end(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+    void SelectMoveCommand::update(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        // if (e.x != p.x && e.y != p.y) {
+        SDL_Point delta{
+            p.x - e.x,
+            p.y - e.y,
+        };
+        App::get_instance()->emit_signal<SDL_Point>("select_move", delta);
+        e = p;
+        // }
+    }
+
+    void SelectMoveCommand::end(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
         update(canvas, p, color);
 
-        App::get_instance()->emit_signal<SDL_Rect>("select_mark", this->rect);
+        App::get_instance()->emit_signal("select_move_end");
+
+        // App::get_instance()->emit_signal<SDL_Rect>("select_mark", this->rect);
     }
 
-    void SelectMarkCommand::discard(const Canvas &canvas) noexcept { rect.w = 0; }
+    void SelectMoveCommand::discard(const Canvas &canvas) noexcept { e = s; }
 
-    // void SelectMarkCommand::imgui_draw(ImVec2 pos, ImVec2 size) noexcept {
+    // void SelectMoveCommand::imgui_draw(ImVec2 pos, ImVec2 size) noexcept {
 
     // }
 
-    void SelectMarkCommand::preview(const Canvas &canvas) noexcept {
-        SDL_Renderer *renderer = App::get_renderer();
+    void SelectMoveCommand::preview(const Canvas &canvas) noexcept {
+        // SDL_Renderer *renderer = App::get_renderer();
 
         // SDL_SetRenderTarget(renderer, canvas.overlay);
         // SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
         // SDL_RenderClear(renderer);
 
-        if (this->rect.w == 0) {
-            // SDL_SetRenderTarget(renderer, NULL);
-            return;
-        }
+        // if (this->rect.w == 0) {
+        //     // SDL_SetRenderTarget(renderer, NULL);
+        //     return;
+        // }
 
         // SDL_SetRenderTarget(renderer, canvas.overlay);
 

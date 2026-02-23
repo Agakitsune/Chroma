@@ -1,26 +1,40 @@
-
+/**
+ * @file color_command.hpp
+ * @author Zeustygien (lucas.gangnant@epitech.eu)
+ * @brief
+ * @version 0.1
+ * @date 2026-02-17
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
 #pragma once
 
-#include "color_command.hpp"
+#include "canvas/command/command.hpp"
 
-#include "SDL3/SDL.h"
-
-#include <vector>
+#include "color.hpp"
 
 namespace chroma {
 
-    class EraseCommand : public ICommand {
-        std::vector<SDL_FPoint>
-            positions; // forced to use floats since SDL doesn't have a method
-                       // to draw with int :c
-        std::vector<Color> previous_colors;
+    struct Canvas;
+
+    class SelectMoveCommand : public ICommand {
+        SDL_Point s;
+        SDL_Point e;
+        // SDL_Point e;
+        // SDL_Rect rect = {0, 0, 0, 0};
+
+        // uint8_t *previous_data = nullptr;
+        // std::vector<SDL_FPoint> positions; // forced to use floats since SDL
+        // doesn't have a method to draw with int :c std::vector<Color>
+        // previous_colors;
 
       public:
-        EraseCommand() noexcept;
-        virtual ~EraseCommand() noexcept override;
+        SelectMoveCommand() noexcept;
+        virtual ~SelectMoveCommand() noexcept override;
 
-        void add(const SDL_Point &point, const Color &old) noexcept;
-        bool contains(const SDL_Point &point) const noexcept;
+        // void add(uint32_t x, uint32_t y, const Color &old) noexcept;
+        // bool contains(uint32_t x, uint32_t y) const noexcept;
 
         virtual void redo(const Canvas &canvas) noexcept override final;
         virtual void undo(const Canvas &canvas) noexcept override final;
