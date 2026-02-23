@@ -17,6 +17,10 @@ Chroma aim to provide an easy-to-use and ready-to-go with most useful features f
 
 [Download Cmake here](https://cmake.org/)
 
+[Cmake dependencies](https://github.com/libsdl-org/SDL/blob/main/docs/README-linux.md)
+
+[GCC](https://github.com/libsdl-org/SDL/blob/main/docs/README-linux.md)
+
 ### Installation
 
 At the root of the project:
