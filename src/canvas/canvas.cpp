@@ -19,233 +19,227 @@
 
 namespace chroma {
 
-    Layer::~Layer() noexcept {
-        if (texture) {
-            SDL_DestroyTexture(texture);
-        }
-        if (surface) {
-            SDL_DestroySurface(surface);
-        }
-    }
+Layer::~Layer() noexcept {
+  if (texture) {
+    SDL_DestroyTexture(texture);
+  }
+  if (surface) {
+    SDL_DestroySurface(surface);
+  }
+}
 
-    Layer::Layer(Layer &&other) noexcept
-        : texture(other.texture), surface(other.surface), name(other.name) {
-        other.texture = nullptr;
-        other.surface = nullptr;
-        other.name = "";
-    }
+Layer::Layer(Layer &&other) noexcept
+    : texture(other.texture), surface(other.surface), name(other.name) {
+  other.texture = nullptr;
+  other.surface = nullptr;
+  other.name = "";
+}
 
-    Layer &Layer::operator=(Layer &&other) noexcept {
-        if (this != &other) {
-            texture = other.texture;
-            surface = other.surface;
-            name = other.name;
+Layer &Layer::operator=(Layer &&other) noexcept {
+  if (this != &other) {
+    texture = other.texture;
+    surface = other.surface;
+    name = other.name;
 
-            other.texture = nullptr;
-            other.surface = nullptr;
-            other.name = "";
-        }
-        return *this;
-    }
+    other.texture = nullptr;
+    other.surface = nullptr;
+    other.name = "";
+  }
+  return *this;
+}
 
-    Canvas::Canvas(uint32_t width, uint32_t height) noexcept
-        : width(width), height(height) {
-        SDL_Renderer *renderer = App::get_renderer();
+Canvas::Canvas(uint32_t width, uint32_t height) noexcept
+    : width(width), height(height) {
+  SDL_Renderer *renderer = App::get_renderer();
 
-        Layer &layer = layers.emplace_back();
-        layer.name = "Layer 1";
+  Layer &layer = layers.emplace_back();
+  layer.name = "Layer 1";
 
-        layer.surface =
-            SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGBA32);
+  layer.surface = SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGBA32);
 
-        layer.texture =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_STREAMING, width, height);
+  layer.texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                                    SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        // this->preview =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
-        
-        // this->overlay =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
+  // this->preview =
+  //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+  //                       SDL_TEXTUREACCESS_TARGET, width, height);
 
-        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
-        // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
-        // SDL_SetTextureScaleMode(this->overlay, SDL_SCALEMODE_NEAREST);
+  // this->overlay =
+  //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+  //                       SDL_TEXTUREACCESS_TARGET, width, height);
 
-        SDL_FillSurfaceRect(layer.surface, NULL, 0);
-        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
-                          layer.surface->pitch);
+  SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+  // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
+  // SDL_SetTextureScaleMode(this->overlay, SDL_SCALEMODE_NEAREST);
 
-        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        // SDL_SetRenderTarget(renderer, this->preview);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, this->overlay);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, NULL);
-    }
+  SDL_FillSurfaceRect(layer.surface, NULL, 0);
+  SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
+                    layer.surface->pitch);
 
-    Canvas::Canvas(SDL_Surface *surface) noexcept
-        : width(surface->w), height(surface->h) {
-        SDL_Renderer *renderer = App::get_renderer();
+  // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+  // SDL_SetRenderTarget(renderer, this->preview);
+  // SDL_RenderClear(renderer);
+  // SDL_SetRenderTarget(renderer, this->overlay);
+  // SDL_RenderClear(renderer);
+  // SDL_SetRenderTarget(renderer, NULL);
+}
 
-        Layer &layer = layers.emplace_back();
-        layer.name = "Layer 1";
+Canvas::Canvas(SDL_Surface *surface) noexcept
+    : width(surface->w), height(surface->h) {
+  SDL_Renderer *renderer = App::get_renderer();
 
-        layer.surface = surface;
+  Layer &layer = layers.emplace_back();
+  layer.name = "Layer 1";
 
-        layer.texture =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_STREAMING, width, height);
+  layer.surface = surface;
 
-        // this->preview =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
-        
-        // this->overlay =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
+  layer.texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                                    SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
-        // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
+  // this->preview =
+  //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+  //                       SDL_TEXTUREACCESS_TARGET, width, height);
 
-        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
-                          layer.surface->pitch);
+  // this->overlay =
+  //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+  //                       SDL_TEXTUREACCESS_TARGET, width, height);
 
-        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        // SDL_SetRenderTarget(renderer, this->preview);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, this->overlay);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, NULL);
-    }
+  SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+  // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
 
-    Canvas::~Canvas() noexcept {
-        // if (preview) {
-        //     SDL_DestroyTexture(this->preview);
-        // }
-        // if (this->overlay) {
-        //     SDL_DestroyTexture(this->overlay);
-        // }
-    }
+  SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
+                    layer.surface->pitch);
 
-    Canvas::Canvas(Canvas &&other) noexcept
-        : name(std::move(other.name)), layers(std::move(other.layers)),
-          stack(std::move(other.stack)),
-          pending(std::move(other.pending)), width(other.width),
-          height(other.height), stack_index(other.stack_index),
-          layer(other.layer), offset(other.offset), zoom(other.zoom),
-          dirty(other.dirty) {
-        // other.preview = nullptr;
-    }
+  // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+  // SDL_SetRenderTarget(renderer, this->preview);
+  // SDL_RenderClear(renderer);
+  // SDL_SetRenderTarget(renderer, this->overlay);
+  // SDL_RenderClear(renderer);
+  // SDL_SetRenderTarget(renderer, NULL);
+}
 
-    Canvas &Canvas::operator=(Canvas &&other) noexcept {
-        if (this != &other) {
-            width = other.width;
-            height = other.height;
-            name = std::move(other.name);
-            stack = std::move(other.stack);
-            pending = std::move(other.pending);
-            layers = std::move(other.layers);
-            stack_index = other.stack_index;
-            layer = other.layer;
-            offset = other.offset;
-            zoom = other.zoom;
-            dirty = other.dirty;
-        }
-        return *this;
-    }
+Canvas::~Canvas() noexcept {
+  // if (preview) {
+  //     SDL_DestroyTexture(this->preview);
+  // }
+  // if (this->overlay) {
+  //     SDL_DestroyTexture(this->overlay);
+  // }
+}
 
-    Color Canvas::get_color(uint32_t x, uint32_t y) const noexcept {
-        const Layer &layer = layers[this->layer];
+Canvas::Canvas(Canvas &&other) noexcept
+    : name(std::move(other.name)), layers(std::move(other.layers)),
+      stack(std::move(other.stack)), pending(std::move(other.pending)),
+      width(other.width), height(other.height), stack_index(other.stack_index),
+      layer(other.layer), offset(other.offset), zoom(other.zoom),
+      dirty(other.dirty) {
+  // other.preview = nullptr;
+}
 
-        uint8_t *mapping = (uint8_t *)layer.surface->pixels;
+Canvas &Canvas::operator=(Canvas &&other) noexcept {
+  if (this != &other) {
+    width = other.width;
+    height = other.height;
+    name = std::move(other.name);
+    stack = std::move(other.stack);
+    pending = std::move(other.pending);
+    layers = std::move(other.layers);
+    stack_index = other.stack_index;
+    layer = other.layer;
+    offset = other.offset;
+    zoom = other.zoom;
+    dirty = other.dirty;
+  }
+  return *this;
+}
 
-        Color ret;
+Color Canvas::get_color(uint32_t x, uint32_t y) const noexcept {
+  const Layer &layer = layers[this->layer];
 
-        mapping += (x + y * width) * 4;
-        ret.download(mapping);
+  uint8_t *mapping = (uint8_t *)layer.surface->pixels;
 
-        return ret;
-    }
+  Color ret;
 
-    void Canvas::add_command(std::unique_ptr<Command> &&cmd) noexcept {
-        // Remove undone commands
-        const uint64_t size = stack.size();
-        const uint64_t remove = size - stack_index;
+  mapping += (x + y * width) * 4;
+  ret.download(mapping);
 
-        stack.erase(stack.end() - remove, stack.end());
+  return ret;
+}
 
-        pending.push(std::move(cmd));
-    }
+void Canvas::add_command(std::unique_ptr<Command> &&cmd) noexcept {
+  // Remove undone commands
+  const uint64_t size = stack.size();
+  const uint64_t remove = size - stack_index;
 
-    void Canvas::execute_pending(SDL_Rect &selection) noexcept {
-        while (!pending.empty()) {
-            std::unique_ptr<Command> &cmd = pending.front();
+  stack.erase(stack.end() - remove, stack.end());
 
-            cmd->redo(selection);
+  pending.push(std::move(cmd));
+}
 
-            stack.push_back(std::move(cmd));
-            ++stack_index;
+void Canvas::execute_pending(SDL_Rect &selection) noexcept {
+  while (!pending.empty()) {
+    std::unique_ptr<Command> &cmd = pending.front();
 
-            pending.pop();
-        }
-    }
+    cmd->redo(selection);
 
-    void Canvas::undo(SDL_Rect &selection) noexcept {
-        if (stack_index == 0) {
-            return;
-        }
+    stack.push_back(std::move(cmd));
+    ++stack_index;
 
-        Command &cmd = *stack[stack_index - 1];
-        cmd.undo(selection);
-        --stack_index;
-    }
+    pending.pop();
+  }
+}
 
-    void Canvas::redo(SDL_Rect &selection) noexcept {
-        if (stack_index >= stack.size()) {
-            return;
-        }
+void Canvas::undo(SDL_Rect &selection) noexcept {
+  if (stack_index == 0) {
+    return;
+  }
 
-        Command &cmd = *stack[stack_index];
-        cmd.redo(selection);
-        ++stack_index;
-    }
+  Command &cmd = *stack[stack_index - 1];
+  cmd.undo(selection);
+  --stack_index;
+}
 
-    void Canvas::add_layer() noexcept {
-        char l[64] = {0};
-        SDL_Renderer *renderer = App::get_renderer();
+void Canvas::redo(SDL_Rect &selection) noexcept {
+  if (stack_index >= stack.size()) {
+    return;
+  }
 
-        Layer &layer = layers.emplace_back();
-        sprintf(l, "Layer %i", layers.size());
+  Command &cmd = *stack[stack_index];
+  cmd.redo(selection);
+  ++stack_index;
+}
 
-        layer.name = l;
+void Canvas::add_layer() noexcept {
+  char l[64] = {0};
+  SDL_Renderer *renderer = App::get_renderer();
 
-        layer.surface =
-            SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGBA32);
+  Layer &layer = layers.emplace_back();
+  sprintf(l, "Layer %i", layers.size());
 
-        layer.texture =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_STREAMING, width, height);
+  layer.name = l;
 
-        SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
+  layer.surface = SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGBA32);
 
-        SDL_FillSurfaceRect(layer.surface, NULL, 0);
-        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
-                          layer.surface->pitch);
-    }
+  layer.texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+                                    SDL_TEXTUREACCESS_STREAMING, width, height);
 
-    void Canvas::delete_layer() noexcept {
-        if (layers.size() == 1) {
-            return;
-        }
+  SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
 
-        layers.erase(layers.begin() + layer);
+  SDL_FillSurfaceRect(layer.surface, NULL, 0);
+  SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
+                    layer.surface->pitch);
+}
 
-        if (layer > 0) {
-            layer--;
-        }
-    }
+void Canvas::delete_layer() noexcept {
+  if (layers.size() == 1) {
+    return;
+  }
+
+  layers.erase(layers.begin() + layer);
+
+  if (layer > 0) {
+    layer--;
+  }
+}
 
 } // namespace chroma

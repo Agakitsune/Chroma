@@ -25,122 +25,122 @@
 
 namespace chroma {
 
-    class App {
-      public:
-        App() noexcept = default;
-        ~App() noexcept;
+class App {
+public:
+  App() noexcept = default;
+  ~App() noexcept;
 
-        App(const App &) = delete;
-        App &operator=(const App &) = delete;
+  App(const App &) = delete;
+  App &operator=(const App &) = delete;
 
-        App(App &&) = delete;
-        App &operator=(App &&) = delete;
+  App(App &&) = delete;
+  App &operator=(App &&) = delete;
 
-        int init() noexcept;
-        int run() noexcept;
+  int init() noexcept;
+  int run() noexcept;
 
-        // template <typename T>
-        // T *get_window(const std::string &label) const noexcept {
-        //     if (!windows.contains(label)) return nullptr;
-        //     return (T*)windows.at(label).get();
-        // }
+  // template <typename T>
+  // T *get_window(const std::string &label) const noexcept {
+  //     if (!windows.contains(label)) return nullptr;
+  //     return (T*)windows.at(label).get();
+  // }
 
-        template <typename... A> void add_signal(const std::string &name) {
-            std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
-            signals.insert_or_assign(name, Signal());
-            signal_hash.insert_or_assign(name, hash);
-        }
+  template <typename... A> void add_signal(const std::string &name) {
+    std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
+    signals.insert_or_assign(name, Signal());
+    signal_hash.insert_or_assign(name, hash);
+  }
 
-        template <typename O, typename... A>
-        void connect_signal(const std::string &name, O *object,
-                            void (O::*func)(A...)) {
-            std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
-            if (!signals.contains(name)) {
-                return;
-            }
-            if (signal_hash[name] != hash) {
-                return;
-            }
-            signals[name].connect(object, func);
-        }
+  template <typename O, typename... A>
+  void connect_signal(const std::string &name, O *object,
+                      void (O::*func)(A...)) {
+    std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
+    if (!signals.contains(name)) {
+      return;
+    }
+    if (signal_hash[name] != hash) {
+      return;
+    }
+    signals[name].connect(object, func);
+  }
 
-        void disconnect_signal(const std::string &name, void *object) {
-            if (!signals.contains(name)) {
-                return;
-            }
-            signals[name].disconnect(object);
-        }
+  void disconnect_signal(const std::string &name, void *object) {
+    if (!signals.contains(name)) {
+      return;
+    }
+    signals[name].disconnect(object);
+  }
 
-        template <typename... A>
-        void emit_signal(const std::string &name, A... args) {
-            std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
-            if (!signals.contains(name)) {
-                return;
-            }
-            if (signal_hash[name] != hash) {
-                return;
-            }
-            signals[name].emit(std::forward<A>(args)...);
-        }
+  template <typename... A>
+  void emit_signal(const std::string &name, A... args) {
+    std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
+    if (!signals.contains(name)) {
+      return;
+    }
+    if (signal_hash[name] != hash) {
+      return;
+    }
+    signals[name].emit(std::forward<A>(args)...);
+  }
 
-        template <typename I> I *add_menu(const std::string &menu) {
-            // if (!menu_bar.contains(menu)) {
-            //     menu_bar[menu]menu,
-            //     std::vector<std::unique_ptr<MenuItem>>());
-            // }
-            menu_bar[menu].push_back(std::make_unique<I>());
-            return (I *)menu_bar[menu].back().get();
-        }
+  template <typename I> I *add_menu(const std::string &menu) {
+    // if (!menu_bar.contains(menu)) {
+    //     menu_bar[menu]menu,
+    //     std::vector<std::unique_ptr<MenuItem>>());
+    // }
+    menu_bar[menu].push_back(std::make_unique<I>());
+    return (I *)menu_bar[menu].back().get();
+  }
 
-        void separator(const std::string &menu) {
-            // if (!menu_bar.contains(menu)) {
-            //     menu_bar.insert(menu,
-            //     std::vector<std::unique_ptr<MenuItem>>());
-            // }
-            menu_bar[menu].emplace_back(nullptr);
-        }
+  void separator(const std::string &menu) {
+    // if (!menu_bar.contains(menu)) {
+    //     menu_bar.insert(menu,
+    //     std::vector<std::unique_ptr<MenuItem>>());
+    // }
+    menu_bar[menu].emplace_back(nullptr);
+  }
 
-        static App *get_instance() noexcept;
-        static SDL_GPUDevice *get_device() noexcept;
-        static SDL_Renderer *get_renderer() noexcept;
-        static SDL_GPUCommandBuffer *get_command_buffer() noexcept;
+  static App *get_instance() noexcept;
+  static SDL_GPUDevice *get_device() noexcept;
+  static SDL_Renderer *get_renderer() noexcept;
+  static SDL_GPUCommandBuffer *get_command_buffer() noexcept;
 
-        // ViewportWindow viewport_window;
-        // ColorPickerWindow color_picker;
-        // PaletteWindow palette_window;
+  // ViewportWindow viewport_window;
+  // ColorPickerWindow color_picker;
+  // PaletteWindow palette_window;
 
-      private:
-        int create_window() noexcept;
-        int create_device() noexcept;
+private:
+  int create_window() noexcept;
+  int create_device() noexcept;
 
-        int setup() noexcept;
-        int setup_imgui() noexcept;
-        // int setup_windows() noexcept;
-        int setup_imgui_dockspace() noexcept;
-        int imgui_dockspace() noexcept;
+  int setup() noexcept;
+  int setup_imgui() noexcept;
+  // int setup_windows() noexcept;
+  int setup_imgui_dockspace() noexcept;
+  int imgui_dockspace() noexcept;
 
-        int process_events(float delta) noexcept;
+  int process_events(float delta) noexcept;
 
-        SDL_Window *window = nullptr;
+  SDL_Window *window = nullptr;
 
-        SDL_GPUDevice *device = nullptr;
-        SDL_Renderer *renderer = nullptr;
-        // SDL_GPUCommandBuffer *cmd_buffer = nullptr;
+  SDL_GPUDevice *device = nullptr;
+  SDL_Renderer *renderer = nullptr;
+  // SDL_GPUCommandBuffer *cmd_buffer = nullptr;
 
-        // SDL_GPUSampler *sampler = nullptr;
+  // SDL_GPUSampler *sampler = nullptr;
 
-        bool dockspace_initialized = false;
-        bool done = false;
-        bool idle = false;
+  bool dockspace_initialized = false;
+  bool done = false;
+  bool idle = false;
 
-        std::vector<std::unique_ptr<Window>> windows;
+  std::vector<std::unique_ptr<Window>> windows;
 
-        std::unordered_map<std::string, Signal> signals;
-        std::unordered_map<std::string, std::size_t> signal_hash;
+  std::unordered_map<std::string, Signal> signals;
+  std::unordered_map<std::string, std::size_t> signal_hash;
 
-        std::unordered_map<std::string, std::vector<std::unique_ptr<MenuItem>>>
-            menu_bar;
+  std::unordered_map<std::string, std::vector<std::unique_ptr<MenuItem>>>
+      menu_bar;
 
-        static App *instance;
-    };
+  static App *instance;
+};
 } // namespace chroma
