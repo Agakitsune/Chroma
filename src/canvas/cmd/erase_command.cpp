@@ -74,19 +74,16 @@ namespace chroma {
     }
 
     void EraseCommand::discard(SDL_Rect &selection) noexcept {
-        uint8_t *mapping;
-        int pitch;
-        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
+        uint8_t *mapping = (uint8_t *)surface->pixels;
 
         for (uint32_t i = 0; i < points.size(); i++) {
             const SDL_Point &p = points[i];
 
-            old[i].upload(mapping + (p.x + p.y * surface->w) * 4);
             old[i].upload(((uint8_t *)surface->pixels) +
                                       (p.x + p.y * surface->w) * 4);
         }
 
-        SDL_UnlockTexture(texture);
+        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
 
         points.clear();
         old.clear();
@@ -99,16 +96,15 @@ namespace chroma {
             return;
         }
 
-        uint8_t *mapping;
-        int pitch;
-        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
+        uint8_t *mapping = (uint8_t *)surface->pixels;
 
         for (const SDL_Point &p : points) {
 
-            MASK.upload(mapping + (p.x + p.y * surface->w) * 4);
+            MASK.upload(((uint8_t *)surface->pixels) +
+                                      (p.x + p.y * surface->w) * 4);
         }
 
-        SDL_UnlockTexture(texture);
+        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
     }
 
     std::unique_ptr<MouseCommand> EraseCommand::next() noexcept {
