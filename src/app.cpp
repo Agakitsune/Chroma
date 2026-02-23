@@ -202,7 +202,7 @@ namespace chroma {
     }
     
     int App::create_window() noexcept {
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
+        if (!SDL_Init(SDL_INIT_VIDEO)) {
             SDL_Log("Error: SDL_Init(): %s\n", SDL_GetError());
             return 1;
         }

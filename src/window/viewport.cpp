@@ -24,12 +24,6 @@
 #include "canvas/cmd/erase_command.hpp"
 #include "canvas/cmd/select_mark_command.hpp"
 
-// #include "canvas/command/brush_command.hpp"
-// #include "canvas/command/erase_command.hpp"
-// #include "canvas/command/select/select_mark_command.hpp"
-// #include "canvas/command/select/select_move_command.hpp"
-// #include "canvas/command/shape_command.hpp"
-
 #include "menu/fileformat.hpp"
 
 #include <cstring>
@@ -37,7 +31,6 @@
 
 #include <SDL3/SDL_surface.h>
 #include <SDL3_image/SDL_image.h>
-// #include <SDL3/SDL.h>
 
 namespace chroma {
 
@@ -45,7 +38,7 @@ namespace chroma {
         : Window("Viewport",
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove) {
-        cmd = std::make_unique<SelectMarkCommand>(); // default command
+        cmd = std::make_unique<BrushCommand>(); // default command
     }
 
     void ViewportWindow::ready() noexcept {
@@ -105,6 +98,16 @@ namespace chroma {
             marked = canvases.size();
         }
 
+        if (ImGui::IsKeyChordPressed(ImGuiKey_B)) {
+            cmd = std::make_unique<BrushCommand>(*cmd); // default command
+        } else if (ImGui::IsKeyChordPressed(ImGuiKey_S)) {
+            cmd = std::make_unique<ShapeCommand>(*cmd);
+        } else if (ImGui::IsKeyChordPressed(ImGuiKey_E)) {
+            cmd = std::make_unique<EraseCommand>(*cmd);
+        } else if (ImGui::IsKeyChordPressed(ImGuiKey_M)) {
+            cmd = std::make_unique<SelectMarkCommand>(*cmd);
+        }
+
         uint64_t modal = 0;
         if (ImGui::BeginTabBar("##ViewportTabs",
                                ImGuiTabBarFlags_NoCloseWithMiddleMouseButton |
@@ -133,6 +136,8 @@ namespace chroma {
                 if (ImGui::BeginTabItem(canvas.name.c_str(), &open, flags)) {
                     if (selected != i) {
                         selected = i;
+                        App::get_instance()->emit_signal<Canvas *>("canvas_selected",
+                                                   &canvases[selected]);
                         reload();
                     }
                     
@@ -154,9 +159,11 @@ namespace chroma {
                         0, 16.0f * canvas.zoom, ImVec2(0, 0));
 
                     for (uint64_t i = 0; i < canvas.layers.size(); i++) {
-                        draw_list->AddImage(
-                            (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
-                            canvas_offset, canvas_offset + canvas_size);
+                        if (canvas.layers[i].visible) {
+                            draw_list->AddImage(
+                                (ImTextureRef)(uintptr_t)canvas.layers[i].texture,
+                                canvas_offset, canvas_offset + canvas_size);
+                        }
 
                         if (i == canvas.layer) {
                             draw_list->AddImage(
@@ -275,20 +282,20 @@ namespace chroma {
             if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && !discarded) {
                 if (!brushing) {
 
-                    if (cmd->can_transform()) {
-                        if (on_select) {
-                            cmd = cmd->transform();
-                        } else {
-                            std::unique_ptr<MouseCommand> tmp = cmd->next();
+                    // if (cmd->can_transform()) {
+                    //     if (on_select) {
+                    //         cmd = cmd->transform();
+                    //     } else {
+                    //         std::unique_ptr<MouseCommand> tmp = cmd->next();
 
-                            if (tmp != cmd) {
-                                canvas.add_command(std::move(cmd));
-                            }
+                    //         if (tmp != cmd) {
+                    //             canvas.add_command(std::move(cmd));
+                    //         }
                             
-                            // Prepare new command
-                            cmd = std::move(tmp);
-                        }
-                    }
+                    //         // Prepare new command
+                    //         cmd = std::move(tmp);
+                    //     }
+                    // }
 
                     cmd->start(p, selection);
                     brushing = true;
@@ -303,7 +310,7 @@ namespace chroma {
             } else if (brushing) {
                 cmd->end(p, selection);
 
-                if (!cmd->is_persitent()) {
+                // if (!cmd->is_persitent()) {
                     std::unique_ptr<MouseCommand> tmp = cmd->next();
 
                     if (tmp != cmd) {
@@ -312,7 +319,7 @@ namespace chroma {
                     
                     // Prepare new command
                     cmd = std::move(tmp);
-                }
+                // }
 
                 brushing = false;
                 canvas.dirty = true;
@@ -378,6 +385,14 @@ namespace chroma {
 
         ImGui::End();
 
+        ImGui::PushOverrideID(57);
+        bool c = true;
+        if (ImGui::BeginPopupModal("SaveFailure", &c)) {
+            ImGui::Text("Failed to save canvas: %s", SDL_GetError());
+            ImGui::EndPopup();
+        }
+        ImGui::PopID();
+
         if (!canvas.pending.empty()) {
             canvas.execute_pending(selection);
         }
@@ -406,7 +421,17 @@ namespace chroma {
 
         bool result = false;
 
-        SDL_Surface *surface = canvas.layers[0].surface;
+        SDL_Surface *surface = SDL_CreateSurface(
+            canvas.width, canvas.height, SDL_PIXELFORMAT_RGBA32
+        );
+
+        for (const auto &layer : canvas.layers) {
+            if (!SDL_BlitSurface(layer.surface, nullptr, surface, nullptr)) {
+                ImGui::PushOverrideID(57);
+                ImGui::OpenPopup("SaveFailure");
+                ImGui::PopID();
+            }
+        }
 
         switch (format) {
         case BMP: {
@@ -421,6 +446,12 @@ namespace chroma {
         case TGA: {
             result = IMG_SaveTGA(surface, path);
         } break;
+        }
+
+        if (!result) {
+            ImGui::PushOverrideID(57);
+            ImGui::OpenPopup("SaveFailure");
+            ImGui::PopID();
         }
 
         SDL_DestroySurface(surface);
@@ -452,10 +483,17 @@ namespace chroma {
 
         SDL_Surface *output =
             SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
+        
+        selected = canvases.size();
+        Canvas &canvas = canvases.emplace_back(output);
+        App::get_instance()->emit_signal<Canvas *>("canvas_selected",
+                                                   &canvases[selected]);
 
-        canvases.emplace_back(output);
+        marked = canvases.size();
 
-        canvases.back().name = file;
+        canvas.name = file;
+
+        reload();
 
         SDL_DestroySurface(surface);
         SDL_CloseIO(stream);

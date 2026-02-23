@@ -28,6 +28,7 @@ namespace chroma {
       public:
         BrushCommand() noexcept = default;
         BrushCommand(const BrushCommand &cmd) noexcept : MouseCommand(cmd) {}
+        BrushCommand(const MouseCommand &cmd) noexcept : MouseCommand(cmd) {}
         virtual ~BrushCommand() noexcept override = default;
 
         virtual void redo(SDL_Rect &selection) noexcept override final;

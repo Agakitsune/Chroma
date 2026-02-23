@@ -31,6 +31,7 @@ namespace chroma {
       public:
         SelectMarkCommand() noexcept = default;
         SelectMarkCommand(const SelectMarkCommand &cmd) noexcept : MouseCommand(cmd) {}
+        SelectMarkCommand(const MouseCommand &cmd) noexcept : MouseCommand(cmd) {}
         virtual ~SelectMarkCommand() noexcept override = default;
 
         virtual void redo(SDL_Rect &selection) noexcept override final;

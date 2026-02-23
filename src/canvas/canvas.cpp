@@ -64,8 +64,8 @@ namespace chroma {
 
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
 
-        SDL_FillSurfaceRect(layer.surface, NULL, 0);
-        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
+        SDL_FillSurfaceRect(layer.surface, nullptr, 0);
+        SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels,
                           layer.surface->pitch);
     }
 
@@ -79,13 +79,17 @@ namespace chroma {
         layer.surface = surface;
 
         layer.texture =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_STREAMING, width, height);
+            SDL_CreateTexture(renderer, surface->format,
+                              SDL_TEXTUREACCESS_STREAMING, surface->w, surface->h);
 
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
 
-        SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
-                          layer.surface->pitch);
+        Color c;
+        c.download((uint8_t*)layer.surface->pixels);
+
+        if (SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels,
+                          layer.surface->pitch))
+        SDL_GetError();
     }
 
     Canvas::~Canvas() noexcept {}

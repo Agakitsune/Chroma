@@ -30,6 +30,7 @@ namespace chroma {
       public:
         ShapeCommand() noexcept = default;
         ShapeCommand(const ShapeCommand &cmd) noexcept : MouseCommand(cmd) {}
+        ShapeCommand(const MouseCommand &cmd) noexcept : MouseCommand(cmd) {}
         virtual ~ShapeCommand() noexcept override = default;
 
         virtual void redo(SDL_Rect &selection) noexcept override final;

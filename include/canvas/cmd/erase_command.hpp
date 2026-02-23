@@ -27,6 +27,7 @@ namespace chroma {
       public:
         EraseCommand() noexcept = default;
         EraseCommand(const EraseCommand &cmd) noexcept : MouseCommand(cmd) {}
+        EraseCommand(const MouseCommand &cmd) noexcept : MouseCommand(cmd) {}
         virtual ~EraseCommand() noexcept override = default;
 
         virtual void redo(SDL_Rect &selection) noexcept override final;

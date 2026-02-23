@@ -104,7 +104,7 @@ namespace chroma {
             if (!(g.ColorEditSavedID != g.ColorEditCurrentID ||
                   g.ColorEditSavedColor !=
                       ImGui::ColorConvertFloat4ToU32(ImVec4(
-                          main_color[0], main_color[1], main_color[2], 0)))) {
+                          main_color[0], main_color[1], main_color[2], main_color[3])))) {
                 // return;
                 H = g.ColorEditSavedHue;
             }
@@ -162,7 +162,7 @@ namespace chroma {
         g.ColorEditSavedSat = S;
         g.ColorEditSavedID = g.ColorEditCurrentID;
         g.ColorEditSavedColor = ImGui::ColorConvertFloat4ToU32(
-            ImVec4(main_color[0], main_color[1], main_color[2], 0));
+            ImVec4(main_color[0], main_color[1], main_color[2], main_color[3]));
 
         ImVec4 hue_color_f(1, 1, 1, 1);
         ImGui::ColorConvertHSVtoRGB(H, 1, 1, hue_color_f.x, hue_color_f.y,

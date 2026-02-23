@@ -9,38 +9,32 @@
 namespace chroma {
 
     void BrushCommand::redo(SDL_Rect &selection) noexcept {
-        uint8_t *mapping;
-        int pitch;
-        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
+        uint8_t *mapping = (uint8_t *)surface->pixels;
 
         for (const SDL_FPoint &p : points) {
             int x = p.x;
             int y = p.y;
 
-            main.upload(mapping + (x + y * surface->w) * 4);
-            main.upload(((uint8_t *)surface->pixels) +
+            main.upload(mapping +
                         (x + y * surface->w) * 4);
         }
 
-        SDL_UnlockTexture(texture);
+        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
     }
 
     void BrushCommand::undo(SDL_Rect &selection) noexcept {
-        uint8_t *mapping;
-        int pitch;
-        SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
+        uint8_t *mapping = (uint8_t *)surface->pixels;
 
         for (uint32_t i = 0; i < points.size(); i++) {
             const SDL_FPoint &p = points[i];
             int x = p.x;
             int y = p.y;
 
-            old[i].upload(mapping + (x + y * surface->w) * 4);
             old[i].upload(((uint8_t *)surface->pixels) +
                                       (x + y * surface->w) * 4);
         }
 
-        SDL_UnlockTexture(texture);
+        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
     }
 
     void BrushCommand::start(const SDL_Point &point, SDL_Rect &selection) noexcept {
