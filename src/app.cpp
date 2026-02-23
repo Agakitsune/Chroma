@@ -99,20 +99,20 @@ int App::init() noexcept
         win->ready();
     }
 
+    add_menu<SelectItem>("Select");
+
+    add_menu<LayerMenuItem>("Layer");
+    
+    add_menu<UndoRedoMenuItem>("Edit");
+    separator("Edit");
+    add_menu<FlipMenuItem>("Edit");
+
     add_menu<NewMenuItem>("File");
     add_menu<OpenMenuItem>("File");
     separator("File");
     SaveMenuItem* save_menu = add_menu<SaveMenuItem>("File");
     separator("File");
     add_menu<ExitMenuItem>("File");
-
-    add_menu<UndoRedoMenuItem>("Edit");
-    separator("Edit");
-    add_menu<FlipMenuItem>("Edit");
-
-    add_menu<LayerMenuItem>("Layer");
-
-    add_menu<SelectItem>("Select");
 
     connect_signal("popup_save", save_menu, &SaveMenuItem::action);
 
