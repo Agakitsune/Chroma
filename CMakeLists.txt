@@ -82,7 +82,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 # Find Doxygen
-find_package(Doxygen REQUIRED)
+find_package(Doxygen)
 
 if (DOXYGEN_FOUND)
 
