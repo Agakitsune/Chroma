@@ -23,15 +23,17 @@ Chroma aim to provide an easy-to-use and ready-to-go with most useful features f
 
 ### Installation
 
-Clone the repository and pull the dependencies using ```git clone --recursive <url>```
+- Clone the repository and pull the dependencies using ```git clone --recursive <url>```
 
-If you cloned only using ```git clone <url>``` :
+- If you cloned only using ```git clone <url>``` :
 
-- Once cloned, pull dependencies yourself using ```git submodule update --init --recursive```
+    Once cloned, pull dependencies yourself using ```git submodule update --init --recursive```
 
 Build the project:
 
-```cmake -B build```
+```bash
+cmake -B build
+```
 
 Once done, use the following command to launch the project:
 
@@ -47,6 +49,16 @@ cmake --build build && ./build/chroma
 
 `Scroll`: Zoom in/out.
 
+`Mouse click`: Move canva
+
+`B`: Brush tool
+
+`E`: Eraser tool
+
+`S`: Shape tool
+
+`M`: Select tool
+
 ## Features
 
 ### Common Commands
@@ -61,6 +73,7 @@ cmake --build build && ./build/chroma
 | `redo`                 | Put back deleted content                       |
 | `flip horizontal`      | Flip horizontally current picture              |
 | `flip verical`         | Flip vertically current picture                |
+| `brush`                | Brush to draw on canva                         |
 | `colorpicker`          | Colorpicker tool                               |
 | `colorpicker gradient` | Colorpicker tool to pinpoint colors            |
 | `save in palette`      | Register color for later usage                 |
