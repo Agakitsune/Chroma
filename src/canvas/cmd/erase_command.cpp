@@ -17,7 +17,12 @@ namespace chroma {
                                       (p.x + p.y * surface->w) * 4);
         }
 
-        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        if (selection.w > 0) {
+            mapping += selection.x * 4 + selection.y * surface->pitch;
+            SDL_UpdateTexture(texture, &selection, mapping, surface->pitch);
+        } else {
+            SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        }
     }
 
     void EraseCommand::undo(SDL_Rect &selection) noexcept {
@@ -30,7 +35,12 @@ namespace chroma {
                                       (p.x + p.y * surface->w) * 4);
         }
 
-        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        if (selection.w > 0) {
+            mapping += selection.x * 4 + selection.y * surface->pitch;
+            SDL_UpdateTexture(texture, &selection, mapping, surface->pitch);
+        } else {
+            SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        }
     }
 
     void EraseCommand::start(const SDL_Point &point, SDL_Rect &selection) noexcept {
@@ -83,7 +93,12 @@ namespace chroma {
                                       (p.x + p.y * surface->w) * 4);
         }
 
-        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        if (selection.w > 0) {
+            mapping += selection.x * 4 + selection.y * surface->pitch;
+            SDL_UpdateTexture(texture, &selection, mapping, surface->pitch);
+        } else {
+            SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        }
 
         points.clear();
         old.clear();
@@ -104,7 +119,12 @@ namespace chroma {
                                       (p.x + p.y * surface->w) * 4);
         }
 
-        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        if (selection.w > 0) {
+            mapping += selection.x * 4 + selection.y * surface->pitch;
+            SDL_UpdateTexture(texture, &selection, mapping, surface->pitch);
+        } else {
+            SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        }
     }
 
     std::unique_ptr<MouseCommand> EraseCommand::next() noexcept {

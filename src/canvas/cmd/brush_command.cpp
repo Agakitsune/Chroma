@@ -19,7 +19,12 @@ namespace chroma {
                         (x + y * surface->w) * 4);
         }
 
-        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        if (selection.w > 0) {
+            mapping += selection.x * 4 + selection.y * surface->pitch;
+            SDL_UpdateTexture(texture, &selection, mapping, surface->pitch);
+        } else {
+            SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        }
     }
 
     void BrushCommand::undo(SDL_Rect &selection) noexcept {
@@ -34,7 +39,12 @@ namespace chroma {
                                       (x + y * surface->w) * 4);
         }
 
-        SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        if (selection.w > 0) {
+            mapping += selection.x * 4 + selection.y * surface->pitch;
+            SDL_UpdateTexture(texture, &selection, mapping, surface->pitch);
+        } else {
+            SDL_UpdateTexture(texture, nullptr, mapping, surface->pitch);
+        }
     }
 
     void BrushCommand::start(const SDL_Point &point, SDL_Rect &selection) noexcept {
