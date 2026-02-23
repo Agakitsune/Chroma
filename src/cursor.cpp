@@ -86,64 +86,64 @@ uint8_t point_mask[] = {
  */
 namespace chroma {
 
-    std::unique_ptr<CursorManager> CursorManager::instance = nullptr;
+std::unique_ptr<CursorManager> CursorManager::instance = nullptr;
 
-    CursorManager::CursorManager() noexcept {
-        cursors.resize(static_cast<size_t>(Cursor::Count), nullptr);
+CursorManager::CursorManager() noexcept {
+  cursors.resize(static_cast<size_t>(Cursor::Count), nullptr);
 
-        cursors[(size_t)Cursor::Default] =
-            SDL_CreateCursor(arrow_data, arrow_mask, 16, 16, 0, 0);
+  cursors[(size_t)Cursor::Default] =
+      SDL_CreateCursor(arrow_data, arrow_mask, 16, 16, 0, 0);
 
-        cursors[(size_t)Cursor::Cross] =
-            SDL_CreateCursor(cross_data, cross_mask, 16, 16, 8, 8);
+  cursors[(size_t)Cursor::Cross] =
+      SDL_CreateCursor(cross_data, cross_mask, 16, 16, 8, 8);
 
-        cursors[(size_t)Cursor::Grab] =
-            SDL_CreateCursor(grab_data, grab_mask, 16, 16, 8, 8);
+  cursors[(size_t)Cursor::Grab] =
+      SDL_CreateCursor(grab_data, grab_mask, 16, 16, 8, 8);
 
-        cursors[(size_t)Cursor::Picker] =
-            SDL_CreateCursor(picker_data, picker_mask, 16, 16, 0, 15);
+  cursors[(size_t)Cursor::Picker] =
+      SDL_CreateCursor(picker_data, picker_mask, 16, 16, 0, 15);
 
-        cursors[(size_t)Cursor::Point] =
-            SDL_CreateCursor(point_data, point_mask, 16, 16, 6, 0);
+  cursors[(size_t)Cursor::Point] =
+      SDL_CreateCursor(point_data, point_mask, 16, 16, 6, 0);
 
-        for (SDL_Cursor *cursor : cursors) {
-            if (cursor == nullptr) {
-                SDL_Log("Error: Failed to create cursor: %s\n", SDL_GetError());
-            }
-        }
+  for (SDL_Cursor *cursor : cursors) {
+    if (cursor == nullptr) {
+      SDL_Log("Error: Failed to create cursor: %s\n", SDL_GetError());
     }
+  }
+}
 
-    CursorManager::~CursorManager() noexcept {
-        for (SDL_Cursor *cursor : cursors) {
-            if (cursor) {
-                SDL_DestroyCursor(cursor);
-            }
-        }
+CursorManager::~CursorManager() noexcept {
+  for (SDL_Cursor *cursor : cursors) {
+    if (cursor) {
+      SDL_DestroyCursor(cursor);
     }
+  }
+}
 
-    CursorManager &CursorManager::get_instance() noexcept {
-        if (!instance) {
-            instance = std::unique_ptr<CursorManager>(new CursorManager());
-        }
-        return *instance;
-    }
+CursorManager &CursorManager::get_instance() noexcept {
+  if (!instance) {
+    instance = std::unique_ptr<CursorManager>(new CursorManager());
+  }
+  return *instance;
+}
 
-    void CursorManager::set_cursor(Cursor cursor) noexcept {
-        CursorManager &mgr = get_instance();
+void CursorManager::set_cursor(Cursor cursor) noexcept {
+  CursorManager &mgr = get_instance();
 
-        size_t index = static_cast<size_t>(cursor);
-        if (index >= mgr.cursors.size() || !mgr.cursors[index]) {
-            index = static_cast<size_t>(Cursor::Default);
-        }
+  size_t index = static_cast<size_t>(cursor);
+  if (index >= mgr.cursors.size() || !mgr.cursors[index]) {
+    index = static_cast<size_t>(Cursor::Default);
+  }
 
-        mgr.cursor = cursor;
-    }
+  mgr.cursor = cursor;
+}
 
-    void CursorManager::update() noexcept {
-        CursorManager &mgr = get_instance();
+void CursorManager::update() noexcept {
+  CursorManager &mgr = get_instance();
 
-        size_t index = static_cast<size_t>(mgr.cursor);
-        SDL_SetCursor(mgr.cursors[index]);
-    }
+  size_t index = static_cast<size_t>(mgr.cursor);
+  SDL_SetCursor(mgr.cursors[index]);
+}
 
 } // namespace chroma

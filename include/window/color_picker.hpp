@@ -16,23 +16,23 @@
 
 namespace chroma {
 
-    /**
-     * @brief Color Picker window
-     * 
-     */
-    class ColorPickerWindow : public Window {
-      public:
-        ColorPickerWindow() noexcept;
-        virtual ~ColorPickerWindow() noexcept = default;
+/**
+ * @brief Color Picker window
+ *
+ */
+class ColorPickerWindow : public Window {
+public:
+  ColorPickerWindow() noexcept;
+  virtual ~ColorPickerWindow() noexcept = default;
 
-        virtual void ready() noexcept override final;
-        virtual void display() noexcept override final;
+  virtual void ready() noexcept override final;
+  virtual void display() noexcept override final;
 
-        Color main_color;
-        Color second_color;
+  Color main_color;
+  Color second_color;
 
-      private:
-        void _on_main_color_selected(const Color &clr) noexcept;
-        void _on_second_color_selected(const Color &clr) noexcept;
-    };
+private:
+  void _on_main_color_selected(const Color &clr) noexcept;
+  void _on_second_color_selected(const Color &clr) noexcept;
+};
 } // namespace chroma
