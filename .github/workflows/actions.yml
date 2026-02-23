@@ -1,0 +1,82 @@
+
+name: Integration
+
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          submodules: recursive
+          fetch-depth: 1
+      
+      - name: Install GCC and cmake
+        run: sudo apt-get update && sudo apt-get install -y gcc cmake
+      
+      - name: Configure
+        run: cmake -B build . -DCMAKE_BUILD_TYPE=Relase -DSDL_UNIX_CONSOLE_BUILD=ON
+      
+      - name: Build
+        run: cmake --build build -- -j8
+  
+  build-doc:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          submodules: recursive
+          fetch-depth: 1
+      
+      - name: Install GCC and cmake
+        run: sudo apt-get update && sudo apt-get install -y doxygen cmake
+      
+      - name: Configure
+        run: cmake -B build . -DCMAKE_BUILD_TYPE=Relase -DSDL_UNIX_CONSOLE_BUILD=ON
+      
+      - name: Build Documentation
+        run: cmake --build build --target doc
+
+
+  format:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+      
+      - name: Check Format
+        run: clang-format --style=LLVM -i $(find src -name *.cpp) $(find include -name *.hpp)
+      
+      - name: Commit
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git add .
+            git commit -m "Code Formatting"
+            git push
+          fi
