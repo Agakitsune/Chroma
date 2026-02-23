@@ -19,6 +19,7 @@
 #include "menu/openitem.hpp"
 #include "menu/saveitem.hpp"
 #include "menu/undoredoitem.hpp"
+#include "menu/selectitem.hpp"
 
 #include "window/color_picker.hpp"
 #include "window/layer.hpp"
@@ -83,11 +84,7 @@ namespace chroma {
         add_signal("layer_new");
         add_signal("layer_delete");
 
-        add_signal<SDL_Rect>("select_mark");
-        add_signal("select_move_start");
-        add_signal<SDL_Point>("select_move");
-        add_signal("select_move_end");
-        add_signal("select_clear");
+        add_signal("select_all");
 
         add_signal("popup_save");
 
@@ -112,6 +109,8 @@ namespace chroma {
         add_menu<FlipMenuItem>("Edit");
 
         add_menu<LayerMenuItem>("Layer");
+
+        add_menu<SelectItem>("Select");
 
         connect_signal("popup_save", save_menu, &SaveMenuItem::action);
 

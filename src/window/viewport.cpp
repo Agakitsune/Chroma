@@ -23,6 +23,7 @@
 #include "canvas/cmd/shape_command.hpp"
 #include "canvas/cmd/erase_command.hpp"
 #include "canvas/cmd/select_mark_command.hpp"
+#include "canvas/cmd/mark_command.hpp"
 
 #include "menu/fileformat.hpp"
 
@@ -70,6 +71,9 @@ namespace chroma {
                                             &ViewportWindow::add_layer);
         App::get_instance()->connect_signal("layer_delete", this,
                                             &ViewportWindow::delete_layer);
+
+        App::get_instance()->connect_signal("select_all", this,
+                                            &ViewportWindow::select_all);
     }
 
     void ViewportWindow::display() noexcept {
@@ -542,6 +546,24 @@ namespace chroma {
 
         Canvas &canvas = canvases[selected];
         canvas.delete_layer();
+    }
+
+    void ViewportWindow::select_all() noexcept {
+        if (canvases.empty()) {
+            return;
+        }
+
+        Canvas &canvas = canvases[selected];
+        std::unique_ptr<MarkCommand> cmd = std::make_unique<MarkCommand>();
+
+        cmd->previous = selection;
+
+        cmd->rect.x = 0;
+        cmd->rect.y = 0;
+        cmd->rect.w = canvas.width;
+        cmd->rect.h = canvas.height;
+
+        canvas.add_command(std::move(cmd));
     }
 
     void ViewportWindow::undo() noexcept {

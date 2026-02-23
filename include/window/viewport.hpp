@@ -79,6 +79,8 @@ namespace chroma {
         void add_layer() noexcept;
         void delete_layer() noexcept;
 
+        void select_all() noexcept;
+
         void undo() noexcept;
         void redo() noexcept;
 
