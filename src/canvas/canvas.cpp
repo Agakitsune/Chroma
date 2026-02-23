@@ -62,28 +62,28 @@ namespace chroma {
             SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
                               SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        this->preview =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_TARGET, width, height);
+        // this->preview =
+        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+        //                       SDL_TEXTUREACCESS_TARGET, width, height);
         
-        this->overlay =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_TARGET, width, height);
+        // this->overlay =
+        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+        //                       SDL_TEXTUREACCESS_TARGET, width, height);
 
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
-        SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
-        SDL_SetTextureScaleMode(this->overlay, SDL_SCALEMODE_NEAREST);
+        // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
+        // SDL_SetTextureScaleMode(this->overlay, SDL_SCALEMODE_NEAREST);
 
         SDL_FillSurfaceRect(layer.surface, NULL, 0);
         SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
                           layer.surface->pitch);
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        SDL_SetRenderTarget(renderer, this->preview);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderTarget(renderer, this->overlay);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderTarget(renderer, NULL);
+        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        // SDL_SetRenderTarget(renderer, this->preview);
+        // SDL_RenderClear(renderer);
+        // SDL_SetRenderTarget(renderer, this->overlay);
+        // SDL_RenderClear(renderer);
+        // SDL_SetRenderTarget(renderer, NULL);
     }
 
     Canvas::Canvas(SDL_Surface *surface) noexcept
@@ -99,45 +99,45 @@ namespace chroma {
             SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
                               SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        this->preview =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_TARGET, width, height);
+        // this->preview =
+        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+        //                       SDL_TEXTUREACCESS_TARGET, width, height);
         
-        this->overlay =
-            SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                              SDL_TEXTUREACCESS_TARGET, width, height);
+        // this->overlay =
+        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+        //                       SDL_TEXTUREACCESS_TARGET, width, height);
 
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
-        SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
+        // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
 
         SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
                           layer.surface->pitch);
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        SDL_SetRenderTarget(renderer, this->preview);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderTarget(renderer, this->overlay);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderTarget(renderer, NULL);
+        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        // SDL_SetRenderTarget(renderer, this->preview);
+        // SDL_RenderClear(renderer);
+        // SDL_SetRenderTarget(renderer, this->overlay);
+        // SDL_RenderClear(renderer);
+        // SDL_SetRenderTarget(renderer, NULL);
     }
 
     Canvas::~Canvas() noexcept {
-        if (preview) {
-            SDL_DestroyTexture(this->preview);
-        }
-        if (this->overlay) {
-            SDL_DestroyTexture(this->overlay);
-        }
+        // if (preview) {
+        //     SDL_DestroyTexture(this->preview);
+        // }
+        // if (this->overlay) {
+        //     SDL_DestroyTexture(this->overlay);
+        // }
     }
 
     Canvas::Canvas(Canvas &&other) noexcept
         : name(std::move(other.name)), layers(std::move(other.layers)),
-          preview(other.preview), stack(std::move(other.stack)),
+          stack(std::move(other.stack)),
           pending(std::move(other.pending)), width(other.width),
           height(other.height), stack_index(other.stack_index),
           layer(other.layer), offset(other.offset), zoom(other.zoom),
           dirty(other.dirty) {
-        other.preview = nullptr;
+        // other.preview = nullptr;
     }
 
     Canvas &Canvas::operator=(Canvas &&other) noexcept {
@@ -148,14 +148,11 @@ namespace chroma {
             stack = std::move(other.stack);
             pending = std::move(other.pending);
             layers = std::move(other.layers);
-            preview = other.preview;
             stack_index = other.stack_index;
             layer = other.layer;
             offset = other.offset;
             zoom = other.zoom;
             dirty = other.dirty;
-
-            other.preview = nullptr;
         }
         return *this;
     }
@@ -173,7 +170,7 @@ namespace chroma {
         return ret;
     }
 
-    void Canvas::add_command(std::unique_ptr<ICommand> &&cmd) noexcept {
+    void Canvas::add_command(std::unique_ptr<Command> &&cmd) noexcept {
         // Remove undone commands
         const uint64_t size = stack.size();
         const uint64_t remove = size - stack_index;
@@ -183,11 +180,11 @@ namespace chroma {
         pending.push(std::move(cmd));
     }
 
-    void Canvas::execute_pending() noexcept {
+    void Canvas::execute_pending(SDL_Rect &selection) noexcept {
         while (!pending.empty()) {
-            std::unique_ptr<ICommand> &cmd = pending.front();
+            std::unique_ptr<Command> &cmd = pending.front();
 
-            cmd->redo(*this);
+            cmd->redo(selection);
 
             stack.push_back(std::move(cmd));
             ++stack_index;
@@ -196,23 +193,23 @@ namespace chroma {
         }
     }
 
-    void Canvas::undo() noexcept {
+    void Canvas::undo(SDL_Rect &selection) noexcept {
         if (stack_index == 0) {
             return;
         }
 
-        ICommand &cmd = *stack[stack_index - 1];
-        cmd.undo(*this);
+        Command &cmd = *stack[stack_index - 1];
+        cmd.undo(selection);
         --stack_index;
     }
 
-    void Canvas::redo() noexcept {
+    void Canvas::redo(SDL_Rect &selection) noexcept {
         if (stack_index >= stack.size()) {
             return;
         }
 
-        ICommand &cmd = *stack[stack_index];
-        cmd.redo(*this);
+        Command &cmd = *stack[stack_index];
+        cmd.redo(selection);
         ++stack_index;
     }
 

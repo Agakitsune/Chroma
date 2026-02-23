@@ -13,15 +13,15 @@ namespace chroma {
 
     BrushCommand::~BrushCommand() noexcept {}
 
-    void BrushCommand::add(uint32_t x, uint32_t y,
+    void BrushCommand::add(const SDL_Point &point,
                            const Color &color) noexcept {
-        positions.push_back({(float)x, (float)y});
+        positions.push_back({(float)point.x, (float)point.y});
         previous_colors.push_back(color);
     }
 
-    bool BrushCommand::contains(uint32_t x, uint32_t y) const noexcept {
+    bool BrushCommand::contains(const SDL_Point &point) const noexcept {
         for (size_t i = 0; i < positions.size(); ++i) {
-            if (positions[i].x == x && positions[i].y == y) {
+            if (positions[i].x == point.x && positions[i].y == point.y) {
                 return true;
             }
         }
@@ -67,24 +67,21 @@ namespace chroma {
         SDL_UnlockTexture(texture);
     }
 
-    void BrushCommand::start(uint32_t x, uint32_t y,
-                             const Color &color) noexcept {
-        add(x, y, color);
+    void BrushCommand::start(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        add(p, color);
     }
 
-    void BrushCommand::update(uint32_t x, uint32_t y,
-                              const Color &color) noexcept {
-        if (!contains(x, y)) {
-            add(x, y, color);
+    void BrushCommand::update(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        if (!contains(p)) {
+            add(p, color);
         }
     }
 
-    void BrushCommand::end(uint32_t x, uint32_t y,
-                           const Color &color) noexcept {
-        update(x, y, color);
+    void BrushCommand::end(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        update(canvas, p, color);
     }
 
-    void BrushCommand::discard() noexcept {
+    void BrushCommand::discard(const Canvas &canvas) noexcept {
         positions.clear();
         previous_colors.clear();
     }
@@ -92,19 +89,21 @@ namespace chroma {
     void BrushCommand::preview(const Canvas &canvas) noexcept {
         SDL_Renderer *renderer = App::get_renderer();
 
-        SDL_SetRenderTarget(renderer, canvas.preview);
-        SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
-        SDL_RenderClear(renderer);
+        // SDL_SetRenderTarget(renderer, canvas.preview);
+        // SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
+        // SDL_RenderClear(renderer);
 
         if (positions.empty()) {
-            SDL_SetRenderTarget(renderer, NULL);
+            // SDL_SetRenderTarget(renderer, NULL);
             return;
         }
 
-        SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
-        SDL_RenderPoints(renderer, positions.data(), positions.size());
+        // SDL_SetRenderTarget(renderer, canvas.preview);
 
-        SDL_SetRenderTarget(renderer, NULL);
+        // SDL_SetRenderDrawColorFloat(renderer, main.r, main.g, main.b, main.a);
+        // SDL_RenderPoints(renderer, positions.data(), positions.size());
+
+        // SDL_SetRenderTarget(renderer, NULL);
     }
 
 } // namespace chroma

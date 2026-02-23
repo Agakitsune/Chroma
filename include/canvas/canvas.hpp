@@ -15,7 +15,9 @@
 #include "SDL3/SDL.h"
 // #include "SDL3/SDL_gpu.h"
 
-#include "command/command.hpp"
+#include "cmd/command.hpp"
+
+#include "color.hpp"
 
 #include <memory>
 #include <queue>
@@ -52,16 +54,16 @@ namespace chroma {
 
         std::vector<Layer> layers;
 
-        SDL_Texture *preview;
-        SDL_Texture *overlay;
+        // SDL_Texture *preview;
+        // SDL_Texture *overlay;
 
         // SDL_GPUTransferBuffer *canvas_preview_buffer = nullptr;
         // SDL_GPUTexture *canvas_preview = nullptr;
 
         // SDL_GPUTexture *preview = nullptr;
 
-        std::vector<std::unique_ptr<ICommand>> stack;
-        std::queue<std::unique_ptr<ICommand>> pending;
+        std::vector<std::unique_ptr<Command>> stack;
+        std::queue<std::unique_ptr<Command>> pending;
 
         uint32_t stack_index = 0;
 
@@ -89,11 +91,11 @@ namespace chroma {
 
         Color get_color(uint32_t x, uint32_t y) const noexcept;
 
-        void add_command(std::unique_ptr<ICommand> &&cmd) noexcept;
-        void execute_pending() noexcept;
+        void add_command(std::unique_ptr<Command> &&cmd) noexcept;
+        void execute_pending(SDL_Rect &selection) noexcept;
 
-        void undo() noexcept;
-        void redo() noexcept;
+        void undo(SDL_Rect &selection) noexcept;
+        void redo(SDL_Rect &selection) noexcept;
 
         void add_layer() noexcept;
         void delete_layer() noexcept;

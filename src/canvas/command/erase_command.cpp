@@ -13,15 +13,15 @@ namespace chroma {
 
     EraseCommand::~EraseCommand() noexcept {}
 
-    void EraseCommand::add(uint32_t x, uint32_t y,
+    void EraseCommand::add(const SDL_Point &point,
                            const Color &color) noexcept {
-        positions.push_back({(float)x, (float)y});
+        positions.push_back({(float)point.x, (float)point.y});
         previous_colors.push_back(color);
     }
 
-    bool EraseCommand::contains(uint32_t x, uint32_t y) const noexcept {
+    bool EraseCommand::contains(const SDL_Point &point) const noexcept {
         for (size_t i = 0; i < positions.size(); ++i) {
-            if (positions[i].x == x && positions[i].y == y) {
+            if (positions[i].x == point.x && positions[i].y == point.y) {
                 return true;
             }
         }
@@ -63,24 +63,21 @@ namespace chroma {
         SDL_UnlockTexture(texture);
     }
 
-    void EraseCommand::start(uint32_t x, uint32_t y,
-                             const Color &color) noexcept {
-        add(x, y, color);
+    void EraseCommand::start(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        add(p, color);
     }
 
-    void EraseCommand::update(uint32_t x, uint32_t y,
-                              const Color &color) noexcept {
-        if (!contains(x, y)) {
-            add(x, y, color);
+    void EraseCommand::update(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        if (!contains(p)) {
+            add(p, color);
         }
     }
 
-    void EraseCommand::end(uint32_t x, uint32_t y,
-                           const Color &color) noexcept {
-        update(x, y, color);
+    void EraseCommand::end(const Canvas &canvas, const SDL_Point &p, const Color &color) noexcept {
+        update(canvas, p, color);
     }
 
-    void EraseCommand::discard() noexcept {
+    void EraseCommand::discard(const Canvas &canvas) noexcept {
         uint8_t *mapping;
         int pitch;
         SDL_LockTexture(texture, NULL, (void **)&mapping, &pitch);
@@ -101,12 +98,12 @@ namespace chroma {
 
     void EraseCommand::preview(const Canvas &canvas) noexcept {
         const Layer &layer = canvas.layers[canvas.layer];
-        SDL_Renderer *renderer = App::get_renderer();
+        // SDL_Renderer *renderer = App::get_renderer();
 
-        SDL_SetRenderTarget(renderer, canvas.preview);
-        SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderTarget(renderer, NULL);
+        // SDL_SetRenderTarget(renderer, canvas.preview);
+        // SDL_SetRenderDrawColorFloat(renderer, 0.0, 0.0, 0.0, 0.0);
+        // SDL_RenderClear(renderer);
+        // SDL_SetRenderTarget(renderer, NULL);
 
         if (positions.empty()) {
             return;

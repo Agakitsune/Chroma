@@ -124,6 +124,10 @@ namespace chroma {
         add_signal("layer_delete");
 
         add_signal<SDL_Rect>("select_mark");
+        add_signal("select_move_start");
+        add_signal<SDL_Point>("select_move");
+        add_signal("select_move_end");
+        add_signal("select_clear");
 
         add_signal("popup_save");
 
