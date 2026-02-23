@@ -98,6 +98,14 @@ void ViewportWindow::display() noexcept
         if (selected == canvases.size() && selected > 0) {
             selected--;
         }
+        if (canvases.empty()) {
+            App::get_instance()->emit_signal<Canvas*>("canvas_selected",
+        nullptr);
+        } else {
+            App::get_instance()->emit_signal<Canvas*>("canvas_selected",
+        &canvases[selected]);
+        }
+        
         marked = canvases.size();
     }
 
