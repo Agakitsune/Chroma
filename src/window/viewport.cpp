@@ -24,6 +24,7 @@
 #include "canvas/cmd/erase_command.hpp"
 #include "canvas/cmd/select_mark_command.hpp"
 #include "canvas/cmd/mark_command.hpp"
+#include "canvas/cmd/flip_command.hpp"
 
 #include "menu/fileformat.hpp"
 
@@ -500,9 +501,16 @@ void ViewportWindow::fliph() noexcept {
   Canvas &canvas = canvases[selected];
   const Layer &layer = canvas.layers[canvas.layer];
 
-  SDL_FlipSurface(layer.surface, SDL_FlipMode::SDL_FLIP_HORIZONTAL);
-  SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels,
-                    layer.surface->pitch);
+  std::unique_ptr<FlipCommand> cmd = std::make_unique<FlipCommand>();
+
+        cmd->mode = SDL_FLIP_HORIZONTAL;
+        cmd->set_layer(layer);
+
+        canvas.add_command(std::move(cmd));
+
+//   SDL_FlipSurface(layer.surface, SDL_FlipMode::SDL_FLIP_HORIZONTAL);
+//   SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels,
+//                     layer.surface->pitch);
 }
 
 void ViewportWindow::flipv() noexcept {
@@ -513,9 +521,12 @@ void ViewportWindow::flipv() noexcept {
   Canvas &canvas = canvases[selected];
   const Layer &layer = canvas.layers[canvas.layer];
 
-  SDL_FlipSurface(layer.surface, SDL_FlipMode::SDL_FLIP_VERTICAL);
-  SDL_UpdateTexture(layer.texture, nullptr, layer.surface->pixels,
-                    layer.surface->pitch);
+  std::unique_ptr<FlipCommand> cmd = std::make_unique<FlipCommand>();
+
+        cmd->mode = SDL_FLIP_VERTICAL;
+        cmd->set_layer(layer);
+
+        canvas.add_command(std::move(cmd));
 }
 
 void ViewportWindow::add_layer() noexcept {
