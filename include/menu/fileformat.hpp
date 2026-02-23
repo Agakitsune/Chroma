@@ -19,19 +19,19 @@ namespace chroma {
  *
  */
 enum FileFormat {
-  All,
-  BMP, // BMP Format (.bmp)
-  JPG, // JPG Format (.jpeg, .jpg)
-  PNG, // PNG Format (.png)
-  TGA, // TGA Format (.tga)
+    All,
+    BMP, // BMP Format (.bmp)
+    JPG, // JPG Format (.jpeg, .jpg)
+    PNG, // PNG Format (.png)
+    TGA, // TGA Format (.tga)
 
-  Count
+    Count
 };
 
-static const char *extensions[] = {"All formats", ".bmp", ".jpeg",
-                                   ".jpg",        ".png", ".tga"};
+static const char* extensions[] = { "All formats", ".bmp", ".jpeg",
+    ".jpg", ".png", ".tga" };
 
-static FileFormat formats[] = {All, BMP, JPG, JPG, PNG, TGA};
+static FileFormat formats[] = { All, BMP, JPG, JPG, PNG, TGA };
 
 /**
  * @brief Is the current extension supported
@@ -40,7 +40,7 @@ static FileFormat formats[] = {All, BMP, JPG, JPG, PNG, TGA};
  * @return true The extension is supported
  * @return false Thd extension isn't supported
  */
-bool is_image(const std::string &ext) noexcept;
+bool is_image(const std::string& ext) noexcept;
 
 /**
  * @brief Convert the extension to a @ref FileFormat
@@ -49,6 +49,6 @@ bool is_image(const std::string &ext) noexcept;
  * @return FileFormat The associated @ref FileFormat, @ref FileFormat::Count if
  * not found
  */
-FileFormat fetch_format(const std::string &ext) noexcept;
+FileFormat fetch_format(const std::string& ext) noexcept;
 
 } // namespace chroma

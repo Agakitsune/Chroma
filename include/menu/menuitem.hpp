@@ -18,32 +18,32 @@ namespace chroma {
  */
 class MenuItem {
 public:
-  MenuItem() noexcept = default;
-  virtual ~MenuItem() noexcept = default;
+    MenuItem() noexcept = default;
+    virtual ~MenuItem() noexcept = default;
 
-  /**
-   * @brief Used to render the ImGui::MenuItem, can be used to add multiple
-   * items
-   *
-   */
-  virtual void menubar() noexcept = 0;
+    /**
+     * @brief Used to render the ImGui::MenuItem, can be used to add multiple
+     * items
+     *
+     */
+    virtual void menubar() noexcept = 0;
 
-  /**
-   * @brief Define an action when executed (Deprecated)
-   *
-   */
-  virtual void action() noexcept {};
+    /**
+     * @brief Define an action when executed (Deprecated)
+     *
+     */
+    virtual void action() noexcept {};
 
-  /**
-   * @brief Display Modals windows and such
-   *
-   */
-  virtual void display() noexcept {};
+    /**
+     * @brief Display Modals windows and such
+     *
+     */
+    virtual void display() noexcept {};
 
-  /**
-   * @brief Process shortcuts
-   *
-   */
-  virtual void shortcuts() noexcept {};
+    /**
+     * @brief Process shortcuts
+     *
+     */
+    virtual void shortcuts() noexcept {};
 };
 } // namespace chroma

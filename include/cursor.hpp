@@ -22,15 +22,15 @@ namespace chroma {
  *
  */
 enum class Cursor {
-  Default, // Default cursor
+    Default, // Default cursor
 
-  Arrow = Default, // Arrow cusor (default)
-  Cross,           // Cross
-  Grab,            // Grab
-  Picker,          // Color Picker
-  Point,           // Point
+    Arrow = Default, // Arrow cusor (default)
+    Cross, // Cross
+    Grab, // Grab
+    Picker, // Color Picker
+    Point, // Point
 
-  Count
+    Count
 };
 
 /**
@@ -41,33 +41,33 @@ enum class Cursor {
  *
  */
 class CursorManager {
-  static std::unique_ptr<CursorManager> instance;
+    static std::unique_ptr<CursorManager> instance;
 
-  std::vector<SDL_Cursor *> cursors;
+    std::vector<SDL_Cursor*> cursors;
 
-  SDL_Cursor *last_cursor = nullptr;
+    SDL_Cursor* last_cursor = nullptr;
 
-  Cursor cursor = Cursor::Default;
+    Cursor cursor = Cursor::Default;
 
-  CursorManager() noexcept;
+    CursorManager() noexcept;
 
-  static CursorManager &get_instance() noexcept;
+    static CursorManager& get_instance() noexcept;
 
 public:
-  ~CursorManager() noexcept;
+    ~CursorManager() noexcept;
 
-  /**
-   * @brief Set the cursor object
-   *
-   * @param cursor The @ref Cursor type
-   */
-  static void set_cursor(Cursor cursor) noexcept;
+    /**
+     * @brief Set the cursor object
+     *
+     * @param cursor The @ref Cursor type
+     */
+    static void set_cursor(Cursor cursor) noexcept;
 
-  /**
-   * @brief Update the instance
-   *
-   */
-  static void update() noexcept;
+    /**
+     * @brief Update the instance
+     *
+     */
+    static void update() noexcept;
 };
 
 } // namespace chroma

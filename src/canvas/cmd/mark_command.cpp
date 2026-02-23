@@ -8,12 +8,14 @@
 
 namespace chroma {
 
-    void MarkCommand::redo(SDL_Rect &selection) noexcept {
-        selection = rect;
-    }
+void MarkCommand::redo(SDL_Rect& selection) noexcept
+{
+    selection = rect;
+}
 
-    void MarkCommand::undo(SDL_Rect &selection) noexcept {
-        selection = previous;
-    }
+void MarkCommand::undo(SDL_Rect& selection) noexcept
+{
+    selection = previous;
+}
 
 }

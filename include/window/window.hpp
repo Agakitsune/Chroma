@@ -22,35 +22,35 @@ namespace chroma {
  */
 class Window {
 public:
-  /**
-   * @brief Construct a new Window object
-   *
-   * @param label The window label
-   * @param flags The Window flags
-   */
-  Window(const std::string &label, ImGuiWindowFlags flags) noexcept;
+    /**
+     * @brief Construct a new Window object
+     *
+     * @param label The window label
+     * @param flags The Window flags
+     */
+    Window(const std::string& label, ImGuiWindowFlags flags) noexcept;
 
-  virtual ~Window() noexcept = default;
+    virtual ~Window() noexcept = default;
 
-  /**
-   * @brief Called at the start of the application, used to connect signals to
-   * methods
-   *
-   */
-  virtual void ready() noexcept {};
+    /**
+     * @brief Called at the start of the application, used to connect signals to
+     * methods
+     *
+     */
+    virtual void ready() noexcept {};
 
-  /**
-   * @brief Display the Window content
-   *
-   */
-  virtual void display() noexcept = 0;
+    /**
+     * @brief Display the Window content
+     *
+     */
+    virtual void display() noexcept = 0;
 
-  // bool begin();
-  // bool render();
-  // void end();
+    // bool begin();
+    // bool render();
+    // void end();
 
 protected:
-  std::string label;
-  ImGuiWindowFlags flags;
+    std::string label;
+    ImGuiWindowFlags flags;
 };
 } // namespace chroma
