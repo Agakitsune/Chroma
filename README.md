@@ -1,6 +1,6 @@
 # Chroma
 
-Chroma is a raster graphics editor developed in C++ inspired by Gimp and influenced by Aseprite software.
+Chroma is a Linux raster graphics editor developed in C++ inspired by Gimp and influenced by Aseprite software.
 
 
 ## Overview
@@ -61,6 +61,10 @@ cmake --build . && ./chroma
 | `colorpicker`          | Colorpicker tool                               |
 | `colorpicker gradient` | Colorpicker tool to pinpoint colors            |
 | `save in palette`      | Register color for later usage                 |
+| `select`               | Define an area of editing                      |
+| `layer`                | Multiple layer for complex editing             |
+| `shape`                | Create and fill a shape by defining an area    |
+| `eraser`               | Remove color from canva                        |
 
 ### Visual examples
 
@@ -76,11 +80,12 @@ cmake --build . && ./chroma
 
 ![Chroma Demo](screenshots/colorpicker.gif)
 
-## Project Structure
+## Project Folders Structure
 
 ```
 Chroma/
-├── build/       
+├── doc/       
+├── external/       
 ├── include/          
 ├── screenshots/             
 └── src/         
