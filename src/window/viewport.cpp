@@ -20,6 +20,7 @@
 #include "app.hpp"
 
 #include "canvas/cmd/brush_command.hpp"
+#include "canvas/cmd/shape_command.hpp"
 #include "canvas/cmd/erase_command.hpp"
 #include "canvas/cmd/select_mark_command.hpp"
 #include "canvas/cmd/mark_command.hpp"
