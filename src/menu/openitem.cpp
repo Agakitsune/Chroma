@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
 
 /**
  * @brief Get the home object
@@ -112,10 +113,21 @@ void OpenMenuItem::query_current_directory() noexcept {
 
   for (const auto &entry : dir_iter) {
     std::string name = entry.path().filename();
+
     if (entry.is_directory()) {
+      try {
+        std::filesystem::directory_iterator it(entry);
+      } catch (const std::filesystem::filesystem_error&) {
+        continue;
+      }
+
       directories.push_back(entry.path());
     } else if (entry.is_regular_file() && entry.path().has_extension() &&
                is_image(entry.path().extension())) {
+      std::ifstream file(entry.path());
+      if (!file.is_open()) {
+        continue;
+      }
       files.push_back(entry.path());
     }
   }
