@@ -25,6 +25,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief The core of the application
+     * 
+     */
     class App {
       public:
         App() noexcept = default;
@@ -39,18 +43,69 @@ namespace chroma {
         int init() noexcept;
         int run() noexcept;
 
-        // template <typename T>
-        // T *get_window(const std::string &label) const noexcept {
-        //     if (!windows.contains(label)) return nullptr;
-        //     return (T*)windows.at(label).get();
-        // }
-
+        /**
+         * @brief Add a Signal
+         * 
+         * @ref Signal
+         * 
+         * Add a Signal to the application that can be used by Windows to communicate with others.
+         * 
+         * The template parameters define the type of the Signal arguments, THIS IS IMPORTANT, those parameters need to match through call of `connect_signal` and `emit_signal`
+         * 
+         * ```
+         * struct A {
+         *      void _on_test_color(Color c);
+         *      void _on_invalid_test_color(const Color &c);
+         * };
+         * 
+         * A instance;
+         * 
+         * add_signal<Color>("test_color"); // Add a Signal with type Color
+         * 
+         * connect_signal("test_color", &instance, &A::_on_test_color); // Color type matches, will connect
+         * connect_signal("test_color", &instance, &A::_on_invalid_test_color); // Color type mismatch, won't connect
+         * 
+         * emit_signal<Color>("test_color", BLACK); // Force down type, will emit
+         * emit_signal<const Color &>("test_color", BLACK); // Force down type mismatch, won't emit
+         * emit_signal("test_color", BLACK); // Deduce type, may not work
+         * ```
+         * 
+         * @tparam A The parameters of the signal, THIS IS IMPORTANT
+         * @param name The name of the signal
+         */
         template <typename... A> void add_signal(const std::string &name) {
             std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
             signals.insert_or_assign(name, Signal());
             signal_hash.insert_or_assign(name, hash);
         }
 
+        /**
+         * @brief Connect a signal
+         * 
+         * @ref Signal
+         * 
+         * Connect a member method to a signal, the argument in the function MUST match the type of the Signal at creation, passing down the template arguments won't work here
+         * 
+         * * ```
+         * struct A {
+         *      void _on_test_color(Color c);
+         *      void _on_invalid_test_color(const Color &c);
+         * };
+         * 
+         * A instance;
+         * 
+         * add_signal<Color>("test_color"); // Add a Signal with type Color
+         * 
+         * connect_signal("test_color", &instance, &A::_on_test_color); // Color type matches, will connect
+         * connect_signal("test_color", &instance, &A::_on_invalid_test_color); // Color type mismatch, won't connect
+         * ```
+         * 
+         * @tparam O Object type
+         * @tparam A The parameters of the method, must match the Signal parameters
+         * @param name The signal name
+         * @param object The object
+         * @param func The member function
+         */
         template <typename O, typename... A>
         void connect_signal(const std::string &name, O *object,
                             void (O::*func)(A...)) {
@@ -64,13 +119,22 @@ namespace chroma {
             signals[name].connect(object, func);
         }
 
-        void disconnect_signal(const std::string &name, void *object) {
-            if (!signals.contains(name)) {
-                return;
-            }
-            signals[name].disconnect(object);
-        }
-
+        /**
+         * @brief Emit a Signal
+         * 
+         * @ref Signal
+         * 
+         * Emit a signal and call every connected method, to ensure no undefined behavior, consider passing down the template arguments
+         * 
+         * ```
+         * emit_signal<Color>("test_color", BLACK); // Force down type, will emit
+         * emit_signal("test_color", BLACK); // Deduce type, may not work
+         * ```
+         * 
+         * @tparam A The parameters of the signal
+         * @param name The signal name
+         * @param args The emitted arguments
+         */
         template <typename... A>
         void emit_signal(const std::string &name, A... args) {
             std::size_t hash = typeid(void (*)(std::decay_t<A>...)).hash_code();
@@ -83,6 +147,22 @@ namespace chroma {
             signals[name].emit(std::forward<A>(args)...);
         }
 
+        /**
+         * @brief Add a Menu Item
+         * 
+         * @ref MenuItem
+         * 
+         * Add a Menu Item to a Menu in the Menubar
+         * 
+         * ```
+         * add_menu<OpenMenuItem>("File"); // 'File' Menu has now 'Open' Item
+         * add_menu<FlipMenuItem>("Edit"); // 'Edit' Menu has now 'Flip' Item
+         * ```
+         * 
+         * @tparam I The type of the Menu, must inherit @ref MenuItem
+         * @param menu The name of the Menu
+         * @return I* An instance of the MenuItem
+         */
         template <typename I> I *add_menu(const std::string &menu) {
             // if (!menu_bar.contains(menu)) {
             //     menu_bar[menu]menu,
@@ -92,6 +172,26 @@ namespace chroma {
             return (I *)menu_bar[menu].back().get();
         }
 
+        /**
+         * @brief Add a Separator to a Menu
+         * 
+         * Add a Separator for clarity in the menus
+         * 
+         * ```
+         * add_menu<SaveMenuItem>("File");
+         * add_separator("File")
+         * add_menu<OpenMenuItem>("File");
+         * 
+         * // Menu will look like this
+         * //
+         * // Save
+         * // ------
+         * // Open
+         * //
+         * ```
+         * 
+         * @param menu The menu name
+         */
         void separator(const std::string &menu) {
             // if (!menu_bar.contains(menu)) {
             //     menu_bar.insert(menu,
@@ -101,13 +201,7 @@ namespace chroma {
         }
 
         static App *get_instance() noexcept;
-        static SDL_GPUDevice *get_device() noexcept;
         static SDL_Renderer *get_renderer() noexcept;
-        static SDL_GPUCommandBuffer *get_command_buffer() noexcept;
-
-        // ViewportWindow viewport_window;
-        // ColorPickerWindow color_picker;
-        // PaletteWindow palette_window;
 
       private:
         int create_window() noexcept;

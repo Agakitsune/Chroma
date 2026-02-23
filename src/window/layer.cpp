@@ -17,11 +17,6 @@ namespace chroma {
         : Window("Layer",
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove) {
-        // App::get_instance()->add_signal<const Color &>("color_picked");
-
-        // App::get_instance()->add_signal<const Color &>("main_color_changed");
-        // App::get_instance()->add_signal<const Color &>(
-        //     "secondary_color_changed");
 
         name = new char[1024];
         name[0] = '\0';

@@ -16,6 +16,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Color Picker window
+     * 
+     */
     class ColorPickerWindow : public Window {
       public:
         ColorPickerWindow() noexcept;

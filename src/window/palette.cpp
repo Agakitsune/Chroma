@@ -19,10 +19,7 @@
 #include "cursor.hpp"
 
 namespace chroma {
-    /**
-     * @brief Construct a new Palette Window:: Palette Window object
-     *
-     */
+
     PaletteWindow::PaletteWindow() noexcept
         : Window("Palette",
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
@@ -146,11 +143,7 @@ namespace chroma {
 
         ImGui::End();
     }
-    /**
-     * @brief add a clickable color square at the palette
-     *
-     * @param color
-     */
+
     void PaletteWindow::add_color(const Color &color) noexcept {
         palette.push_back(color);
     }

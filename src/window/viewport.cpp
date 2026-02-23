@@ -40,32 +40,14 @@
 // #include <SDL3/SDL.h>
 
 namespace chroma {
-    /**
-     * @brief Construct a new Viewport Window:: Viewport Window object
-     *
-     */
+
     ViewportWindow::ViewportWindow() noexcept
         : Window("Viewport",
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove) {
         cmd = std::make_unique<SelectMarkCommand>(); // default command
-        // SDL_GPUDevice *device = App::get_device();
-
-        // SDL_GPUTransferBufferCreateInfo transfer_info = {};
-        // transfer_info.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
-        // transfer_info.size = sizeof(float) * 24; // mat4 and 2 vec4
-
-        // transfer_buffer = SDL_CreateGPUTransferBuffer(device,
-        // &transfer_info);
-
-        // SDL_GPUBufferCreateInfo uniform_info = {};
-        // uniform_info.usage = SDL_GPU_BUFFERUSAGE_UNIFORM;
-        // uniform_info.size = sizeof(float) * 24; // mat4 and 2 vec
     }
-    /**
-     * @brief Handle all instanciate of the signal used along the user journey
-     *
-     */
+
     void ViewportWindow::ready() noexcept {
         App::get_instance()->connect_signal("create_canvas_requested", this,
                                             &ViewportWindow::new_canvas);
@@ -95,17 +77,6 @@ namespace chroma {
                                             &ViewportWindow::add_layer);
         App::get_instance()->connect_signal("layer_delete", this,
                                             &ViewportWindow::delete_layer);
-
-        App::get_instance()->connect_signal("select_mark", this,
-                                            &ViewportWindow::select_mark);
-        App::get_instance()->connect_signal("select_move_start", this,
-                                            &ViewportWindow::select_move_start);
-        App::get_instance()->connect_signal("select_move", this,
-                                            &ViewportWindow::select_move);
-        App::get_instance()->connect_signal("select_move_end", this,
-                                            &ViewportWindow::select_move_end);
-        App::get_instance()->connect_signal("select_clear", this,
-                                            &ViewportWindow::select_clear);
     }
 
     void ViewportWindow::display() noexcept {
@@ -124,9 +95,7 @@ namespace chroma {
 
         const ImVec2 mouse = io.MousePos;
 
-        SDL_GPUDevice *device = App::get_device();
         SDL_Renderer *renderer = App::get_renderer();
-        SDL_GPUCommandBuffer *cmd_buffer = App::get_command_buffer();
 
         if (marked < canvases.size()) {
             canvases.erase(canvases.begin() + marked);
@@ -429,8 +398,6 @@ namespace chroma {
                                      FileFormat format) noexcept {
         Canvas &canvas = canvases[selected];
 
-        // SDL_GPUDevice *device = App::get_device();
-
         std::filesystem::path file_path = directory / file;
         const char *path = file_path.c_str();
 
@@ -457,15 +424,8 @@ namespace chroma {
         }
 
         SDL_DestroySurface(surface);
-        // SDL_UnmapGPUTransferBuffer(device, canvas.layers[0].buffer);
     }
-    /**
-     * @brief Open an image from user filesystem if this is a supported image
-     *
-     * @param directory
-     * @param file
-     * @param format
-     */
+
     void ViewportWindow::open_canvas(const std::filesystem::path &directory,
                                      const std::filesystem::path &file,
                                      FileFormat format) noexcept {
@@ -474,7 +434,6 @@ namespace chroma {
 
         SDL_IOStream *stream = SDL_IOFromFile(path, "r");
         SDL_Surface *surface = nullptr;
-        SDL_GPUDevice *device = App::get_device();
 
         switch (format) {
         case BMP: {
@@ -545,135 +504,6 @@ namespace chroma {
 
         Canvas &canvas = canvases[selected];
         canvas.delete_layer();
-    }
-
-    void ViewportWindow::select_mark(SDL_Rect rect) noexcept {
-        // if (select_data) {
-        //     delete[] select_data;
-        // }
-
-        // selection = rect;
-
-        // const Canvas &canvas = canvases[selected];
-        // const Layer &layer = canvas.layers[canvas.layer];
-
-        // const uint64_t stride = rect.w * 4;
-        // const uint64_t buffer_size = rect.h * stride;
-        // const uint64_t skip = (rect.x + rect.y * canvas.width) * 4;
-
-        // select_data = new uint8_t[buffer_size];
-        // uint8_t *mapping = (uint8_t *)layer.surface->pixels;
-
-        // mapping += skip;
-
-        // for (uint32_t i = 0; i < rect.h; i++) {
-        //     std::memcpy(&select_data[i * stride], mapping, stride);
-        //     mapping += layer.surface->pitch;
-        // }
-
-        // void *clear;
-        // SDL_LockTexture(layer.texture, &rect, );
-
-        // SDL_UnlockTexture(layer.texture);
-
-        // SDL_UpdateTexture(canvas.preview, &rect, select_data, stride);
-    }
-
-    void ViewportWindow::select_move_start() noexcept {
-        // const Canvas &canvas = canvases[selected];
-        // const Layer &layer = canvas.layers[canvas.layer];
-
-        // const uint64_t stride = selection.w * 4;
-        // const uint64_t buffer_size = selection.h * stride;
-        // const uint64_t skip = (selection.x + selection.y * canvas.width) * 4;
-
-        // if (select_data) {
-        //     delete[] select_data;
-        //     SDL_DestroyTexture(select_texture);
-        // }
-
-        // select_data = new uint8_t[buffer_size];
-        // uint8_t *mapping = (uint8_t *)layer.surface->pixels;
-
-        // SDL_Renderer *renderer = App::get_renderer();
-
-        // select_texture = SDL_CreateTexture(
-        //     renderer,
-        //     SDL_PIXELFORMAT_RGBA32,
-        //     SDL_TEXTUREACCESS_STREAMING,
-        //     selection.w,
-        //     selection.h
-        // );
-
-        // mapping += skip;
-
-        // uint8_t *clear;
-        // int pitch;
-        // SDL_LockTexture(select_texture, &selection, (void**)&clear, &pitch);
-
-        // for (uint32_t i = 0; i < selection.h; i++) {
-        //     std::memcpy(&clear[i * stride], mapping, stride);
-        //     std::memcpy(&select_data[i * stride], mapping, stride);
-        //     mapping += layer.surface->pitch;
-        // }
-
-        // SDL_UnlockTexture(select_texture);
-
-        // SDL_LockTexture(layer.texture, &selection, (void**)&clear, &pitch);
-
-        // std::memset(clear, 0, buffer_size);
-
-        // SDL_UnlockTexture(layer.texture);
-    }
-
-    void ViewportWindow::select_move(SDL_Point p) noexcept {
-        // selection.x += p.x;
-        // selection.y += p.y;
-
-        // const Canvas &canvas = canvases[selected];
-        // const Layer &layer = canvas.layers[canvas.layer];
-
-        // SDL_Renderer *renderer = App::get_renderer();
-
-        // SDL_FRect rect = {
-        //     (float)selection.x,
-        //     (float)selection.y,
-        //     (float)selection.w,
-        //     (float)selection.h
-        // };
-
-        // SDL_SetRenderTarget(renderer, canvas.preview);
-
-        // SDL_RenderTexture(renderer, select_texture, nullptr, &rect);
-
-        // SDL_SetRenderTarget(renderer, nullptr);
-    }
-
-    void ViewportWindow::select_move_end() noexcept {
-        // const Canvas &canvas = canvases[selected];
-        // const Layer &layer = canvas.layers[canvas.layer];
-
-        // const uint64_t stride = selection.w * 4;
-        // const uint64_t buffer_size = selection.h * stride;
-        // const uint64_t skip = (selection.x + selection.y * canvas.width) * 4;
-
-        // uint8_t *mapping = (uint8_t *)layer.surface->pixels;
-        // mapping += skip;
-        
-        // uint8_t *clear;
-        // int pitch;
-        // SDL_LockTexture(layer.texture, &selection, (void**)&clear, &pitch);
-
-        // for (uint32_t i = 0; i < selection.h; i++) {
-        //     std::memcpy(mapping, &select_data[i * stride], stride);
-        //     mapping += layer.surface->pitch;
-        // }
-
-        // SDL_UnlockTexture(layer.texture);
-    }
-
-    void ViewportWindow::select_clear() noexcept {
-        selection.w == 0;
     }
 
     void ViewportWindow::undo() noexcept {

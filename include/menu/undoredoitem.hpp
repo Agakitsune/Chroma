@@ -16,6 +16,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Undo/Redo Menu item
+     * 
+     */
     class UndoRedoMenuItem : public MenuItem {
       public:
         UndoRedoMenuItem() noexcept = default;

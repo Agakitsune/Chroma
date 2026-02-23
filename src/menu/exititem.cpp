@@ -30,7 +30,6 @@ namespace chroma {
             SDL_Event event;
             event.type = SDL_EVENT_QUIT;
             SDL_PushEvent(&event);
-            // App::get_instance()->emit_signal("edit_flipv");
         }
     }
 } // namespace chroma

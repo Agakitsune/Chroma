@@ -27,6 +27,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Viewport window
+     * 
+     */
     class ViewportWindow : public Window {
         std::vector<Canvas> canvases;
         uint32_t marked = 0;
@@ -57,6 +61,8 @@ namespace chroma {
 
         virtual void ready() noexcept override final;
         virtual void display() noexcept override final;
+      
+      private:
 
         void new_canvas(uint32_t width, uint32_t height) noexcept;
         void save_canvas(const std::filesystem::path &directory,
@@ -72,12 +78,6 @@ namespace chroma {
 
         void add_layer() noexcept;
         void delete_layer() noexcept;
-
-        void select_mark(SDL_Rect rect) noexcept;
-        void select_move_start() noexcept;
-        void select_move(SDL_Point p) noexcept;
-        void select_move_end() noexcept;
-        void select_clear() noexcept;
 
         void undo() noexcept;
         void redo() noexcept;

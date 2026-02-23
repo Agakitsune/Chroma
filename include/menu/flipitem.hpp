@@ -16,6 +16,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Flip Menu item
+     * 
+     */
     class FlipMenuItem : public MenuItem {
       public:
         FlipMenuItem() noexcept = default;

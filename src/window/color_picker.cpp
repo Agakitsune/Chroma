@@ -20,10 +20,7 @@
 #include <functional>
 
 namespace chroma {
-    /**
-     * @brief Construct a new Color Picker Window:: Color Picker Window object
-     *
-     */
+
     ColorPickerWindow::ColorPickerWindow() noexcept
         : Window("Color Pick",
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
@@ -34,10 +31,7 @@ namespace chroma {
         App::get_instance()->add_signal<const Color &>(
             "secondary_color_changed");
     }
-    /**
-     * @brief signal main color selected and ready to proceed
-     *
-     */
+
     void ColorPickerWindow::ready() noexcept {
         App::get_instance()->connect_signal(
             "main_color_selected", this,
@@ -46,11 +40,7 @@ namespace chroma {
             "second_color_changed", this,
             &ColorPickerWindow::_on_second_color_selected);
     }
-    /**
-     * @brief Display various elements like picker from colorpicker, color
-     * gradient, hue slider, etc
-     *
-     */
+
     void ColorPickerWindow::display() noexcept {
         ImGui::Begin(label.c_str(), nullptr, flags);
 
@@ -273,21 +263,13 @@ namespace chroma {
 
         ImGui::End();
     }
-    /**
-     * @brief signal main color has been changed
-     *
-     * @param clr
-     */
+
     void ColorPickerWindow::_on_main_color_selected(const Color &clr) noexcept {
         main_color = clr;
         App::get_instance()->emit_signal<const Color &>("main_color_changed",
                                                         clr);
     }
-    /**
-     * @brief signal second color has been changed
-     *
-     * @param clr
-     */
+
     void
     ColorPickerWindow::_on_second_color_selected(const Color &clr) noexcept {
         second_color = clr;

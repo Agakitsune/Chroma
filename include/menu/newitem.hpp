@@ -16,6 +16,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief New Menu item
+     * 
+     */
     class NewMenuItem : public MenuItem {
         uint32_t w;
         uint32_t h;

@@ -16,6 +16,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Layer window
+     * 
+     */
     class LayerWindow : public Window {
         Canvas *canvas = nullptr;
         uint32_t selected = 0;

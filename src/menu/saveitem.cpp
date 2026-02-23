@@ -86,10 +86,7 @@ namespace chroma {
             return case_cmp(a.filename().c_str(), b.filename().c_str());
         }
     };
-    /**
-     * @brief Construct a new Save Menu Item:: Save Menu Item object
-     *
-     */
+
     SaveMenuItem::SaveMenuItem() noexcept {
         name = new char[1024];
         directory = new char[4096];
@@ -100,18 +97,12 @@ namespace chroma {
         name[0] = '\0';
         std::strcpy(directory, current.c_str());
     }
-    /**
-     * @brief Destroy the Save Menu Item:: Save Menu Item object
-     *
-     */
+
     SaveMenuItem::~SaveMenuItem() noexcept {
         delete[] name;
         delete[] directory;
     }
-    /**
-     * @brief Get the current directory
-     *
-     */
+
     void SaveMenuItem::query_current_directory() noexcept {
         directories.clear();
         files.clear();
@@ -133,29 +124,20 @@ namespace chroma {
                          path_less_compare{});
         std::stable_sort(files.begin(), files.end(), path_less_compare{});
     }
-    /**
-     * @brief Upon pressing the Save function, run the save action
-     *
-     */
+
     void SaveMenuItem::menubar() noexcept {
         if (ImGui::MenuItem("Save", "Ctrl+S")) {
             action();
         }
     }
-    /**
-     * @brief Create a popup to save a file on the filesystem
-     *
-     */
+
     void SaveMenuItem::action() noexcept {
         ImGui::PushOverrideID(33);
         ImGui::OpenPopup("Save");
         ImGui::PopID();
         query_current_directory();
     }
-    /**
-     * @brief Handle the saving file on filesystem behavior
-     *
-     */
+
     void SaveMenuItem::display() noexcept {
         constexpr uint32_t ext_size =
             sizeof(extensions) / sizeof(extensions[0]);
@@ -279,10 +261,7 @@ namespace chroma {
         }
         ImGui::PopID();
     }
-    /**
-     * @brief if Ctrl+S pressed, call save file function
-     *
-     */
+
     void SaveMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S)) {
             action();

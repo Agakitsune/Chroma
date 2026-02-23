@@ -16,6 +16,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Exit Menu item
+     * 
+     */
     class ExitMenuItem : public MenuItem {
       public:
         ExitMenuItem() noexcept = default;

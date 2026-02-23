@@ -26,13 +26,11 @@
 
 namespace chroma {
 
+    /**
+     * @brief Contains the CPU and GPU data
+     * 
+     */
     struct Layer {
-        // uint8_t *data = nullptr;
-        // bool *dirty_flags = nullptr;
-
-        // SDL_GPUTransferBuffer *buffer = nullptr;
-        // SDL_GPUTexture *texture = nullptr;
-
         SDL_Surface *surface = nullptr; // for data manipulation purposes
         SDL_Texture *texture = nullptr; // woosh, i'm paperthin
 
@@ -49,18 +47,14 @@ namespace chroma {
         Layer &operator=(Layer &&) noexcept;
     };
 
+    /**
+     * @brief Collection of layers
+     * 
+     */
     struct Canvas {
         std::string name = "Untitled";
 
         std::vector<Layer> layers;
-
-        // SDL_Texture *preview;
-        // SDL_Texture *overlay;
-
-        // SDL_GPUTransferBuffer *canvas_preview_buffer = nullptr;
-        // SDL_GPUTexture *canvas_preview = nullptr;
-
-        // SDL_GPUTexture *preview = nullptr;
 
         std::vector<std::unique_ptr<Command>> stack;
         std::queue<std::unique_ptr<Command>> pending;
@@ -99,25 +93,6 @@ namespace chroma {
 
         void add_layer() noexcept;
         void delete_layer() noexcept;
-
-        // void upload(SDL_GPUCopyPass *pass) noexcept;
-
-        // void refresh() noexcept;
-        // void refresh(uint32_t x, uint32_t y, uint32_t w, uint32_t height)
-        // noexcept;
-
-      private:
-        // struct TileTransfer {
-        //     uint32_t offset;
-
-        //     uint32_t w;
-        //     uint32_t h;
-
-        //     uint32_t x;
-        //     uint32_t y;
-        // };
-
-        // std::vector<TileTransfer> pending_uploads;
     };
 
 } // namespace chroma

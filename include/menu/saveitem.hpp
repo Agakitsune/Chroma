@@ -18,6 +18,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Save Menu item
+     * 
+     */
     class SaveMenuItem : public MenuItem {
         char *name;
         char *directory;

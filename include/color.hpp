@@ -17,6 +17,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief 4 Float Color
+     * 
+     */
     struct Color {
         float r = 0.0f;
         float g = 0.0f;
@@ -79,17 +83,18 @@ namespace chroma {
         return s;
     }
 
+    // Transparent color
     constexpr Color MASK(0.0f, 0.0f, 0.0f, 0.0f);
 
-    constexpr Color WHITE(1.0f, 1.0f, 1.0f);
-    constexpr Color BLACK(0.0f, 0.0f, 0.0f);
+    constexpr Color WHITE(1.0f, 1.0f, 1.0f); // White color
+    constexpr Color BLACK(0.0f, 0.0f, 0.0f); // Black Color
 
-    constexpr Color RED(1.0f, 0.0f, 0.0f);
-    constexpr Color GREEN(0.0f, 1.0f, 0.0f);
-    constexpr Color BLUE(0.0f, 0.0f, 1.0f);
+    constexpr Color RED(1.0f, 0.0f, 0.0f); // Red Color
+    constexpr Color GREEN(0.0f, 1.0f, 0.0f); // Green Color
+    constexpr Color BLUE(0.0f, 0.0f, 1.0f); // Blue Color
 
-    constexpr Color YELLOW(1.0f, 1.0f, 0.0f);
-    constexpr Color CYAN(0.0f, 1.0f, 1.0f);
-    constexpr Color MAGENTA(1.0f, 0.0f, 1.0f);
+    constexpr Color YELLOW(1.0f, 1.0f, 0.0f); // Yellow Color
+    constexpr Color CYAN(0.0f, 1.0f, 1.0f); // Cyan Color
+    constexpr Color MAGENTA(1.0f, 0.0f, 1.0f); // Magenta Color
 
 } // namespace chroma

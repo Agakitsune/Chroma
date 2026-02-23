@@ -1,12 +1,12 @@
 /**
  * @file command.hpp
- * @author Zeustygien (lucas.gangnant@epitech.eu)
- * @brief
+ * @author Kitsune (https://github.com/Agakitsune)
+ * @brief 
  * @version 0.1
- * @date 2026-02-17
- *
+ * @date 2026-02-23
+ * 
  * @copyright Copyright (c) 2026
- *
+ * 
  */
 #pragma once
 
@@ -16,9 +16,12 @@
 
 namespace chroma {
 
-    // struct Canvas;
     struct Layer;
 
+    /**
+     * @brief Base class for all Command
+     * 
+     */
     class Command {
       protected:
         // Layer data
@@ -28,35 +31,21 @@ namespace chroma {
       public:
         virtual ~Command() noexcept = default;
 
+        /**
+         * @brief Execute command on layer data
+         * 
+         * @param selection The current selection
+         */
         virtual void redo(SDL_Rect &selection) noexcept = 0;
+
+        /**
+         * @brief Undo the command on layer data
+         * 
+         * @param selection The current selection
+         */
         virtual void undo(SDL_Rect &selection) noexcept = 0;
 
         void set_layer(const Layer &layer) noexcept;
-        // virtual ~ICommand() noexcept = default;
-
-        // virtual void redo(const Canvas &canvas) noexcept = 0;
-        // virtual void undo(const Canvas &canvas) noexcept = 0;
-
-        // virtual void set_main_color(const Color &color) noexcept {};
-        // virtual void set_second_color(const Color &color) noexcept {};
-
-        // virtual void set_layer(const Layer &layer) noexcept;
-
-        // virtual Color get_main_color() noexcept { return BLACK; }
-        // virtual Color get_second_color() noexcept { return BLACK; }
-
-        // virtual void start(const Canvas &canvas,
-        //                    const SDL_Point &point,
-        //                    const Color &color) noexcept = 0;
-        // virtual void update(const Canvas &canvas,
-        //                    const SDL_Point &point,
-        //                    const Color &color) noexcept = 0;
-        // virtual void end(const Canvas &canvas,
-        //                    const SDL_Point &point,
-        //                    const Color &color) noexcept = 0;
-        // virtual void discard(const Canvas &canvas) noexcept = 0;
-
-        // virtual void preview(const Canvas &canvas) noexcept = 0;
     };
 
 } // namespace chroma

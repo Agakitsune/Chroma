@@ -88,10 +88,6 @@ namespace chroma {
         }
     };
 
-    /**
-     * @brief Construct a new Open Menu Item:: Open Menu Item object
-     *
-     */
     OpenMenuItem::OpenMenuItem() noexcept {
         name = new char[1024];
         directory = new char[4096];
@@ -102,18 +98,12 @@ namespace chroma {
         name[0] = '\0';
         std::strcpy(directory, current.c_str());
     }
-    /**
-     * @brief Destroy the Open Menu Item:: Open Menu Item object
-     *
-     */
+
     OpenMenuItem::~OpenMenuItem() noexcept {
         delete[] name;
         delete[] directory;
     }
-    /**
-     * @brief Get the current directory
-     *
-     */
+
     void OpenMenuItem::query_current_directory() noexcept {
         directories.clear();
         files.clear();
@@ -135,29 +125,20 @@ namespace chroma {
                          path_less_compare{});
         std::stable_sort(files.begin(), files.end(), path_less_compare{});
     }
-    /**
-     * @brief Open a file from filesystem
-     *
-     */
+
     void OpenMenuItem::menubar() noexcept {
         if (ImGui::MenuItem("Open", "Ctrl+O")) {
             action();
         }
     }
-    /**
-     * @brief Create a popup to open a file from filesystem
-     *
-     */
+
     void OpenMenuItem::action() noexcept {
         ImGui::PushOverrideID(37);
         ImGui::OpenPopup("Open");
         ImGui::PopID();
         query_current_directory();
     }
-    /**
-     * @brief Handle the opening file from filesystem behavior
-     *
-     */
+
     void OpenMenuItem::display() noexcept {
         constexpr uint32_t ext_size =
             sizeof(extensions) / sizeof(extensions[0]);
@@ -303,10 +284,7 @@ namespace chroma {
         }
         ImGui::PopID();
     }
-    /**
-     * @brief if Ctrl+O pressed, call open file function
-     *
-     */
+
     void OpenMenuItem::shortcuts() noexcept {
         if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_O)) {
             action();

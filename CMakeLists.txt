@@ -31,12 +31,8 @@ file(GLOB CPP_SOURCES
     src/*.cpp
     src/menu/*.cpp
     src/window/*.cpp
-    # src/lua/*.cpp
-    # src/lua/imgui/*.cpp
     src/canvas/*.cpp
     src/canvas/cmd/*.cpp
-    src/canvas/command/*.cpp
-    src/canvas/command/select/*.cpp
 )
 
 set(imgui_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/imgui)
@@ -46,32 +42,9 @@ file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*cpp")
 list(APPEND IMGUI_SOURCES
     ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
-    # ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.cpp
-    # ${imgui_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp
 )
 
 add_executable(${PROJECT_NAME} ${CPP_SOURCES} ${IMGUI_SOURCES})
-
-# find_package(Vulkan REQUIRED)
-
-# if(NOT Vulkan_FOUND)
-#     message(STATUS "Fetching Vulkan headers...")
-
-#     include(FetchContent)
-#     FetchContent_Declare(
-#         vulkan_headers
-#         GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
-#         GIT_BRANCH main
-#     )
-#     FetchContent_MakeAvailable(vulkan_headers)
-#     target_include_directories(${PROJECT_NAME} PRIVATE
-#         ${vulkan_headers_SOURCE_DIR}/include
-#     )
-
-#     target_link_libraries(${PROJECT_NAME} PRIVATE
-#         Vulkan::Headers
-#     )
-# endif()
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_compile_options(${PROJECT_NAME} PRIVATE
@@ -100,15 +73,26 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${imgui_SOURCE_DIR}/backends
     ${sdl3_SOURCE_DIR}/include
     ${sdl_image_SOURCE_DIR}/include
-    # ${sdl_ttf_SOURCE_DIR}/include
-    # ${lua_SOURCE_DIR}/src
     ./include
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    # Vulkan::Vulkan
     SDL3::SDL3
     SDL3_image::SDL3_image
-    # SDL3_ttf::SDL3_ttf
-    # lua::lib
 )
+
+# Find Doxygen
+find_package(Doxygen REQUIRED)
+
+if (DOXYGEN_FOUND)
+
+    add_custom_target(doc
+        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Generating Doxygen documentation"
+        VERBATIM
+    )
+else()
+    message(WARNING "Doxygen not found, you can still use the project, but you won't be able to generate the documentation")
+endif()
+

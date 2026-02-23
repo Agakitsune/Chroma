@@ -62,28 +62,11 @@ namespace chroma {
             SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
                               SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        // this->preview =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
-        
-        // this->overlay =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
-
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
-        // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
-        // SDL_SetTextureScaleMode(this->overlay, SDL_SCALEMODE_NEAREST);
 
         SDL_FillSurfaceRect(layer.surface, NULL, 0);
         SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
                           layer.surface->pitch);
-
-        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        // SDL_SetRenderTarget(renderer, this->preview);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, this->overlay);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, NULL);
     }
 
     Canvas::Canvas(SDL_Surface *surface) noexcept
@@ -99,36 +82,13 @@ namespace chroma {
             SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
                               SDL_TEXTUREACCESS_STREAMING, width, height);
 
-        // this->preview =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
-        
-        // this->overlay =
-        //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-        //                       SDL_TEXTUREACCESS_TARGET, width, height);
-
         SDL_SetTextureScaleMode(layer.texture, SDL_SCALEMODE_NEAREST);
-        // SDL_SetTextureScaleMode(this->preview, SDL_SCALEMODE_NEAREST);
 
         SDL_UpdateTexture(layer.texture, NULL, layer.surface->pixels,
                           layer.surface->pitch);
-
-        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        // SDL_SetRenderTarget(renderer, this->preview);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, this->overlay);
-        // SDL_RenderClear(renderer);
-        // SDL_SetRenderTarget(renderer, NULL);
     }
 
-    Canvas::~Canvas() noexcept {
-        // if (preview) {
-        //     SDL_DestroyTexture(this->preview);
-        // }
-        // if (this->overlay) {
-        //     SDL_DestroyTexture(this->overlay);
-        // }
-    }
+    Canvas::~Canvas() noexcept {}
 
     Canvas::Canvas(Canvas &&other) noexcept
         : name(std::move(other.name)), layers(std::move(other.layers)),
@@ -137,7 +97,6 @@ namespace chroma {
           height(other.height), stack_index(other.stack_index),
           layer(other.layer), offset(other.offset), zoom(other.zoom),
           dirty(other.dirty) {
-        // other.preview = nullptr;
     }
 
     Canvas &Canvas::operator=(Canvas &&other) noexcept {

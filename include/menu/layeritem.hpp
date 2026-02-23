@@ -1,4 +1,13 @@
-
+/**
+ * @file layeritem.hpp
+ * @author Kitsune (https://github.com/Agakitsune)
+ * @brief 
+ * @version 0.1
+ * @date 2026-02-23
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #pragma once
 
 #include "menu/menuitem.hpp"
@@ -7,6 +16,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Layer Menu item
+     * 
+     */
     class LayerMenuItem : public MenuItem {
       public:
         LayerMenuItem() noexcept = default;

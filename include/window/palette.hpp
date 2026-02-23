@@ -23,6 +23,10 @@
 
 namespace chroma {
 
+    /**
+     * @brief Palette window
+     * 
+     */
     class PaletteWindow : public Window {
         std::vector<Color> palette;
         uint32_t selected = 0;

@@ -17,18 +17,28 @@
 
 namespace chroma {
 
+    /**
+     * @brief Cursor enum
+     * 
+     */
     enum class Cursor {
-        Default,
+        Default, // Default cursor
 
-        Arrow = Default,
-        Cross,
-        Grab,
-        Picker,
-        Point,
+        Arrow = Default, // Arrow cusor (default)
+        Cross, // Cross
+        Grab, // Grab
+        Picker, // Color Picker
+        Point, // Point
 
         Count
     };
 
+    /**
+     * @brief Custom SDL cursor manager
+     * 
+     * Remplace `ImGui::SetMouseCursor` since there is little customisation on how the cursor looks
+     * 
+     */
     class CursorManager {
         static std::unique_ptr<CursorManager> instance;
 
@@ -45,7 +55,17 @@ namespace chroma {
       public:
         ~CursorManager() noexcept;
 
+        /**
+         * @brief Set the cursor object
+         * 
+         * @param cursor The @ref Cursor type
+         */
         static void set_cursor(Cursor cursor) noexcept;
+
+        /**
+         * @brief Update the instance
+         * 
+         */
         static void update() noexcept;
     };
 

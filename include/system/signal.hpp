@@ -17,6 +17,12 @@
 
 namespace chroma {
 
+    /**
+     * @brief System used to communicate between Windows
+     * 
+     * Windows can connect a method to the signal, and when emitted, the connected method will be called
+     * 
+     */
     class Signal {
         std::vector<void (*)()> connected;
         std::vector<void *> objects;
@@ -33,7 +39,7 @@ namespace chroma {
 
         template <typename O, typename... Args>
         void connect(O *object, void (O::*func)(Args...)) noexcept {
-            connected.push_back((void (*)())func);
+            connected.push_back((void (*)())(void*)(void*)func);
             objects.push_back(object);
         }
 
@@ -53,7 +59,7 @@ namespace chroma {
         template <typename... Args> void emit(Args &&...args) const noexcept {
             for (size_t i = 0; i < connected.size(); i++) {
                 void (*fn)(void *, Args...) =
-                    (void (*)(void *, Args...))connected[i];
+                    (void (*)(void *, Args...))(void*)connected[i];
                 fn(objects[i], std::forward<Args>(args)...);
             }
         }

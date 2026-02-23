@@ -1,4 +1,13 @@
-
+/**
+ * @file brush_command.hpp
+ * @author Kitsune (https://github.com/Agakitsune)
+ * @brief 
+ * @version 0.1
+ * @date 2026-02-23
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #pragma once
 
 #include "mouse_command.hpp"
@@ -6,6 +15,11 @@
 #include <vector>
 
 namespace chroma {
+
+    /**
+     * @brief Brush Tool
+     * 
+     */
 
     class BrushCommand : public MouseCommand {
         std::vector<SDL_FPoint> points;

@@ -26,38 +26,19 @@
 #include "window/viewport.hpp"
 
 #include "backends/imgui_impl_sdl3.h"
-// #include "backends/imgui_impl_sdlgpu3.h"
 #include "backends/imgui_impl_sdlrenderer3.h"
 #include "imgui.h"
 #include "imgui_internal.h"
-// #include "lua/api.hpp"
 
 #include "cursor.hpp"
 
 #include <iostream>
 #include <vector>
 
-// struct ImGui_ImplSDLGPU3_Data {
-//     ImGui_ImplSDLGPU3_InitInfo InitInfo;
-
-//     // Graphics pipeline & shaders
-//     SDL_GPUShader *VertexShader = nullptr;
-//     SDL_GPUShader *FragmentShader = nullptr;
-//     SDL_GPUGraphicsPipeline *Pipeline = nullptr;
-//     SDL_GPUSampler *TexSamplerLinear = nullptr;
-//     SDL_GPUTransferBuffer *TexTransferBuffer = nullptr;
-//     uint32_t TexTransferBufferSize = 0;
-// };
-
-// static char name[1024] = {0};
-// static char *save_format = ".bmp";
-
 namespace chroma {
     App *App::instance = nullptr;
 
     App::~App() noexcept {
-        // lua_close(state);
-
         windows.clear(); // Release all windows and their resources
 
         SDL_WaitForGPUIdle(device);
@@ -72,11 +53,7 @@ namespace chroma {
         SDL_DestroyWindow(window);
         SDL_Quit();
     }
-    /**
-     * @brief App initialization
-     *
-     * @return int
-     */
+
     int App::init() noexcept {
         int err = 0;
 
@@ -89,23 +66,6 @@ namespace chroma {
         if ((err = setup_imgui()) != 0) {
             return err;
         }
-
-        // state = luaL_newstate();
-        // if (!state) {
-        //     return -1;
-        // }
-
-        // luaL_openlibs(state);
-
-        // lua::register_chroma_api(state);
-
-        // color_picker.ready();
-        // palette.ready();
-        // viewport.ready();
-
-        // canvas_created.connect([this](int w, int h) {
-        //     viewport.new_canvas(w, h);
-        // });
 
         add_signal<uint32_t, uint32_t>("create_canvas_requested");
         add_signal<const std::filesystem::path &, const std::filesystem::path &,
@@ -160,31 +120,12 @@ namespace chroma {
 
         return 0;
     }
-    /**
-     * @brief App execution
-     *
-     * @return int
-     */
+
     int App::run() noexcept {
         uint64_t tick = 0;
         uint64_t delta = 0;
 
         ImGuiIO &io = ImGui::GetIO();
-
-        // bool a = luaL_dofile(state, "../test.lua");
-        // if (a != LUA_OK) {
-        //     const char *msg = lua_tostring(state, -1);
-        //     std::cerr << "Lua Error: " << msg << std::endl;
-        //     lua_pop(state, 1);
-        // }
-
-        // lua_getglobal(state, "update");
-        // if (!lua_isfunction(state, -1)) {
-        //     std::cerr << "Lua Error: 'update' is not a function" <<
-        //     std::endl; lua_pop(state, 1); return -1;
-        // }
-
-        // int update_ref = luaL_ref(state, LUA_REGISTRYINDEX);
 
         while (!done) {
             process_events(delta);
@@ -213,50 +154,9 @@ namespace chroma {
                 }
             }
 
-            // ImGui_ImplSDLGPU3_Data *bd =
-            //     (ImGui_ImplSDLGPU3_Data *)io.BackendRendererUserData;
-
-            // if (bd->TexSamplerLinear != sampler) {
-            //     if (bd->TexSamplerLinear) {
-            //         SDL_ReleaseGPUSampler(device, bd->TexSamplerLinear);
-            //     }
-            //     bd->TexSamplerLinear = sampler;
-            // }
-
             CursorManager::update();
 
             CursorManager::set_cursor(Cursor::Default);
-
-            // this->cmd_buffer = SDL_AcquireGPUCommandBuffer(device);
-
-            // ViewportWindow *viewport =
-            // get_window<ViewportWindow>("Viewport"); Canvas *canvas = nullptr;
-
-            // SDL_GPURenderPass* preview_pass = nullptr;
-
-            // if (!viewport->is_empty()) {
-            //     canvas = &viewport->get_canvas();
-
-            //     SDL_GPUColorTargetInfo target_info = {};
-            //     target_info.texture = canvas->preview;
-            //     target_info.clear_color = SDL_FColor { 1.0f, 1.0f, 1.0f, 0.0f
-            //     }; target_info.load_op = SDL_GPU_LOADOP_CLEAR;
-            //     target_info.store_op = SDL_GPU_STOREOP_STORE;
-            //     target_info.mip_level = 0;
-            //     target_info.layer_or_depth_plane = 0;
-            //     target_info.cycle = false;
-            //     preview_pass = SDL_BeginGPURenderPass(cmd_buffer,
-            //     &target_info, 1, nullptr);
-            // }
-
-            // lua_rawgeti(state, LUA_REGISTRYINDEX, update_ref);
-            // if (lua_pcall(state, 0, 0, 0) != LUA_OK) {
-            //     const char *msg = lua_tostring(state, -1);
-            //     std::cerr << "Lua Error: " << msg << std::endl;
-            //     lua_pop(state, 1);
-            // }
-
-            // ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 
             if (!dockspace_initialized) {
                 setup_imgui_dockspace();
@@ -269,34 +169,9 @@ namespace chroma {
                                             ImGuiWindowFlags_NoCollapse |
                                             ImGuiWindowFlags_NoMove;
 
-            // color_picker.display();
-            // palette.display();
-            // viewport.display();
-
             for (const auto &window : windows) {
                 window->display();
             }
-
-            // if (preview_pass) {
-            //     SDL_EndGPURenderPass(preview_pass);
-            // }
-
-            // if (canvas) {
-            //     if (!canvas->pending.empty()) {
-            //         canvas->execute_pending();
-            //     }
-
-            //     SDL_GPUCopyPass *copy_pass =
-            //     SDL_BeginGPUCopyPass(cmd_buffer);
-
-            //     canvas->upload(copy_pass);
-
-            //     SDL_EndGPUCopyPass(copy_pass);
-            // }
-
-            // ImGui::Begin("Layer", nullptr, window_flags);
-            // ImGui::Text("Layer and shit");
-            // ImGui::End();
 
             // Rendering
             ImGui::Render();
@@ -312,81 +187,20 @@ namespace chroma {
                                                   renderer);
             SDL_RenderPresent(renderer);
 
-            // SDL_GPUTexture *swapchain_texture;
-            // SDL_WaitAndAcquireGPUSwapchainTexture(
-            //     cmd_buffer, window, &swapchain_texture, nullptr, nullptr);
-
-            // if (swapchain_texture != nullptr && !is_minimized) {
-            //     // This is mandatory: call
-            //     ImGui_ImplSDLGPU3_PrepareDrawData()
-            //     // to upload the vertex/index buffer!
-            //     ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, cmd_buffer);
-
-            //     // Setup and start a render pass
-            //     SDL_GPUColorTargetInfo target_info = {};
-            //     target_info.texture = swapchain_texture;
-            //     target_info.clear_color = SDL_FColor{0.07f, 0.07f,
-            //     0.07f, 1.0f}; target_info.load_op = SDL_GPU_LOADOP_CLEAR;
-            //     target_info.store_op = SDL_GPU_STOREOP_STORE;
-            //     target_info.mip_level = 0;
-            //     target_info.layer_or_depth_plane = 0;
-            //     target_info.cycle = false;
-            //     SDL_GPURenderPass *render_pass = SDL_BeginGPURenderPass(
-            //         cmd_buffer, &target_info, 1, nullptr);
-
-            //     // Render ImGui
-            //     ImGui_ImplSDLGPU3_RenderDrawData(draw_data, cmd_buffer,
-            //                                      render_pass);
-
-            //     SDL_EndGPURenderPass(render_pass);
-            // }
-
-            // SDL_SubmitGPUCommandBuffer(cmd_buffer);
-
-            // SDL_WaitForGPUIdle(
-            //     device); // Not ideal, but not a high render application
-
             const uint64_t end_tick = SDL_GetTicks();
             delta = end_tick - tick;
         }
         return 0;
     }
-    /**
-     * @brief Provides a global access to instance
-     *
-     * @return App*
-     */
+
     App *App::get_instance() noexcept { return instance; }
-    /**
-     * @brief Provides a global access to device
-     *
-     * @return SDL_GPUDevice*
-     */
-    SDL_GPUDevice *App::get_device() noexcept {
-        if (!instance)
-            return nullptr;
-        return instance->device;
-    }
+
     SDL_Renderer *App::get_renderer() noexcept {
         if (!instance)
             return nullptr;
         return instance->renderer;
     }
-    /**
-     * @brief Provides a global access to command buffer
-     *
-     * @return SDL_GPUCommandBuffer*
-     */
-    SDL_GPUCommandBuffer *App::get_command_buffer() noexcept {
-        if (!instance)
-            return nullptr;
-        return nullptr;
-    }
-    /**
-     * @brief Initialize a window
-     *
-     * @return int
-     */
+    
     int App::create_window() noexcept {
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
             SDL_Log("Error: SDL_Init(): %s\n", SDL_GetError());
@@ -421,23 +235,8 @@ namespace chroma {
 
         return 0;
     }
-    /**
-     * @brief Initialize a device
-     *
-     * @return int
-     */
+
     int App::create_device() noexcept {
-        // Create GPU Device
-
-        // SDL_Log("Creating the GPU Device\n");
-
-        // this->device =
-        //     SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, nullptr);
-        // if (device == nullptr) {
-        //     SDL_Log("Error: SDL_CreateGPUDevice(): %s\n", SDL_GetError());
-        //     return 1;
-        // }
-
         this->renderer = SDL_CreateRenderer(this->window, "opengl");
         if (this->renderer == nullptr) {
             SDL_Log("Error: SDL_CreateGPURenderer(): %s\n", SDL_GetError());
@@ -447,11 +246,7 @@ namespace chroma {
 
         return 0;
     }
-    /**
-     * @brief Setup a window an a device
-     *
-     * @return int
-     */
+
     int App::setup() noexcept {
         int err = 0;
         if ((err = create_window()) != 0) {
@@ -462,11 +257,7 @@ namespace chroma {
         }
         return 0;
     }
-    /**
-     * @brief Setup ImGUI necessary parameters
-     *
-     * @return int
-     */
+
     int App::setup_imgui() noexcept {
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
@@ -485,7 +276,6 @@ namespace chroma {
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
-        // ImGui::StyleColorsLight();
 
         const float main_scale =
             SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
@@ -513,60 +303,9 @@ namespace chroma {
             return 1;
         }
 
-        // // Setup Platform/Renderer backends
-        // if (!ImGui_ImplSDL3_InitForSDLGPU(window)) {
-        //     SDL_Log("Error: ImGui_ImplSDL3_InitForSDLGPU(): %s\n",
-        //             SDL_GetError());
-        //     return 1;
-        // }
-
-        // ImGui_ImplSDLGPU3_InitInfo init_info = {};
-        // init_info.Device = device;
-        // init_info.ColorTargetFormat =
-        //     SDL_GetGPUSwapchainTextureFormat(device, window);
-        // init_info.MSAASamples =
-        //     SDL_GPU_SAMPLECOUNT_1; // Only used in multi-viewports mode.
-        // init_info.SwapchainComposition =
-        //     SDL_GPU_SWAPCHAINCOMPOSITION_SDR; // Only used in multi-viewports
-        //                                       // mode.
-        // init_info.PresentMode = SDL_GPU_PRESENTMODE_IMMEDIATE;
-
-        // if (!ImGui_ImplSDLGPU3_Init(&init_info)) {
-        //     SDL_Log("Error: ImGui_ImplSDLGPU3_Init(): %s\n", SDL_GetError());
-        //     return 1;
-        // }
-
-        // SDL_GPUSamplerCreateInfo sampler_info = {};
-        // sampler_info.min_filter = SDL_GPU_FILTER_NEAREST;
-        // sampler_info.mag_filter = SDL_GPU_FILTER_NEAREST;
-        // sampler_info.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST;
-        // sampler_info.address_mode_u =
-        // SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE; sampler_info.address_mode_v
-        // = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
-        // sampler_info.address_mode_w =
-        // SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE; sampler_info.mip_lod_bias =
-        // 0.0f; sampler_info.min_lod = -1000.0f; sampler_info.max_lod =
-        // 1000.0f; sampler_info.enable_anisotropy = false;
-        // sampler_info.max_anisotropy = 1.0f;
-        // sampler_info.enable_compare = false;
-
-        // this->sampler = SDL_CreateGPUSampler(device, &sampler_info);
-        // if (sampler == nullptr) {
-        //     SDL_Log("Error: SDL_CreateGPUSampler(): %s\n", SDL_GetError());
-        //     return 1;
-        // }
-
         return 0;
     }
-    /**
-     * @brief Configures the main ImGui DockSpace and programmatically defines
-     * the window layout. This function initializes a transparent, full-screen
-     * host window and partitions the internal DockSpace into a grid containing
-     * a central Viewport, a left-hand Palette (with an attached Color Picker),
-     * and a bottom-aligned Layer panel.
-     *
-     * @return int
-     */
+
     int App::setup_imgui_dockspace() noexcept {
         // static bool layout_initialized = false;
 
@@ -628,12 +367,7 @@ namespace chroma {
 
         return 0;
     }
-    /**
-     * @brief Orchestrates the primary UI workspace, including the DockSpace,
-     * global Menu Bar, and component rendering.
-     *
-     * @return int
-     */
+
     int App::imgui_dockspace() noexcept {
         ImGuiWindowFlags window_flags =
             ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -686,12 +420,7 @@ namespace chroma {
 
         return 0;
     }
-    /**
-     * @brief Processing all event detected by SDL_PollEvent each frame
-     *
-     * @param delta
-     * @return int
-     */
+
     int App::process_events(float delta) noexcept {
         static float time = 0;
 
