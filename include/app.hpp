@@ -70,8 +70,8 @@ public:
      * &A::_on_invalid_test_color); // Color type mismatch, won't connect
      *
      * emit_signal<Color>("test_color", BLACK); // Force down type, will emit
-     * emit_signal<const Color &>("test_color", BLACK); // Force down type
-     * mismatch, won't emit emit_signal("test_color", BLACK); // Deduce type, may
+     * emit_signal<const Color &>("test_color", BLACK); // Force down type mismatch, won't emit
+     * emit_signal("test_color", BLACK); // Deduce type, may
      * not work
      * ```
      *
@@ -106,8 +106,7 @@ public:
      * add_signal<Color>("test_color"); // Add a Signal with type Color
      *
      * connect_signal("test_color", &instance, &A::_on_test_color); // Color type
-     * matches, will connect connect_signal("test_color", &instance,
-     * &A::_on_invalid_test_color); // Color type mismatch, won't connect
+     * matches, will connect connect_signal("test_color", &instance, &A::_on_invalid_test_color); // Color type mismatch, won't connect
      * ```
      *
      * @tparam O Object type
@@ -235,9 +234,6 @@ private:
 
     SDL_GPUDevice* device = nullptr;
     SDL_Renderer* renderer = nullptr;
-    // SDL_GPUCommandBuffer *cmd_buffer = nullptr;
-
-    // SDL_GPUSampler *sampler = nullptr;
 
     bool dockspace_initialized = false;
     bool done = false;
