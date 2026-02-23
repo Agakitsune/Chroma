@@ -98,6 +98,7 @@ void ViewportWindow::display() noexcept
         if (selected == canvases.size() && selected > 0) {
             selected--;
         }
+        App::get_instance()->emit_signal<bool>("set_empty", canvases.empty());
         if (canvases.empty()) {
             App::get_instance()->emit_signal<Canvas*>("canvas_selected",
         nullptr);
@@ -399,6 +400,8 @@ void ViewportWindow::new_canvas(uint32_t width, uint32_t height) noexcept
         &canvases[selected]);
     marked = canvases.size();
 
+    App::get_instance()->emit_signal<bool>("set_empty", canvases.empty());
+
     reload();
 }
 
@@ -485,6 +488,8 @@ void ViewportWindow::open_canvas(const std::filesystem::path& directory,
     marked = canvases.size();
 
     canvas.name = file;
+
+    App::get_instance()->emit_signal<bool>("set_empty", canvases.empty());
 
     reload();
 

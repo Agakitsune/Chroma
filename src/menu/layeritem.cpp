@@ -10,16 +10,24 @@ namespace chroma {
 
 void LayerMenuItem::menubar() noexcept
 {
-    if (ImGui::MenuItem("New Layer", "Shift+N")) {
+    bool disabled = !App::get_instance()->empty;
+
+    if (ImGui::MenuItem("New Layer", "Shift+N", nullptr, disabled)) {
         App::get_instance()->emit_signal("layer_new");
     }
-    if (ImGui::MenuItem("Delete Layer")) {
+    if (ImGui::MenuItem("Delete Layer", nullptr, nullptr, disabled)) {
         App::get_instance()->emit_signal("layer_delete");
     }
 }
 
 void LayerMenuItem::shortcuts() noexcept
 {
+    bool disabled = !App::get_instance()->empty;
+
+    if (disabled) {
+        return;
+    }
+
     if (ImGui::IsKeyChordPressed(ImGuiMod_Shift | ImGuiKey_N)) {
         App::get_instance()->emit_signal("layer_new");
     }

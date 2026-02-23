@@ -19,16 +19,24 @@ namespace chroma {
 
 void UndoRedoMenuItem::menubar() noexcept
 {
-    if (ImGui::MenuItem("Undo", "Ctrl+Z")) {
+    bool disabled = !App::get_instance()->empty;
+
+    if (ImGui::MenuItem("Undo", "Ctrl+Z", nullptr, disabled)) {
         App::get_instance()->emit_signal("edit_undo");
     }
-    if (ImGui::MenuItem("Redo", "Ctrl+Y")) {
+    if (ImGui::MenuItem("Redo", "Ctrl+Y", nullptr, disabled)) {
         App::get_instance()->emit_signal("edit_redo");
     }
 }
 
 void UndoRedoMenuItem::shortcuts() noexcept
 {
+    bool disabled = !App::get_instance()->empty;
+
+    if (disabled) {
+        return;
+    }
+
     if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Z)) {
         App::get_instance()->emit_signal("edit_undo");
     }

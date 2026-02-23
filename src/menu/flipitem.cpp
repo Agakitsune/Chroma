@@ -19,16 +19,24 @@ namespace chroma {
 
 void FlipMenuItem::menubar() noexcept
 {
-    if (ImGui::MenuItem("Flip Horizontal", "Shift+H")) {
+    bool disabled = !App::get_instance()->empty;
+
+    if (ImGui::MenuItem("Flip Horizontal", "Shift+H", nullptr, disabled)) {
         App::get_instance()->emit_signal("edit_fliph");
     }
-    if (ImGui::MenuItem("Flip Vertical", "Shift+V")) {
+    if (ImGui::MenuItem("Flip Vertical", "Shift+V", nullptr, disabled)) {
         App::get_instance()->emit_signal("edit_flipv");
     }
 }
 
 void FlipMenuItem::shortcuts() noexcept
 {
+    bool disabled = !App::get_instance()->empty;
+
+    if (disabled) {
+        return;
+    }
+
     if (ImGui::IsKeyChordPressed(ImGuiMod_Shift | ImGuiKey_H)) {
         App::get_instance()->emit_signal("edit_fliph");
     }

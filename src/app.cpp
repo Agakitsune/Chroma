@@ -90,6 +90,8 @@ int App::init() noexcept
 
     add_signal("popup_save");
 
+    add_signal<bool>("set_empty");
+
     windows.push_back(std::make_unique<ViewportWindow>());
     windows.push_back(std::make_unique<ColorPickerWindow>());
     windows.push_back(std::make_unique<PaletteWindow>());
@@ -115,6 +117,7 @@ int App::init() noexcept
     add_menu<ExitMenuItem>("File");
 
     connect_signal("popup_save", save_menu, &SaveMenuItem::action);
+    connect_signal("set_empty", this, &App::set_empty);
 
     emit_signal<const Color&>("main_color_selected", WHITE);
     emit_signal<const Color&>("second_color_selected", BLACK);
@@ -431,6 +434,11 @@ int App::process_events(float delta) noexcept
     }
 
     return 0;
+}
+
+void App::set_empty(bool s) noexcept
+{
+    this->empty = s;
 }
 
 } // namespace chroma

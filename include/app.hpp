@@ -218,6 +218,8 @@ public:
     static App* get_instance() noexcept;
     static SDL_Renderer* get_renderer() noexcept;
 
+    bool empty = true;
+
 private:
     int create_window() noexcept;
     int create_device() noexcept;
@@ -229,6 +231,8 @@ private:
     int imgui_dockspace() noexcept;
 
     int process_events(float delta) noexcept;
+
+    void set_empty(bool s) noexcept;
 
     SDL_Window* window = nullptr;
 

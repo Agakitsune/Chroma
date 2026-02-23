@@ -142,7 +142,9 @@ void SaveMenuItem::query_current_directory() noexcept
 
 void SaveMenuItem::menubar() noexcept
 {
-    if (ImGui::MenuItem("Save", "Ctrl+S")) {
+    bool disabled = !App::get_instance()->empty;
+
+    if (ImGui::MenuItem("Save", "Ctrl+S", nullptr, disabled)) {
         action();
     }
 }
@@ -279,6 +281,12 @@ void SaveMenuItem::display() noexcept
 
 void SaveMenuItem::shortcuts() noexcept
 {
+    bool disabled = !App::get_instance()->empty;
+
+    if (disabled) {
+        return;
+    }
+
     if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S)) {
         action();
     }
