@@ -16,16 +16,16 @@
 
 namespace chroma {
 
-    /**
-     * @brief Undo/Redo Menu item
-     * 
-     */
-    class UndoRedoMenuItem : public MenuItem {
-      public:
-        UndoRedoMenuItem() noexcept = default;
-        ~UndoRedoMenuItem() noexcept = default;
+/**
+ * @brief Undo/Redo Menu item
+ *
+ */
+class UndoRedoMenuItem : public MenuItem {
+public:
+  UndoRedoMenuItem() noexcept = default;
+  ~UndoRedoMenuItem() noexcept = default;
 
-        virtual void menubar() noexcept override final;
-        virtual void shortcuts() noexcept override final;
-    };
+  virtual void menubar() noexcept override final;
+  virtual void shortcuts() noexcept override final;
+};
 } // namespace chroma
